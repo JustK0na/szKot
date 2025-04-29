@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <title>Tabela biletow</title>
+
+</head>
+<body>
+<h1>Lista biletow</h1>
+<table border="1">
+    <tr>
+        <th>ID_biletu</th>
+        <th>ID_pasazera</th>
+        <th>ID_polaczena</th>
+        <th>cena</th>
+        <th>rodzaj ulgi</th>
+    </tr>
+    {% for row in biletyhtml %}
+    <tr>
+        <td>{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+        <td>{{ row[2] }}</td>
+        <td>{{ row[3] }}</td>
+        <td>{{ row[4] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
