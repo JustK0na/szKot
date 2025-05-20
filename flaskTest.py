@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_mysqldb import MySQL
+import  random
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Needed for sessions
@@ -42,6 +43,58 @@ def register():
         flash("Rejestracja zakończona. Zaloguj się.")
         return redirect(url_for('login'))
     return render_template('register.html')
+
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    cursor = mysql.connection.cursor()
+
+    # Fetch city names for dropdowns
+    cursor.execute("SELECT DISTINCT miasto FROM stacje_kolejowe ORDER BY miasto ASC")
+    cities = [row[0] for row in cursor.fetchall()]
+
+    results = []
+    if request.method == 'POST':
+        from_city = request.form['from_city']
+        to_city = request.form['to_city']
+
+        query = """
+                SELECT p.id_połączenia, s1.miasto, s2.miasto, p.data, p.czas_przejazdu, p.opóźnienie
+                FROM polaczenia p
+                         JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
+                         JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
+                WHERE s1.miasto = %s AND s2.miasto = %s \
+                """
+        cursor.execute(query, (from_city, to_city))
+        results = cursor.fetchall()
+
+    cursor.close()
+    return render_template('search.html', cities=cities, results=results)
+
+@app.route('/buy_ticket/<int:connection_id>', methods=['POST'])
+def buy_ticket(connection_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    cursor = mysql.connection.cursor()
+
+    # Random price and discount
+    cena = random.randint(50, 300)
+    ulgi = random.choice(["None", "Student", "Senior", "Weteran", "Dziecko"])
+
+    cursor.execute("""
+                   INSERT INTO bilety (id_pasażera, id_połączenia, cena, ulgi)
+                   VALUES (%s, %s, %s, %s)
+                   """, (session['user_id'], connection_id, cena, ulgi))
+
+    mysql.connection.commit()
+    cursor.close()
+    flash("Bilet zakupiony!")
+    return redirect(url_for('bilety'))
 
 @app.route('/bilety')
 def bilety():
