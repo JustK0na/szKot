@@ -13,7 +13,6 @@ conn = mysql.connector.connect(
 cursor = conn.cursor()
 fake = Faker('pl_PL')
 
-# Clean all tables before inserting new data
 cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
 cursor.execute("TRUNCATE TABLE bilety;")
 cursor.execute("TRUNCATE TABLE polaczenia;")
@@ -54,7 +53,6 @@ for _ in range(10000):
 
 print("Pasazerowie have been filled")
 
-# ... [rest of the script remains unchanged] ...
 #########################
 #miasta
 #########################

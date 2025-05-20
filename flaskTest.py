@@ -3,7 +3,7 @@ from flask_mysqldb import MySQL
 import  random
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Needed for sessions
+app.secret_key = 'your_secret_key'
 
 # MySQL Configuration
 app.config['MYSQL_HOST'] = 'localhost'
@@ -25,7 +25,7 @@ def register():
         email = request.form['email']
         telefon = request.form['telefon']
         password = request.form['password']
-        password_hash = str(abs(hash(password)))[:10]  # simple hash
+        password_hash = str(abs(hash(password)))[:10]
 
         cursor = mysql.connection.cursor()
         cursor.execute("SELECT id_pasażera FROM pasazerowie WHERE mail = %s", (email,))
@@ -53,7 +53,7 @@ def search():
 
     cursor = mysql.connection.cursor()
 
-    # Fetch city names for dropdowns
+    #dropdown data
     cursor.execute("SELECT DISTINCT miasto FROM stacje_kolejowe ORDER BY miasto ASC")
     cities = [row[0] for row in cursor.fetchall()]
 
@@ -82,7 +82,6 @@ def buy_ticket(connection_id):
 
     cursor = mysql.connection.cursor()
 
-    # Random price and discount
     cena = random.randint(50, 300)
     ulgi = random.choice(["None", "Student", "Senior", "Weteran", "Dziecko"])
 
