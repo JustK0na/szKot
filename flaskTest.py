@@ -30,7 +30,7 @@ def register():
         cursor = mysql.connection.cursor()
         cursor.execute("SELECT id_pasażera FROM pasazerowie WHERE mail = %s", (email,))
         if cursor.fetchone():
-            flash("Email already registered.")
+            flash("Ten emali ma już przypisane konto.")
             return redirect(url_for('register'))
 
         query = """
