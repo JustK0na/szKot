@@ -53,11 +53,12 @@ def search():
 
     cursor = mysql.connection.cursor()
 
-    #dropdown data
     cursor.execute("SELECT DISTINCT miasto FROM stacje_kolejowe ORDER BY miasto ASC")
     cities = [row[0] for row in cursor.fetchall()]
 
     results = []
+    all_connections = []
+
     if request.method == 'POST':
         from_city = request.form['from_city']
         to_city = request.form['to_city']
@@ -67,13 +68,24 @@ def search():
                 FROM polaczenia p
                          JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
                          JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
-                WHERE s1.miasto = %s AND s2.miasto = %s \
+                WHERE s1.miasto = %s AND s2.miasto = %s
                 """
         cursor.execute(query, (from_city, to_city))
         results = cursor.fetchall()
 
+    # Fetch all connections (for the scrollable list)
+    cursor.execute("""
+        SELECT p.id_połączenia, s1.miasto, s2.miasto, p.data, p.czas_przejazdu, p.opóźnienie
+        FROM polaczenia p
+                 JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
+                 JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
+        ORDER BY p.data ASC
+    """)
+    all_connections = cursor.fetchall()
+
     cursor.close()
-    return render_template('search.html', cities=cities, results=results)
+    return render_template('search.html', cities=cities, results=results, all_connections=all_connections)
+
 
 @app.route('/buy_ticket/<int:connection_id>', methods=['POST'])
 def buy_ticket(connection_id):
