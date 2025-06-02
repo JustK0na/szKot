@@ -165,7 +165,7 @@ def bilety_szczegol(bilet_id):
             SELECT b.id_biletu, b.cena, b.ulgi, p.data, p.czas_przejazdu, p.opóźnienie, 
             s1.nazwa_stacji AS stacja_początkowa, 
             s2.nazwa_stacji AS stacja_docelowa,
-            po.model_pociągu,
+            po.model_pociągu, po.id_pociągu,
             prz.nazwa AS przewoznik
             FROM bilety b
             JOIN polaczenia p ON b.id_połączenia = p.id_połączenia
