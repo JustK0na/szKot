@@ -6,7 +6,7 @@
 </head>
 <body>
 <h2>Wyszukaj połączenie między miastami</h2>
-
+<!--
 <form method="POST">
     <label>Miasto początkowe:</label>
     <select name="from_city" required>
@@ -24,7 +24,7 @@
 
     <input type="submit" value="Szukaj">
 </form>
-
+-->
 <h3>Wszystkie dostępne połączenia:</h3>
 <input type="text" id="filterInput" placeholder="Filtruj połączenia..." style="width: 100%; margin-bottom: 10px;">
 
@@ -49,6 +49,11 @@
                 <td>{{ conn[3] }}</td>
                 <td>{{ conn[4] }}</td>
                 <td>{{ conn[5] }}</td>
+                <td>
+                    <form action="{{ url_for('buy_ticket', connection_id=conn[0]) }}" method="GET">
+                        <button type="submit">Kup bilet</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Kup bilet</title>
+</head>
+<body>
+<h2>Zakup biletu</h2>
+
+<p><strong>Trasa:</strong> {{ connection[1] }} → {{ connection[2] }}</p>
+<p><strong>Data:</strong> {{ connection[3] }}</p>
+<p><strong>Czas przejazdu:</strong> {{ connection[4] }}</p>
+<p><strong>Opóźnienie:</strong> {{ connection[5] }}</p>
+<p><strong>Pociąg:</strong> {{ connection[6] }} #{{ connection[8] }}</p>
+<p><strong>Przewoźnik:</strong> {{ connection[7] }}</p>
+
+<form method="POST">
+    <label>Wybierz ulgę:</label><br>
+    <select name="ulga" required>
+        {% for u in ulgi %}
+        <option value="{{ u }}">{{ u }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <button type="submit">Potwierdź zakup</button>
+</form>
+
+<br><a href="{{ url_for('search') }}">Powrót</a>
+</body>
+</html>

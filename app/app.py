@@ -6,7 +6,8 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # MySQL Configuration
-app.config['MYSQL_HOST'] = 'db'
+#app.config['MYSQL_HOST'] = 'db' #Docker 
+app.config['MYSQL_USER'] = 'root' #host
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'szkot'
@@ -88,25 +89,50 @@ def search():
     return render_template('search.html', cities=cities, results=results, all_connections=all_connections)
 
 
-@app.route('/buy_ticket/<int:connection_id>', methods=['POST'])
+@app.route('/buy_ticket/<int:connection_id>', methods=['GET', 'POST'])
 def buy_ticket(connection_id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
     cursor = mysql.connection.cursor()
 
-    cena = random.randint(50, 300)
-    ulgi = random.choice(["None", "Student", "Senior", "Weteran", "Dziecko"])
+    if request.method == 'POST':
+        selected_discount = request.form['ulga']
+        cena = random.randint(50, 300)
 
+        cursor.execute("""
+            INSERT INTO bilety (id_pasażera, id_połączenia, cena, ulgi)
+            VALUES (%s, %s, %s, %s)
+        """, (session['user_id'], connection_id, cena, selected_discount))
+
+        mysql.connection.commit()
+        cursor.close()
+        flash("Bilet zakupiony!")
+        return redirect(url_for('bilety'))
+
+    # jeśli GET — wyświetl stronę z danymi
     cursor.execute("""
-                   INSERT INTO bilety (id_pasażera, id_połączenia, cena, ulgi)
-                   VALUES (%s, %s, %s, %s)
-                   """, (session['user_id'], connection_id, cena, ulgi))
-
-    mysql.connection.commit()
+        SELECT p.id_połączenia, s1.miasto, s2.miasto, p.data, p.czas_przejazdu, p.opóźnienie,
+               poc.model_pociągu, prz.nazwa, poc.id_pociągu
+        FROM polaczenia p
+        JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
+        JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
+        JOIN pociagi poc ON p.id_pociągu = poc.id_pociągu
+        JOIN przewoznicy prz ON poc.id_przewoźnika = prz.id_przewoznika
+        WHERE p.id_połączenia = %s
+    """, (connection_id,))
+    connection = cursor.fetchone()
     cursor.close()
-    flash("Bilet zakupiony!")
-    return redirect(url_for('bilety'))
+
+    ulgi = ["Brak", "Student", "Senior", "Dziecko", "Weteran"]
+    return render_template('kupBilet.html', connection=connection, ulgi=ulgi)
+
+
+
+
+
+
+
 
 @app.route('/bilety')
 def bilety():
@@ -115,16 +141,48 @@ def bilety():
 
     cursor = mysql.connection.cursor()
     query = """
-            SELECT b.id_biletu, p.data, p.czas_przejazdu, p.opóźnienie, b.cena, b.ulgi
+            SELECT s1.miasto AS stacja_początkowa, s2. miasto AS stacja_docelowa ,b.id_biletu, p.data, p.czas_przejazdu, p.opóźnienie, b.cena, b.ulgi
             FROM bilety b
                      JOIN polaczenia p ON b.id_połączenia = p.id_połączenia
+                     JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
+                     JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
             WHERE b.id_pasażera = %s \
+            ORDER BY p.data DESC
             """
     cursor.execute(query, (session['user_id'],))
     tickets = cursor.fetchall()
     cursor.close()
 
     return render_template('bilety.html', tickets=tickets)
+
+@app.route('/bilety/<int:bilet_id>')
+def bilety_szczegol(bilet_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    cursor = mysql.connection.cursor()
+    query = """
+            SELECT b.id_biletu, b.cena, b.ulgi, p.data, p.czas_przejazdu, p.opóźnienie, 
+            s1.nazwa_stacji AS stacja_początkowa, 
+            s2.nazwa_stacji AS stacja_docelowa,
+            po.model_pociągu,
+            prz.nazwa AS przewoznik
+            FROM bilety b
+            JOIN polaczenia p ON b.id_połączenia = p.id_połączenia
+            JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
+            JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
+            JOIN pociagi po ON p.id_pociągu = po.id_pociągu
+            JOIN przewoznicy prz ON po.id_przewoźnika = prz.id_przewoznika
+            WHERE b.id_biletu = %s AND b.id_pasażera = %s
+            """
+    cursor.execute(query, (bilet_id, session['user_id']))
+    ticket = cursor.fetchone()
+    cursor.close()
+    if not ticket:
+        flash("Bilet nie istnieje lub nie jest przypisany do Twojego konta.")
+        return redirect(url_for('bilety'))
+    return render_template('biletSzczegoly.html', bilet=ticket)
+    
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
