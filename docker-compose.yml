@@ -1,0 +1,30 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    volumes:
+      - ./mysql/dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
+    networks:
+      - backend
+
+  web:
+    build: ./app
+    depends_on:
+      - db
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+      MYSQL_DATABASE: mydatabase
+    ports:
+      - "5000:5000"
+    networks:
+      - backend
+
+networks:
+  backend:
