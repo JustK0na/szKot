@@ -40,10 +40,12 @@ if not cursor.fetchone():
 for _ in range(10000):
     first = fake.first_name()
     last = fake.last_name()
-    email = fake.email()
+    email = fake.unique.email()
     phone = fake.phone_number()
     password_plain = fake.password(length=8)
     password_hash = str(abs(hash(password_plain)))[:10]  # simple numeric hash
+
+    
 
     query = """
             INSERT INTO pasazerowie (imie, nazwisko, mail, telefon, haslo_plain, haslo)

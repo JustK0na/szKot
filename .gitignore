@@ -7,4 +7,7 @@
 # Compiled Pre-Linked Libraries
 *.plx
 
+venv/
+=======
 .idea
+
