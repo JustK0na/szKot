@@ -1,6 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_mysqldb import MySQL
+
+import hashlib
 import  random
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()[:16] 
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -19,6 +25,25 @@ mysql = MySQL(app)
 def index():
     return redirect(url_for('login'))
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM pasazerowie WHERE mail=%s", (email,))
+        user = cursor.fetchone()
+        cursor.close()
+        if user and user[5] == hash_password(password):
+            session['user_id'] = user[0]
+            session['user_name'] = user[1]
+            return redirect(url_for('welcome'))
+        else:
+            flash('Niepoprawny login lub hasło')
+            return redirect(url_for('login'))
+        
+    return render_template('login.html')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -27,7 +52,8 @@ def register():
         email = request.form['email']
         telefon = request.form['telefon']
         password = request.form['password']
-        password_hash = str(abs(hash(password)))[:10]
+
+        password_hash = hash_password(password)
 
         cursor = mysql.connection.cursor()
         cursor.execute("SELECT id_pasażera FROM pasazerowie WHERE mail = %s", (email,))
@@ -36,10 +62,10 @@ def register():
             return redirect(url_for('register'))
 
         query = """
-                INSERT INTO pasazerowie (imie, nazwisko, mail, telefon, haslo_plain, haslo)
-                VALUES (%s, %s, %s, %s, %s, %s) \
+                INSERT INTO pasazerowie (imie, nazwisko, mail, telefon, haslo)
+                VALUES (%s, %s, %s, %s, %s) \
                 """
-        cursor.execute(query, (imie, nazwisko, email, telefon, password, password_hash))
+        cursor.execute(query, (imie, nazwisko, email, telefon, password_hash))
         mysql.connection.commit()
         cursor.close()
         flash("Rejestracja zakończona. Zaloguj się.")
@@ -128,12 +154,6 @@ def buy_ticket(connection_id):
     return render_template('kupBilet.html', connection=connection, ulgi=ulgi)
 
 
-
-
-
-
-
-
 @app.route('/bilety')
 def bilety():
     if 'user_id' not in session:
@@ -184,23 +204,6 @@ def bilety_szczegol(bilet_id):
     return render_template('biletSzczegoly.html', bilet=ticket)
     
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM pasazerowie WHERE mail=%s AND haslo_plain=%s", (email, password))
-        user = cursor.fetchone()
-        cursor.close()
-        if user:
-            session['user_id'] = user[0]
-            session['user_name'] = user[1]
-            return redirect(url_for('welcome'))
-        else:
-            flash('Niepoprawny login lub hasło')
-            return redirect(url_for('login'))
-    return render_template('login.html')
 
 @app.route('/welcome')
 def welcome():
