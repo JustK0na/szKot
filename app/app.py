@@ -4,6 +4,12 @@ from flask_mysqldb import MySQL
 import hashlib
 import  random
 
+
+###########
+#TODO:
+#    -add all admin powers to panel admina
+#    -add some admin powers to panel przewoznika
+###########
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()[:16] 
 
@@ -112,7 +118,7 @@ def search():
     all_connections = cursor.fetchall()
 
     cursor.close()
-    return render_template('search.html', cities=cities, results=results, all_connections=all_connections)
+    return render_template('user/search.html', cities=cities, results=results, all_connections=all_connections)
 
 
 @app.route('/buy_ticket/<int:connection_id>', methods=['GET', 'POST'])
@@ -151,7 +157,7 @@ def buy_ticket(connection_id):
     cursor.close()
 
     ulgi = ["Brak", "Student", "Senior", "Dziecko", "Weteran"]
-    return render_template('kupBilet.html', connection=connection, ulgi=ulgi)
+    return render_template('user/kupBilet.html', connection=connection, ulgi=ulgi)
 
 
 @app.route('/bilety')
@@ -173,7 +179,7 @@ def bilety():
     tickets = cursor.fetchall()
     cursor.close()
 
-    return render_template('bilety.html', tickets=tickets)
+    return render_template('user/bilety.html', tickets=tickets)
 
 @app.route('/bilety/<int:bilet_id>')
 def bilety_szczegol(bilet_id):
@@ -201,7 +207,7 @@ def bilety_szczegol(bilet_id):
     if not ticket:
         flash("Bilet nie istnieje lub nie jest przypisany do Twojego konta.")
         return redirect(url_for('bilety'))
-    return render_template('biletSzczegoly.html', bilet=ticket)
+    return render_template('user/biletSzczegoly.html', bilet=ticket)
     
 
 
@@ -209,12 +215,70 @@ def bilety_szczegol(bilet_id):
 def welcome():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('welcome.html', name=session['user_name'])
+    return render_template('user/welcome.html', name=session['user_name'])
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    return render_template('admin/admin.html')
+
+
+@app.route('/admin/pasazerowie')
+def admin_pasazerowie():
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT id_pasażera, imie, nazwisko, mail, telefon, haslo FROM pasazerowie")
+    passengers = cursor.fetchall()
+    cursor.close()
+    return render_template('admin/pasazerowie.html', passengers=passengers)
+
+
+@app.route('/admin/pasazerowie/<int:id_pasazer>/bilety')
+def pokaz_bilety_pasazera(id_pasazer):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT id_biletu, id_pasażera, id_połączenia, cena, ulgi FROM bilety WHERE id_pasażera = %s", (id_pasazer,))
+    tickets = cursor.fetchall()
+
+    cursor.execute("SELECT imie, nazwisko FROM pasazerowie WHERE id_pasażera = %s", (id_pasazer,))
+    passenger = cursor.fetchone()
+
+    cursor.close()
+    return render_template('admin/bilety_pasazera.html', tickets=tickets, passenger=passenger, id_pasazer=id_pasazer)
+
+
+@app.route('/admin/pasazerowie/<int:id_pasazer>/bilety/<int:bilet_id>/usun', methods=['POST'])
+def usun_bilet(id_pasazer, bilet_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM bilety WHERE id_biletu = %s", (bilet_id,))
+    mysql.connection.commit()
+    cursor.close()
+    return redirect(url_for('pokaz_bilety_pasazera', id_pasazer=id_pasazer))
+
+
+
+@app.route('/admin/pasazerowie/<int:id_pasazer>/bilety/<int:bilet_id>/edytuj', methods=['POST'])
+def edytuj_bilet(id_pasazer, bilet_id):
+    cena = request.form.get('cena')
+    ulga = request.form.get('ulga')  # teraz string, np. "Student"
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("""
+        UPDATE bilety SET cena = %s, ulgi = %s WHERE id_biletu = %s
+    """, (cena, ulga, bilet_id))
+    mysql.connection.commit()
+    cursor.close()
+
+    return redirect(url_for('pokaz_bilety_pasazera', id_pasazer=id_pasazer))
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
