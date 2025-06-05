@@ -3,23 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Logowanie</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<h2>Zaloguj się</h2>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<p style="color:red;">{{ messages[0] }}</p>
-{% endif %}
-{% endwith %}
-<form method="POST">
-    <label>Email:</label><br>
-    <input type="text" name="email"><br>
-    <label>Hasło:</label><br>
-    <input type="password" name="password"><br><br>
-    <input type="submit" value="Zaloguj">
-    <p>Nie masz konta? <a href="{{ url_for('register') }}">Zarejestruj się</a></p>
-</form>
+    <div class="login">
+        <h1>Zaloguj się</h1>
+        <div class="links">
+            <a href="{{ url_for('login') }}" class="active">Zaloguj się</a>
+            <a href="{{ url_for('register') }}" >Rejestracja</a>
+        </div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="msg" style="color:red;">{{ messages[0] }}</div>
+            {% endif %}
+            {% endwith %}
+    <form method="POST">
+        <input type="text" name="email" placeholder="E-mail" required><br>
+        <input type="text" name="password" placeholder="Hasło" required>
+        <input type="submit" value="Zaloguj">
+    </form>
 
+</div>
 
 </body>
 </html>

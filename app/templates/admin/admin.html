@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Panel administratora</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<h2>Panel administratora</h2>
-<a href="{{ url_for('admin_pasazerowie') }}">Pasazerowie</a><br><br>
+    <div class = "admin">
+        <h1>Panel administratora</h1>
+        <div class = "links">
+            <a href="{{ url_for('admin_pasazerowie') }}">Pasazerowie</a><br><br>
+        </div>
+    </div>
 </body>
 </html>

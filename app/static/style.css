@@ -1,0 +1,91 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+body {
+    background-color: #213050;
+}
+
+.login, .register {
+    width: 400px;
+    background: #fff;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    margin: 100px auto;
+}
+
+.welcome, .bilety, .search, .admin {
+    background: #fff;
+    padding-bottom: 20px;
+    justify-content: center;
+}
+
+h1 {
+    text-align: center;
+    font-size: 24px;
+    color: #1b1e22;
+    padding: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+h2 {
+    text-align: center;
+    font-size: 16px;
+    color: #1b1e22;
+    padding-bottom: 20px;
+    padding-top: 5px;
+}
+
+.links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 15px 0;
+}
+
+.links a {
+    text-decoration: none;
+    color: #888;
+    font-weight: bold;
+}
+
+.links a.active {
+    border-bottom: 2px solid #3274d6;
+    color: #3274d6;
+}
+
+.msg {
+    color: red;
+    text-align: center;
+    margin: 10px 0;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form input[type="text"] {
+    width: 310px;
+    height: 50px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+form input[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    background: #3274d6;
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+form input[type="submit"]:hover {
+    background: #2868c7;
+}
+

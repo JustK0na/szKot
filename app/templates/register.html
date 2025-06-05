@@ -3,27 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Rejestracja</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<h2>Rejestracja pasażera</h2>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<p style="color:red;">{{ messages[0] }}</p>
-{% endif %}
-{% endwith %}
-<form method="POST">
-    <label>Imię:</label><br>
-    <input type="text" name="imie" required><br>
-    <label>Nazwisko:</label><br>
-    <input type="text" name="nazwisko" required><br>
-    <label>Email:</label><br>
-    <input type="email" name="email" required><br>
-    <label>Telefon:</label><br>
-    <input type="text" name="telefon" required><br>
-    <label>Hasło:</label><br>
-    <input type="password" name="password" required><br><br>
-    <input type="submit" value="Zarejestruj się">
-</form>
-<p>Masz już konto? <a href="{{ url_for('login') }}">Zaloguj się</a></p>
+    <div class="register">
+        <h1>Rejestracja pasażera</h1>
+        <div class="links">
+            <a href="{{ url_for('login') }}">Zaloguj się</a>
+            <a href="{{ url_for('register') }}"class="active">Rejestracja</a>
+        </div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="msg" style="color:red;">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <input type="text" name="imie" placeholder="Imię" required>
+            <input type="text" name="nazwisko" placeholder="Nazwisko" required>
+            <input type="text" name="email" placeholder="E-mail" required>
+            <input type="text" name="telefon" placeholder="Numer telefonu" required>
+            <input type="text" name="password" placeholder="Hasło" required>
+            <input type="submit" value="Zarejestruj się">
+        </form>
+
+    </div>
 </body>
 </html>
