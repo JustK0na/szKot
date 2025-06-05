@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<h2>Bilety pasażera {{ passenger[0] }} {{ passenger[1] }}</h2>
+<h2>Bilety pasażera {{ user[0] }} {{ user[1] }}</h2>
 <a href="{{ url_for('admin') }}">Powrót do panelu admina</a><br><br>
 <ul>
   {% for ticket in tickets %}
@@ -15,7 +15,7 @@
       Cena: {{ ticket[3] }}, Ulga: {{ ticket[4] }}
       
       <!-- Formularz edycji ceny i ulgi -->
-      <form method="POST" action="{{ url_for('edytuj_bilet', bilet_id=ticket[0], id_pasazer=id_pasazer) }}" style="display:inline;">
+      <form method="POST" action="{{ url_for('edytuj_bilet', ticket_id=ticket[0], user_id=user_id) }}" style="display:inline;">
         Cena: <input type="number" step="0.01" name="cena" value="{{ ticket[3] }}" required>Ulga:
         <select name="ulga" required>
         {% for key, label in {
@@ -32,7 +32,7 @@
       </form>
 
       <!-- Formularz usuwania biletu -->
-      <form method="POST" action="{{ url_for('usun_bilet', bilet_id=ticket[0], id_pasazer=id_pasazer) }}" style="display:inline;">
+      <form method="POST" action="{{ url_for('usun_bilet', ticket_id=ticket[0], user_id=user_id) }}" style="display:inline;">
         <button type="submit" onclick="return confirm('Na pewno usunąć ten bilet?');">Usuń</button>
       </form>
     </li>

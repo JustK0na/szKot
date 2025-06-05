@@ -24,7 +24,7 @@ RUN apt-get update && \
         python3-tk \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy the requirements file and install dependencies
+
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 

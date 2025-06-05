@@ -7,6 +7,8 @@ services:
       MYSQL_DATABASE: mydatabase
       MYSQL_USER: user
       MYSQL_PASSWORD: user
+    ports:
+    - "3307:3306"
     volumes:
       - ./mysql/dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro
     networks:

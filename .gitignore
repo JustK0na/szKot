@@ -10,4 +10,6 @@
 venv/
 =======
 .idea
-
+.devcontainer
+.vscode
+settings.json

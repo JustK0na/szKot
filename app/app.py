@@ -20,7 +20,6 @@ app.secret_key = 'your_secret_key'
 # MySQL Configuration
 #app.config['MYSQL_HOST'] = 'db' #Docker 
 app.config['MYSQL_USER'] = 'root' #host
-app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'szkot'
 app.config['MYSQL_PORT'] = 3306
@@ -223,6 +222,10 @@ def logout():
     return redirect(url_for('login'))
 
 
+#   Wypadałoby to przenieśc do innych plików
+#       |
+#      \/
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     if 'user_id' not in session:
@@ -235,49 +238,47 @@ def admin():
 def admin_pasazerowie():
     cursor = mysql.connection.cursor()
     cursor.execute("SELECT id_pasażera, imie, nazwisko, mail, telefon, haslo FROM pasazerowie")
-    passengers = cursor.fetchall()
+    users = cursor.fetchall()
     cursor.close()
-    return render_template('admin/pasazerowie.html', passengers=passengers)
+    return render_template('admin/pasazerowie.html', users=users)
 
 
-@app.route('/admin/pasazerowie/<int:id_pasazer>/bilety')
-def pokaz_bilety_pasazera(id_pasazer):
+@app.route('/admin/pasazerowie/<int:user_id>/bilety')
+def pokaz_bilety_pasazera(user_id):
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT id_biletu, id_pasażera, id_połączenia, cena, ulgi FROM bilety WHERE id_pasażera = %s", (id_pasazer,))
+    cursor.execute("SELECT id_biletu, id_pasażera, id_połączenia, cena, ulgi FROM bilety WHERE id_pasażera = %s", (user_id,))
     tickets = cursor.fetchall()
 
-    cursor.execute("SELECT imie, nazwisko FROM pasazerowie WHERE id_pasażera = %s", (id_pasazer,))
-    passenger = cursor.fetchone()
+    cursor.execute("SELECT imie, nazwisko FROM pasazerowie WHERE id_pasażera = %s", (user_id,))
+    user = cursor.fetchone()
 
     cursor.close()
-    return render_template('admin/bilety_pasazera.html', tickets=tickets, passenger=passenger, id_pasazer=id_pasazer)
+    return render_template('admin/bilety_pasazera.html', tickets=tickets, user=user, user_id=user_id)
 
 
-@app.route('/admin/pasazerowie/<int:id_pasazer>/bilety/<int:bilet_id>/usun', methods=['POST'])
-def usun_bilet(id_pasazer, bilet_id):
+@app.route('/admin/pasazerowie/<int:user_id>/bilety/<int:ticket_id>/usun', methods=['POST'])
+def usun_bilet(user_id, ticket_id):   
     cursor = mysql.connection.cursor()
-    cursor.execute("DELETE FROM bilety WHERE id_biletu = %s", (bilet_id,))
+    cursor.execute("DELETE FROM bilety WHERE id_biletu = %s", (ticket_id,))
     mysql.connection.commit()
     cursor.close()
-    return redirect(url_for('pokaz_bilety_pasazera', id_pasazer=id_pasazer))
+    return redirect(url_for('pokaz_bilety_pasazera', user_id=user_id))
 
 
 
-@app.route('/admin/pasazerowie/<int:id_pasazer>/bilety/<int:bilet_id>/edytuj', methods=['POST'])
-def edytuj_bilet(id_pasazer, bilet_id):
+@app.route('/admin/pasazerowie/<int:user_id>/bilety/<int:ticket_id>/edytuj', methods=['POST'])
+def edytuj_bilet(user_id, ticket_id):
     cena = request.form.get('cena')
-    ulga = request.form.get('ulga')  # teraz string, np. "Student"
+    ulga = request.form.get('ulga') 
 
     cursor = mysql.connection.cursor()
     cursor.execute("""
         UPDATE bilety SET cena = %s, ulgi = %s WHERE id_biletu = %s
-    """, (cena, ulga, bilet_id))
+    """, (cena, ulga, ticket_id))
     mysql.connection.commit()
     cursor.close()
 
-    return redirect(url_for('pokaz_bilety_pasazera', id_pasazer=id_pasazer))
-
-
+    return redirect(url_for('pokaz_bilety_pasazera', user_id=user_id))
 
 
 if __name__ == '__main__':
