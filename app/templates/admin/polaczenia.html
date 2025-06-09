@@ -36,11 +36,14 @@
                 <td>{{ p[4] }}</td>
                 <td>{{ p[5] }}</td>
                 <td>{{ p[6] }}</td>
-                <td>{{ p[7] }}</td>
+                <td>{{ p[7] }}</td> 
                 <td>{{ p[8] }}</td>
                 <td>{{ p[9] }}</td>
                 <td>
                     <a href="{{ url_for('admin.edytuj_polaczenie', connection_id=p[0]) }}">Edytuj połaczenie</a>
+                    <form method="POST" action="{{ url_for('admin.usun_polaczenie', connection_id=p[0]) }}" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Na pewno usunąć połączenie?');">Usuń</button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}

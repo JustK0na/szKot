@@ -88,6 +88,15 @@ def edytuj_pasazera(user_id):
                            user=user,)
 
 
+@admin_bp.route('/pasazerowie/<int:user_id>/usun', methods=['POST'])
+def usun_pasazera(user_id):   
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM pasazerowie WHERE id_pasażera = %s", (user_id,))
+    mysql.connection.commit()
+    cursor.close()
+    return redirect(url_for('admin.admin_pasazerowie', user_id=user_id))
+
+
 
 
 @admin_bp.route('/polaczenia')
@@ -224,5 +233,14 @@ def dodaj_polaczenie():
 
 
 
+
+
+@admin_bp.route('/polaczenia/usun/<int:connection_id>', methods=['POST'])
+def usun_polaczenie(connection_id):   
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM polaczenia WHERE id_połączenia = %s", (connection_id,))
+    mysql.connection.commit()
+    cursor.close()
+    return redirect(url_for('admin.admin_polaczenia'))
 
 

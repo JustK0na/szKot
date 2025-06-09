@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Panel administratora - Pasażerowie</title>
+    <title>Panel administratora - Linie kolejowe</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -30,10 +30,8 @@
             <td>{{ p[4] }}</td>
             <td>
                 <a href="{{ url_for('admin.pokaz_bilety_pasazera', user_id=p[0]) }}">Zobacz bilety</a>
+                
                 <a href="{{ url_for('admin.edytuj_pasazera', user_id=p[0]) }}">Edytuj użytkownika</a>
-                <form method="POST" action="{{ url_for('admin.usun_pasazera', user_id=p[0]) }}" style="display:inline;">
-                    <button type="submit" onclick="return confirm('Na pewno usunąć użytkownika?');">Usuń</button>
-                </form>
             </td>
         </tr>
         {% endfor %}

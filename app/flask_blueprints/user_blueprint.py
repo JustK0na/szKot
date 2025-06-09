@@ -30,7 +30,6 @@ def search():
         cursor.execute(query, (from_city, to_city))
         results = cursor.fetchall()
 
-    # Fetch all connections (for the scrollable list)
     cursor.execute("""
         SELECT p.id_połączenia, s1.miasto, s2.miasto, p.data, p.czas_przejazdu, p.opóźnienie
         FROM polaczenia p
@@ -65,7 +64,6 @@ def buy_ticket(connection_id):
         flash("Bilet zakupiony!")
         return redirect(url_for('user.bilety'))
 
-    # jeśli GET — wyświetl stronę z danymi
     cursor.execute("""
         SELECT p.id_połączenia, s1.miasto, s2.miasto, p.data, p.czas_przejazdu, p.opóźnienie,
                poc.model_pociągu, prz.nazwa, poc.id_pociągu
