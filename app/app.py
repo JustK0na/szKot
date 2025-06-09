@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # MySQL Configuration
-app.config['MYSQL_HOST'] = 'db' #Docker 
+#app.config['MYSQL_HOST'] = 'db' #Docker 
 app.config['MYSQL_USER'] = 'root' #host
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'szkot'
