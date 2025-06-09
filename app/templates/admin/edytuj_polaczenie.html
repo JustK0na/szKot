@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Edytuj połączenie #{{ connection[0] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h2>Edytuj połączenie #{{ connection[0] }}</h2>
+<a href="{{ url_for('admin_polaczenia') }}">Powrót do listy połączeń</a><br><br>
+
+<form method="POST">    
+    <label for="id_linii">Linia kolejowa:</label>
+    <select name="id_linii" id="id_linii" required>
+        {% for linia in linie %}
+            <option value="{{ linia[0] }}" {% if linia[0] == connection[1] %}selected{% endif %}>
+                {{ linia[1] }}
+            </option>
+        {% endfor %}
+    </select>
+    
+    <label for="id_stacji_początkowej">Stacja początkowa:</label>
+    <select name="id_stacji_początkowej" id="id_stacji_początkowej" required>
+        {% for stacja in stacje %}
+            <option value="{{ stacja[0] }}" {% if stacja[0] == connection[2] %}selected{% endif %}>
+                {{ stacja[1] }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label for="id_stacji_końcowej">Stacja końcowa:</label>
+    <select name="id_stacji_końcowej" id="id_stacji_końcowej" required>
+        {% for stacja in stacje %}
+            <option value="{{ stacja[0] }}" {% if stacja[0] == connection[3] %}selected{% endif %}>
+                {{ stacja[1] }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label for="id_pociągu">Pociąg:</label>
+    <select name="id_pociągu" id="id_pociągu" required>
+        {% for pociag in pociagi %}
+            <option value="{{ pociag[0] }}" {% if pociag[0] == connection[4] %}selected{% endif %}>
+                {{ pociag[0] }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label for="czas_przejazdu">Czas przejazdu:</label>
+    <input type="time" id="czas_przejazdu" name="czas_przejazdu" value="{{ connection[5] }}" step="1" min="1" required>
+
+    <label for="data">Data:</label>
+    <input type="date" id="data" name="data" value="{{ connection[6] }}" required>
+
+    <label for="opóźnienie">Opóźnienie (minuty):</label>
+    <input type="time" id="opóźnienie" name="opóźnienie" value="{{ connection[7] }}" step="1" min="0" required>
+
+    <button type="submit">Zapisz</button>
+</form>
+
+</body>
+</html>

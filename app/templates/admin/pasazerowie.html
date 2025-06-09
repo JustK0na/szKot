@@ -29,9 +29,8 @@
             <td>{{ p[3] }}</td>
             <td>{{ p[4] }}</td>
             <td>
-                {% for p in users %}
                 <a href="{{ url_for('pokaz_bilety_pasazera', user_id=p[0]) }}">Zobacz bilety</a>
-                {% endfor %}
+                <a href="{{ url_for('login') }}">Edytuj użytkownika</a>
             </td>
         </tr>
         {% endfor %}
