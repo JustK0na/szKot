@@ -9,7 +9,7 @@
    <div class = "bilety">
         <h1>Bilety zakupione przez {{ session['user_name'] }}</h1>
         <div class = "links">
-            <a href="{{ url_for('welcome') }}">Powrót</a>
+            <a href="{{ url_for('user.welcome') }}">Powrót</a>
         </div>
 
         {% if tickets %}
@@ -36,7 +36,7 @@
             <td>{{ t[6] }} zł</td>
             <td>{{ t[7] }}</td>
             <td>
-            <a href="{{ url_for('bilety_szczegol', bilet_id=t[2]) }}">Szczegóły</a>
+            <a href="{{ url_for('user.bilety_szczegol', bilet_id=t[2]) }}">Szczegóły</a>
             </td>
         </tr>
         {% endfor %}

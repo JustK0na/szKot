@@ -10,10 +10,10 @@
     <div class = "welcome">
     <h1>Witaj, {{ name }}!</h1>
         <div class="links">
-            <a href="{{ url_for('bilety') }}">Zobacz moje bilety</a> |
-            <a href="{{ url_for('search') }}">Wyszukaj połączenie</a> |
-            <a href="{{ url_for('admin') }}">Panel admina</a> |
-            <a href="{{ url_for('logout') }}">Wyloguj</a>
+            <a href="{{ url_for('user.bilety') }}">Zobacz moje bilety</a> |
+            <a href="{{ url_for('user.search') }}">Wyszukaj połączenie</a> |
+            <a href="{{ url_for('admin.admin') }}">Panel admina</a> |
+            <a href="{{ url_for('user.logout') }}">Wyloguj</a>
         </div>
     </div>
 </body>

@@ -10,9 +10,9 @@
         <h1>Edytuj połączenie #{{ connection[0] }}</h1>
 
         <div class="links">
-            <a href="{{ url_for('admin_polaczenia') }}">Powrót do listy połączeń</a><br><br>
+            <a href="{{ url_for('admin.admin_polaczenia') }}">Powrót do listy połączeń</a><br><br>
         </div>
-        
+
         <form method="POST">    
             <label>Linia kolejowa:</label>
             <select name="id_linii" id="id_linii" required>

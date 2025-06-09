@@ -53,7 +53,7 @@
                     <td>{{ conn[4] }}</td>
                     <td>{{ conn[5] }}</td>
                     <td>
-                        <form action="{{ url_for('buy_ticket', connection_id=conn[0]) }}" method="GET">
+                        <form action="{{ url_for('user.buy_ticket', connection_id=conn[0]) }}" method="GET">
                             <button type="submit">Kup bilet</button>
                         </form>
                     </td>
@@ -95,7 +95,7 @@
             <td>{{ r[4] }}</td>
             <td>{{ r[5] }}</td>
             <td>
-                <form action="{{ url_for('buy_ticket', connection_id=r[0]) }}" method="POST">
+                <form action="{{ url_for('user.buy_ticket', connection_id=r[0]) }}" method="POST">
                     <button type="submit">Kup bilet</button>
                 </form>
             </td>
@@ -106,7 +106,7 @@
     <p style="color:red;">Brak połączeń między tymi miastami.</p>
     {% endif %}
     <div class = "links">
-        <a href="{{ url_for('welcome') }}">Powrót</a>
+        <a href="{{ url_for('user.welcome') }}">Powrót</a>
     </div>
 
     </div>

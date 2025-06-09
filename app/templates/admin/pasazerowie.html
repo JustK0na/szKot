@@ -9,7 +9,7 @@
     <div class = "admin">
 <h1>Wszyscy pasażerowie</h1>
     <div class = "links">
-         <a href="{{ url_for('admin') }}">Powrót</a><br><br>
+         <a href="{{ url_for('admin.admin') }}">Powrót</a><br><br>
     </div>
     {% if users %}
     <table border="1">
@@ -29,9 +29,9 @@
             <td>{{ p[3] }}</td>
             <td>{{ p[4] }}</td>
             <td>
-                <a href="{{ url_for('pokaz_bilety_pasazera', user_id=p[0]) }}">Zobacz bilety</a>
+                <a href="{{ url_for('admin.pokaz_bilety_pasazera', user_id=p[0]) }}">Zobacz bilety</a>
                 
-                <a href="{{ url_for('edytuj_pasazera', user_id=p[0]) }}">Edytuj użytkownika</a>
+                <a href="{{ url_for('admin.edytuj_pasazera', user_id=p[0]) }}">Edytuj użytkownika</a>
             </td>
         </tr>
         {% endfor %}

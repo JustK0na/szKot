@@ -9,8 +9,8 @@
     <div class="admin">
         <h1>Wszystkie połączenia</h1>
         <div class="links">
-            <a href="{{ url_for('admin') }}">Powrót</a><br><br>
-            <a href="{{ url_for('dodaj_polaczenie') }}"> Dodaj nowe połączenie</a>
+            <a href="{{ url_for('admin.admin') }}">Powrót</a><br><br>
+            <a href="{{ url_for('admin.dodaj_polaczenie') }}"> Dodaj nowe połączenie</a>
         </div>
         {% if connections %}
         <table border="1">
@@ -40,7 +40,7 @@
                 <td>{{ p[8] }}</td>
                 <td>{{ p[9] }}</td>
                 <td>
-                    <a href="{{ url_for('edytuj_polaczenie', connection_id=p[0]) }}">Edytuj połaczenie</a>
+                    <a href="{{ url_for('admin.edytuj_polaczenie', connection_id=p[0]) }}">Edytuj połaczenie</a>
                 </td>
             </tr>
             {% endfor %}
