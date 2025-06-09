@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # MySQL Configuration
-#app.config['MYSQL_HOST'] = 'db' #Docker 
+app.config['MYSQL_HOST'] = 'db' #Docker 
 app.config['MYSQL_USER'] = 'root' #host
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'szkot'
@@ -267,8 +267,6 @@ def usun_bilet(user_id, ticket_id):
     cursor.close()
     return redirect(url_for('pokaz_bilety_pasazera', user_id=user_id))
 
-
-
 @app.route('/admin/pasazerowie/<int:user_id>/bilety/<int:ticket_id>/edytuj', methods=['POST'])
 def edytuj_bilet(user_id, ticket_id):
     cena = request.form.get('cena')
@@ -282,6 +280,40 @@ def edytuj_bilet(user_id, ticket_id):
     cursor.close()
 
     return redirect(url_for('pokaz_bilety_pasazera', user_id=user_id))
+
+@app.route('/admin/pasazerowie/<int:user_id>', methods=['GET', 'POST'])
+def edytuj_pasazera(user_id):   
+    cursor = mysql.connection.cursor()
+
+    cursor.execute("""SELECT * FROM pasazerowie WHERE id_pasażera=%s""", (user_id,))
+    user = cursor.fetchall()
+
+    if request.method == 'POST':
+        imie = request.form.get('imie')
+        naziwsko = request.form.get('nazwisko')
+        email = request.form.get('email')
+        telefon = request.form.get('telefon')
+        
+        cursor.execute("""
+            UPDATE pasazerowie SET
+                imie = %s,
+                nazwisko = %s,
+                mail = %s,
+                telefon = %s
+            WHERE id_pasażera = %s
+        """, (imie, naziwsko, email, telefon, user_id))
+        
+        mysql.connection.commit()
+        cursor.close()
+        return redirect(url_for('admin_pasazerowie'))
+
+
+    cursor.close()
+
+    return render_template('admin/edytuj_pasazera.html',
+                           user=user,)
+
+
 
 
 @app.route('/admin/polaczenia')
@@ -371,6 +403,53 @@ def edytuj_polaczenie(connection_id):
                            stacje=stacje,
                            pociagi=pociagi,
                            linie=linie)
+
+
+@app.route('/admin/polaczenia/dodaj', methods=['GET', 'POST'])
+def dodaj_polaczenie():
+    cursor = mysql.connection.cursor()
+
+    if request.method == 'POST':
+
+        id_linii = request.form.get('id_linii')
+        id_stacji_poczatkowej = request.form.get('id_stacji_początkowej')
+        id_stacji_koncowej = request.form.get('id_stacji_końcowej')
+        id_pociagu = request.form.get('id_pociągu')
+        czas_przejazdu = request.form.get('czas_przejazdu')
+        data = request.form.get('data')
+        opoznienie = request.form.get('opóźnienie')
+
+        cursor.execute("""
+            INSERT INTO polaczenia (
+                id_lini, id_stacji_początkowej, id_stacji_końcowej,
+                id_pociągu, czas_przejazdu, data, opóźnienie
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (id_linii, id_stacji_poczatkowej, id_stacji_koncowej, id_pociagu, czas_przejazdu, data, opoznienie))
+        
+        mysql.connection.commit()
+        cursor.close()
+        return redirect(url_for('admin_polaczenia'))
+
+    cursor.execute("SELECT id_stacji, nazwa_stacji FROM stacje_kolejowe ORDER BY nazwa_stacji")
+    stacje = cursor.fetchall()
+
+
+    cursor.execute("SELECT id_pociągu FROM pociagi ORDER BY id_pociągu")
+    pociagi = cursor.fetchall()
+
+
+    cursor.execute("SELECT id_linii, nazwa_linii FROM linie_kolejowe ORDER BY nazwa_linii")
+    linie = cursor.fetchall()
+
+    cursor.close()
+
+    return render_template('admin/dodaj_polaczenie.html',
+                           stacje=stacje,
+                           pociagi=pociagi,
+                           linie=linie)
+
+
+
 
 
 

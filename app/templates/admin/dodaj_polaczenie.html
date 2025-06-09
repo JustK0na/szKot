@@ -2,22 +2,24 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Edytuj połączenie #{{ connection[0] }}</title>
+    <title>Dodaj połączenie</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class = "admin">
-        <h1>Edytuj połączenie #{{ connection[0] }}</h1>
+        <h1>Dodaj połączenie</h1>
 
         <div class="links">
             <a href="{{ url_for('admin_polaczenia') }}">Powrót do listy połączeń</a><br><br>
         </div>
-        
+
+
+
         <form method="POST">    
             <label>Linia kolejowa:</label>
             <select name="id_linii" id="id_linii" required>
                 {% for linia in linie %}
-                    <option value="{{ linia[0] }}" {% if linia[0] == connection[1] %}selected{% endif %}>
+                    <option value="{{ linia[0] }}">
                         {{ linia[1] }}
                     </option>
                 {% endfor %}
@@ -26,7 +28,7 @@
             <label>Stacja początkowa:</label>
             <select name="id_stacji_początkowej" id="id_stacji_początkowej" required>
                 {% for stacja in stacje %}
-                    <option value="{{ stacja[0] }}" {% if stacja[0] == connection[2] %}selected{% endif %}>
+                    <option value="{{ stacja[0] }}">
                         {{ stacja[1] }}
                     </option>
                 {% endfor %}
@@ -35,7 +37,7 @@
             <label>Stacja końcowa:</label>
             <select name="id_stacji_końcowej" id="id_stacji_końcowej" required>
                 {% for stacja in stacje %}
-                    <option value="{{ stacja[0] }}" {% if stacja[0] == connection[3] %}selected{% endif %}>
+                    <option value="{{ stacja[0] }}">
                         {{ stacja[1] }}
                     </option>
                 {% endfor %}
@@ -44,22 +46,22 @@
             <label>Pociąg:</label>
             <select name="id_pociągu" id="id_pociągu" required>
                 {% for pociag in pociagi %}
-                    <option value="{{ pociag[0] }}" {% if pociag[0] == connection[4] %}selected{% endif %}>
+                    <option value="{{ pociag[0] }}">
                         {{ pociag[0] }}
                     </option>
                 {% endfor %}
             </select>
 
             <label>Czas przejazdu:</label>
-            <input type="time" id="czas_przejazdu" name="czas_przejazdu" value="{{ connection[5] }}" step="1" min="1" required>
+            <input type="time" id="czas_przejazdu" name="czas_przejazdu" step="1" min="1" required>
 
             <label>Data:</label>
-            <input type="date" id="data" name="data" value="{{ connection[6] }}" required>
+            <input type="date" id="data" name="data" required>
 
             <label>Opóźnienie:</label>
-            <input type="time" id="opóźnienie" name="opóźnienie" value="{{ connection[7] }}" step="1" min="0" required>
+            <input type="time" id="opóźnienie" name="opóźnienie"  step="1" min="0" required>
 
-            <button type="submit">Zapisz</button>
+            <button type="submit">Dodaj</button>
         </form>
     </div>
 </body>
