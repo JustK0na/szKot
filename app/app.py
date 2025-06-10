@@ -6,6 +6,7 @@ from flask_mysqldb import MySQL
 #TODO:
 #    -add all admin powers to panel admina
 #    -add some admin powers to panel przewoznika
+#    - make admin access to admin powers secure
 ###########
 
 app = Flask(__name__)
