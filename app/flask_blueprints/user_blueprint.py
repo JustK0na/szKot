@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from app import mysql
+from common import random
 
 user_bp = Blueprint('user', __name__)
 
@@ -21,7 +22,7 @@ def search():
         to_city = request.form['to_city']
 
         query = """
-                SELECT p.id_połączenia, s1.miasto, s2.miasto, p.data, p.czas_przejazdu, p.opóźnienie
+                SELECT p.id_połączenia, s1.miasto, s2.miasto, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia
                 FROM polaczenia p
                          JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
                          JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
@@ -31,11 +32,11 @@ def search():
         results = cursor.fetchall()
 
     cursor.execute("""
-        SELECT p.id_połączenia, s1.miasto, s2.miasto, p.data, p.czas_przejazdu, p.opóźnienie
+        SELECT p.id_połączenia, s1.miasto, s2.miasto, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia
         FROM polaczenia p
                  JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
                  JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
-        ORDER BY p.data ASC
+        ORDER BY p.godzina_odjazdu DESC
     """)
     all_connections = cursor.fetchall()
 
@@ -65,7 +66,7 @@ def buy_ticket(connection_id):
         return redirect(url_for('user.bilety'))
 
     cursor.execute("""
-        SELECT p.id_połączenia, s1.miasto, s2.miasto, p.data, p.czas_przejazdu, p.opóźnienie,
+        SELECT p.id_połączenia, s1.miasto, s2.miasto, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia,
                poc.model_pociągu, prz.nazwa, poc.id_pociągu
         FROM polaczenia p
         JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
@@ -88,13 +89,13 @@ def bilety():
 
     cursor = mysql.connection.cursor()
     query = """
-            SELECT s1.miasto AS stacja_początkowa, s2. miasto AS stacja_docelowa ,b.id_biletu, p.data, p.czas_przejazdu, p.opóźnienie, b.cena, b.ulgi
+            SELECT s1.miasto AS stacja_początkowa, s2. miasto AS stacja_docelowa ,b.id_biletu, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia, b.cena, b.ulgi
             FROM bilety b
                      JOIN polaczenia p ON b.id_połączenia = p.id_połączenia
                      JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
                      JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
             WHERE b.id_pasażera = %s \
-            ORDER BY p.data DESC
+            ORDER BY p.godzina_odjazdu DESC
             """
     cursor.execute(query, (session['user_id'],))
     tickets = cursor.fetchall()
@@ -109,7 +110,7 @@ def bilety_szczegol(bilet_id):
 
     cursor = mysql.connection.cursor()
     query = """
-            SELECT b.id_biletu, b.cena, b.ulgi, p.data, p.czas_przejazdu, p.opóźnienie, 
+            SELECT b.id_biletu, b.cena, b.ulgi, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia,
             s1.nazwa_stacji AS stacja_początkowa, 
             s2.nazwa_stacji AS stacja_docelowa,
             po.model_pociągu, po.id_pociągu,

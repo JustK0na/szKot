@@ -18,9 +18,9 @@
             <th>ID Biletu</th>
             <th>Miasto Początkowe</th>
             <th>Miasto Docelowe</th>
-            <th>Data Podróży</th>
             <th>Czas Przejazdu</th>
-            <th>Opóźnienie</th>
+            <th>Godzina Odjazdu</th>
+            <th>Dni tygodnia</th>
             <th>Cena</th>
             <th>Ulga</th>
             <th>Szczegóły</th>
@@ -33,7 +33,7 @@
             <td>{{ t[3] }}</td>
             <td>{{ t[4] }}</td>
             <td>{{ t[5] }}</td>
-            <td>{{ t[6] }} zł</td>
+            <td>{{ t[6] }}zł</td>
             <td>{{ t[7] }}</td>
             <td>
             <a href="{{ url_for('user.bilety_szczegol', bilet_id=t[2]) }}">Szczegóły</a>
