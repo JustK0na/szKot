@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel administratora - Stacje kolejowe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "admin">
+        <h1>Wszystkie stacje kolejowe</h1>
+    <div class = "links">
+         <a href="{{ url_for('admin.admin') }}">Powrót</a><br><br>
+         <a href="{{ url_for('admin.dodaj_stacje') }}">Dodaj stacje kolejową</a><br><br>
+    </div>
+    {% if stations %}
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nazwa linii</th>
+            <th>Stacja początkowa</th>
+        </tr>
+        {% for p in stations %}
+        <tr>
+            <td>{{ p[0] }}</td>
+            <td>{{ p[1] }}</td>
+            <td>{{ p[2] }}</td>
+            <td>
+                <a href="{{ url_for('admin.edytuj_stacje', station_id=p[0]) }}">Edytuj stacje</a>
+                <form method="POST" action="{{ url_for('admin.usun_stacje', station_id=p[0]) }}" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Na pewno usunąć stacje kolejową?');">Usuń</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>Brak zarejestrowanych stacji kolejowych.</p>
+    {% endif %}
+    </div>
+</body>
+</html>

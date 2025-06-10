@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dodaj stacje kolejowe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "admin">
+        <h1>Dodaj stacje kolejowe</h1>
+        <div class = "links">
+            <a href="{{ url_for('admin.admin_stacje') }}">Powrót do listy stacji kolejowych</a><br><br>
+        </div>
+        <form method="POST">    
+            <label>Nazwa stacji</label>
+            <input type="text" id="nazwa_stacji" name="nazwa_stacji" required>
+    
+            <label>Miasto</label>
+            <input type="text" id="miasto" name="miasto" required>
+
+
+            <button type="submit">Dodaj</button>
+        </form>
+    </div>
+</body>
+</html>
