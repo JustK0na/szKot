@@ -1,11 +1,17 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from app import mysql
-from flask_blueprints.admin_blueprint import admin_bp
+from flask_blueprints.admin_blueprint import admin_bp, get_db_connection
 
 
 @admin_bp.route('/pociagi')
 def admin_pociagi():
-    cursor = mysql.connection.cursor()
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+    
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
     cursor.execute("""
         SELECT 
             p.id_pociągu,
@@ -28,7 +34,13 @@ def admin_pociagi():
 
 @admin_bp.route('/pociągi/<int:train_id>/wagony')
 def pokaz_wagony(train_id):
-    cursor = mysql.connection.cursor()
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
     cursor.execute("SELECT * FROM wagony WHERE id_pociągu = %s", (train_id,))
     wagons = cursor.fetchall()
 
@@ -38,11 +50,18 @@ def pokaz_wagony(train_id):
 
 
 @admin_bp.route('/pociągi/<int:train_id>/wagony/<int:wagon_id>/usun', methods=['POST'])
-def usun_wagon(train_id,wagon_id):   
-    cursor = mysql.connection.cursor()
+def usun_wagon(train_id,wagon_id):
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
     cursor.execute("DELETE FROM wagony WHERE id_wagonu = %s", (wagon_id,))
 
-    mysql.connection.commit()
+    conn.commit()
+
     cursor.close()
     return redirect(url_for('admin.pokaz_wagony', train_id=train_id))
 
@@ -50,13 +69,21 @@ def usun_wagon(train_id,wagon_id):
 
 @admin_bp.route('/pociągi/<int:train_id>/wagony/<int:wagon_id>/edytuj', methods=['POST'])
 def edytuj_wagon(train_id, wagon_id):
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+    
     liczba_miejsc = request.form.get('liczba_miejsc')
     
-    cursor = mysql.connection.cursor()
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
     cursor.execute("""
         UPDATE wagony SET liczba_miejsc = %s WHERE id_wagonu = %s
     """, (liczba_miejsc , wagon_id))
-    mysql.connection.commit()
+    
+    conn.commit()
+    
     cursor.close()
 
     return redirect(url_for('admin.pokaz_wagony', train_id=train_id))
@@ -64,13 +91,21 @@ def edytuj_wagon(train_id, wagon_id):
 
 @admin_bp.route('/pociągi/<int:train_id>/wagony/dodaj', methods=['POST'])
 def dodaj_wagon(train_id):
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+    
     liczba_miejsc = request.form.get('liczba_miejsc')
     
-    cursor = mysql.connection.cursor()
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+
     cursor.execute("""
         INSERT INTO wagony(id_pociągu, liczba_miejsc) VALUES(%s,%s)    """
                    , (train_id,liczba_miejsc))
-    mysql.connection.commit()
+    
+    conn.commit()
+    
     cursor.close()
 
     return redirect(url_for('admin.pokaz_wagony', train_id=train_id))
@@ -81,7 +116,12 @@ def dodaj_wagon(train_id):
 
 @admin_bp.route('/pociągi/<int:train_id>', methods=['GET', 'POST'])
 def edytuj_pociag(train_id):   
-    cursor = mysql.connection.cursor()
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
 
     cursor.execute("""SELECT * FROM pociagi WHERE id_pociągu=%s""", (train_id,))
     train = cursor.fetchall()
@@ -101,7 +141,8 @@ def edytuj_pociag(train_id):
             WHERE id_pociągu = %s
         """, (model, id_przewoznika, id_stacji, stan, train_id))
         
-        mysql.connection.commit()
+        conn.commit()
+        
         cursor.close()
         return redirect(url_for('admin.admin_pociagi'))
 
@@ -124,7 +165,12 @@ def edytuj_pociag(train_id):
 
 @admin_bp.route('/pociągi/dodaj', methods=['GET', 'POST'])
 def dodaj_pociag():   
-    cursor = mysql.connection.cursor()
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
 
     if request.method == 'POST':
         model = request.form.get('model_pociagu')
@@ -138,7 +184,7 @@ def dodaj_pociag():
             ) VALUES (%s,%s,%s,%s)
         """, (model, id_przewoznika, id_stacji, stan))
         
-        mysql.connection.commit()
+        conn.commit()
         cursor.close()
         return redirect(url_for('admin.admin_pociagi'))
 
@@ -158,7 +204,12 @@ def dodaj_pociag():
 
 @admin_bp.route('/pociągi/<int:train_id>/usun', methods=['POST'])
 def usun_pociag(train_id):   
-    cursor = mysql.connection.cursor()
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
 
     cursor.execute("DELETE FROM wagony WHERE id_pociągu = %s", (train_id,))
 
@@ -167,6 +218,6 @@ def usun_pociag(train_id):
     cursor.execute("DELETE FROM pociagi WHERE id_pociągu = %s", (train_id,))
 
 
-    mysql.connection.commit()
+    conn.commit()
     cursor.close()
     return redirect(url_for('admin.admin_pociagi'))

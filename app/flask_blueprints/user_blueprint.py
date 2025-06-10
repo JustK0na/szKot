@@ -1,15 +1,72 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from app import mysql
-from common import random
+from common import random,hash_password,get_db_connection
 
 user_bp = Blueprint('user', __name__)
+
+@user_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        conn = get_db_connection('auth')
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT * FROM pasazerowie WHERE mail=%s", (email,))
+        user = cursor.fetchone()
+        cursor.close()
+        if user and user[5] == hash_password(password):
+            session['user_id'] = user[0]
+            session['user_name'] = user[1]
+            return redirect(url_for('user.welcome'))
+        else:
+            flash('Niepoprawny login lub hasło')
+            return redirect(url_for('user.login'))
+        
+    return render_template('login.html')
+
+
+@user_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        imie = request.form['imie']
+        nazwisko = request.form['nazwisko']
+        email = request.form['email']
+        telefon = request.form['telefon']
+        password = request.form['password']
+
+        password_hash = hash_password(password)
+
+        conn = get_db_connection('auth')
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT id_pasażera FROM pasazerowie WHERE mail = %s", (email,))
+        if cursor.fetchone():
+            flash("Ten emali ma już przypisane konto.")
+            return redirect(url_for('user.register'))
+
+        query = """
+                INSERT INTO pasazerowie (imie, nazwisko, mail, telefon, haslo)
+                VALUES (%s, %s, %s, %s, %s) \
+                """
+        cursor.execute(query, (imie, nazwisko, email, telefon, password_hash))
+        conn.commit()
+        cursor.close()
+        flash("Rejestracja zakończona. Zaloguj się.")
+        return redirect(url_for('user.login'))
+    return render_template('register.html')
+
+
+
+
 
 @user_bp.route('/search', methods=['GET', 'POST'])
 def search():
     if 'user_id' not in session:
         return redirect(url_for('user.login'))
 
-    cursor = mysql.connection.cursor()
+    conn = get_db_connection('passenger')
+    cursor = conn.cursor()
 
     cursor.execute("SELECT DISTINCT miasto FROM stacje_kolejowe ORDER BY miasto ASC")
     cities = [row[0] for row in cursor.fetchall()]
@@ -49,7 +106,8 @@ def buy_ticket(connection_id):
     if 'user_id' not in session:
         return redirect(url_for('user.login'))
 
-    cursor = mysql.connection.cursor()
+    conn = get_db_connection('passenger')
+    cursor = conn.cursor()
 
     if request.method == 'POST':
         selected_discount = request.form['ulga']
@@ -60,7 +118,7 @@ def buy_ticket(connection_id):
             VALUES (%s, %s, %s, %s)
         """, (session['user_id'], connection_id, cena, selected_discount))
 
-        mysql.connection.commit()
+        conn.commit()
         cursor.close()
         flash("Bilet zakupiony!")
         return redirect(url_for('user.bilety'))
@@ -75,6 +133,7 @@ def buy_ticket(connection_id):
         JOIN przewoznicy prz ON poc.id_przewoźnika = prz.id_przewoznika
         WHERE p.id_połączenia = %s
     """, (connection_id,))
+
     connection = cursor.fetchone()
     cursor.close()
 
@@ -87,7 +146,9 @@ def bilety():
     if 'user_id' not in session:
         return redirect(url_for('user.login'))
 
-    cursor = mysql.connection.cursor()
+    conn = get_db_connection('passenger')
+    cursor = conn.cursor()
+
     query = """
             SELECT s1.miasto AS stacja_początkowa, s2. miasto AS stacja_docelowa ,b.id_biletu, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia, b.cena, b.ulgi
             FROM bilety b
@@ -106,9 +167,11 @@ def bilety():
 @user_bp.route('/bilety/<int:bilet_id>')
 def bilety_szczegol(bilet_id):
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('user.login'))
 
-    cursor = mysql.connection.cursor()
+    conn = get_db_connection('passenger')
+    cursor = conn.cursor()
+
     query = """
             SELECT b.id_biletu, b.cena, b.ulgi, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia,
             s1.nazwa_stacji AS stacja_początkowa, 
@@ -136,11 +199,11 @@ def bilety_szczegol(bilet_id):
 @user_bp.route('/welcome')
 def welcome():
     if 'user_id' not in session:
-        return redirect(url_for('login'))
+        return redirect(url_for('user.login'))
     return render_template('user/welcome.html', name=session['user_name'])
 
 @user_bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('user.login'))
 

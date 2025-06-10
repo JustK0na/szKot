@@ -1,10 +1,15 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from app import mysql
-from flask_blueprints.admin_blueprint import admin_bp
+from flask_blueprints.admin_blueprint import admin_bp,get_db_connection
 
 @admin_bp.route('/stacje')
 def admin_stacje():
-    cursor = mysql.connection.cursor()
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
     cursor.execute("""
         SELECT * FROM stacje_kolejowe
     """)
@@ -14,22 +19,33 @@ def admin_stacje():
 
 
 @admin_bp.route('/stacje/<int:station_id>/usun', methods=['POST'])
-def usun_stacje(station_id):   
-    cursor = mysql.connection.cursor()
+def usun_stacje(station_id):
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))   
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+
     cursor.execute("DELETE FROM polaczenia WHERE id_stacji_początkowej = %s", (station_id,))
     cursor.execute("DELETE FROM polaczenia WHERE id_stacji_końcowej = %s", (station_id,))
 
     cursor.execute("DELETE FROM linie_kolejowe WHERE id_stacji = %s", (station_id,))
 
     cursor.execute("DELETE FROM stacje_kolejowe WHERE id_stacji = %s", (station_id,))
-    mysql.connection.commit()
+    conn.commit()
     cursor.close()
     return redirect(url_for('admin.admin_stacje'))
 
 
 @admin_bp.route('/stacje/<int:station_id>/edytuj', methods=['GET', 'POST'])
-def edytuj_stacje(station_id):   
-    cursor = mysql.connection.cursor()
+def edytuj_stacje(station_id):
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))   
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
 
     cursor.execute("""SELECT * FROM stacje_kolejowe WHERE id_stacji=%s""", (station_id,))
     station = cursor.fetchone()
@@ -45,7 +61,7 @@ def edytuj_stacje(station_id):
             WHERE id_stacji = %s
         """, (nazwa_stacji, miasto, station_id))
         
-        mysql.connection.commit()
+        conn.commit()
         cursor.close()
         return redirect(url_for('admin.admin_stacje'))
 
@@ -58,8 +74,13 @@ def edytuj_stacje(station_id):
 
 
 @admin_bp.route('/stacje/dodaj', methods=['GET', 'POST'])
-def dodaj_stacje():   
-    cursor = mysql.connection.cursor()
+def dodaj_stacje():
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
 
 
     if request.method == 'POST':
@@ -72,7 +93,7 @@ def dodaj_stacje():
             ) VALUES (%s, %s)
         """, (nazwa_stacji, miasto))
         
-        mysql.connection.commit()
+        conn.commit()
         cursor.close()
         return redirect(url_for('admin.admin_stacje'))
 

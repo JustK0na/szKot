@@ -64,15 +64,6 @@ CREATE TABLE `linie_kolejowe` (
 ) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `linie_kolejowe`
---
-
-LOCK TABLES `linie_kolejowe` WRITE;
-/*!40000 ALTER TABLE `linie_kolejowe` DISABLE KEYS */;
-INSERT INTO `linie_kolejowe` VALUES (1,'Linia Wejherowo',188,6),(2,'Linia Łowicz',127,7),(3,'Linia Pabianice',19,6),(4,'Linia Mikołów',165,1),(5,'Linia Jelenia Góra',45,8),(6,'Linia Zakopane',38,8),(7,'Linia Piotrków Trybunalski',23,9),(8,'Linia Nowy Sącz',187,1),(9,'Linia Nowy Sącz',187,6),(10,'Linia Kutno',134,8),(11,'Linia Wodzisław Śląski',178,8),(12,'Linia Elbląg',37,9),(13,'Linia Bytom',149,5),(14,'Linia Tarnowskie Góry',181,5),(15,'Linia Jasło',108,2),(16,'Linia Pszczyna',8,1),(17,'Linia Wodzisław Śląski',178,9),(18,'Linia Mysłowice',161,8),(19,'Linia Biłgoraj',61,8),(20,'Linia Sochaczew',96,9),(21,'Linia Tczew',138,4),(22,'Linia Suwałki',30,6),(23,'Linia Jastrzębie-Zdrój',95,5),(24,'Linia Ostrów Mazowiecka',81,1),(25,'Linia Mława',54,2),(26,'Linia Pruszków',55,4),(27,'Linia Kraśnik',142,3),(28,'Linia Tomaszów Mazowiecki',2,1),(29,'Linia Tarnowskie Góry',181,5),(30,'Linia Wodzisław Śląski',178,3),(31,'Linia Otwock',117,6),(32,'Linia Biłgoraj',61,2),(33,'Linia Augustów',186,4),(34,'Linia Bolesławiec',180,9),(35,'Linia Świdnik',59,9),(36,'Linia Chełm',46,1),(37,'Linia Jasło',108,7),(38,'Linia Kętrzyn',62,9),(39,'Linia Łódź',87,2),(40,'Linia Radom',22,6),(41,'Linia Śrem',168,4),(42,'Linia Nysa',192,7),(43,'Linia Stargard Szczeciński',52,9),(44,'Linia Biłgoraj',61,4),(45,'Linia Stargard Szczeciński',52,5),(46,'Linia Rybnik',151,2),(47,'Linia Swarzędz',153,4),(48,'Linia Sieradz',107,1),(49,'Linia Sopot',145,5),(50,'Linia Tychy',128,3),(51,'Linia Ostrów Mazowiecka',81,1),(52,'Linia Kluczbork',163,7),(53,'Linia Sandomierz',172,1),(54,'Linia Ciechanów',102,5),(55,'Linia Żyrardów',158,2),(56,'Linia Nowy Dwór Mazowiecki',126,7),(57,'Linia Świecie',90,7),(58,'Linia Ciechanów',102,5),(59,'Linia Żywiec',78,2),(60,'Linia Stargard Szczeciński',52,5),(61,'Linia Kwidzyn',63,3),(62,'Linia Brzeg',124,4),(63,'Linia Giżycko',154,9),(64,'Linia Czerwionka-Leszczyny',88,5),(65,'Linia Kołobrzeg',131,9),(66,'Linia Grodzisk Mazowiecki',3,2),(67,'Linia Pruszków',55,1),(68,'Linia Dębica',195,9),(69,'Linia Kościan',76,9),(70,'Linia Zamość',44,9),(71,'Linia Jastrzębie-Zdrój',95,5),(72,'Linia Łuków',49,8),(73,'Linia Szczecinek',24,5),(74,'Linia Bolesławiec',180,6),(75,'Linia Lubartów',68,1),(76,'Linia Szczecinek',24,4),(77,'Linia Płock',155,4),(78,'Linia Sieradz',107,5),(79,'Linia Sopot',145,4),(80,'Linia Wołomin',162,4),(81,'Linia Mysłowice',161,6),(82,'Linia Koło',140,7),(83,'Linia Turek',179,8),(84,'Linia Skarżysko-Kamienna',21,3),(85,'Linia Starogard Gdański',175,2),(86,'Linia Biłgoraj',61,3),(87,'Linia Pabianice',19,3),(88,'Linia Zakopane',38,7),(89,'Linia Białystok',6,1),(90,'Linia Skawina',89,1),(91,'Linia Wągrowiec',47,2),(92,'Linia Dzierżoniów',150,2),(93,'Linia Sanok',164,6),(94,'Linia Wołomin',162,4),(95,'Linia Wągrowiec',47,5),(96,'Linia Polkowice',129,2),(97,'Linia Płońsk',94,3),(98,'Linia Łuków',49,1),(99,'Linia Poznań',35,1),(100,'Linia Pruszcz Gdański',26,3),(101,'Linia Polkowice',129,1),(102,'Linia Żyrardów',158,8),(103,'Linia Włocławek',130,4),(104,'Linia Bielawa',66,7),(105,'Linia Sochaczew',96,6),(106,'Linia Bartoszyce',12,1),(107,'Linia Brodnica',1,8),(108,'Linia Olsztyn',120,7),(109,'Linia Żary',197,7),(110,'Linia Piotrków Trybunalski',23,7),(111,'Linia Piastów',27,8),(112,'Linia Chorzów',132,5),(113,'Linia Katowice',103,6),(114,'Linia Kętrzyn',62,8),(115,'Linia Ząbki',5,7),(116,'Linia Zawiercie',72,7),(117,'Linia Gdańsk',122,6),(118,'Linia Zielona Góra',71,3),(119,'Linia Kraków',16,8),(120,'Linia Biała Podlaska',41,8),(121,'Linia Gorzów Wielkopolski',98,8),(122,'Linia Iława',157,1),(123,'Linia Zambrów',166,4),(124,'Linia Stalowa Wola',93,9),(125,'Linia Tarnowskie Góry',181,3),(126,'Linia Nowa Ruda',113,4),(127,'Linia Stargard Szczeciński',52,4),(128,'Linia Jasło',108,6),(129,'Linia Rzeszów',43,9),(130,'Linia Puławy',4,3),(131,'Linia Pszczyna',8,6),(132,'Linia Białystok',6,2),(133,'Linia Bochnia',135,8),(134,'Linia Jaworzno',177,3),(135,'Linia Radom',22,5),(136,'Linia Mikołów',165,7),(137,'Linia Nowy Dwór Mazowiecki',126,5),(138,'Linia Chorzów',132,7),(139,'Linia Stargard Szczeciński',52,5),(140,'Linia Bełchatów',15,2),(141,'Linia Łaziska Górne',9,1),(142,'Linia Marki',167,4),(143,'Linia Jawor',79,6),(144,'Linia Rybnik',151,1),(145,'Linia Włocławek',130,6),(146,'Linia Piaseczno',123,7),(147,'Linia Zamość',44,1),(148,'Linia Konin',77,3),(149,'Linia Kielce',173,5),(150,'Linia Wałcz',69,4),(151,'Linia Zielona Góra',71,7),(152,'Linia Nowa Ruda',113,7),(153,'Linia Nowy Targ',137,8),(154,'Linia Zabrze',7,3),(155,'Linia Piotrków Trybunalski',23,1),(156,'Linia Nysa',192,8),(157,'Linia Łuków',49,2),(158,'Linia Koło',140,2),(159,'Linia Kościerzyna',73,5),(160,'Linia Sandomierz',172,2),(161,'Linia Bytom',149,9),(162,'Linia Sanok',164,5),(163,'Linia Chełm',46,9),(164,'Linia Piotrków Trybunalski',23,2),(165,'Linia Oława',112,9),(166,'Linia Zamość',44,7),(167,'Linia Będzin',170,9),(168,'Linia Wejherowo',188,9),(169,'Linia Chełm',46,4),(170,'Linia Chorzów',132,5),(171,'Linia Piła',97,6),(172,'Linia Jastrzębie-Zdrój',95,6),(173,'Linia Piekary Śląskie',100,3),(174,'Linia Siemianowice Śląskie',53,4),(175,'Linia Nowy Sącz',187,7),(176,'Linia Świdnica',121,3),(177,'Linia Świdnica',121,8),(178,'Linia Mysłowice',161,8),(179,'Linia Płońsk',94,1),(180,'Linia Brodnica',1,5),(181,'Linia Czechowice-Dziedzice',34,2),(182,'Linia Suwałki',30,6),(183,'Linia Jarosław',101,6),(184,'Linia Żagań',118,4),(185,'Linia Piastów',27,1),(186,'Linia Luboń',189,4),(187,'Linia Tarnobrzeg',191,5),(188,'Linia Kraków',16,6),(189,'Linia Wałbrzych',32,4),(190,'Linia Sopot',145,3),(191,'Linia Słupsk',25,8),(192,'Linia Czeladź',82,2),(193,'Linia Opole',42,9),(194,'Linia Ostrowiec Świętokrzyski',33,1),(195,'Linia Mława',54,6),(196,'Linia Nysa',192,9),(197,'Linia Lubartów',68,5),(198,'Linia Jarocin',65,9),(199,'Linia Jaworzno',177,5),(200,'Linia Białystok',6,6);
-/*!40000 ALTER TABLE `linie_kolejowe` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `pasazerowie`
@@ -130,24 +121,30 @@ DROP TABLE IF EXISTS `przewoznicy`;
 CREATE TABLE `przewoznicy` (
   `id_przewoznika` int NOT NULL AUTO_INCREMENT,
   `nazwa` varchar(100) DEFAULT NULL,
+  `username` VARCHAR(255) UNIQUE NOT NULL,
+  `haslo` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id_przewoznika`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `przewoznicy`
---
-
-LOCK TABLES `przewoznicy` WRITE;
-/*!40000 ALTER TABLE `przewoznicy` DISABLE KEYS */;
-INSERT INTO `przewoznicy` VALUES (1,'PKP Intercity'),(2,'Arriva'),(3,'Koleje Mazowieckie'),(4,'Koleje Śląskie'),(5,'Łódzka Kolej Aglomeracyjna'),(6,'Przewozy Regionalne'),(7,'Warszawska Kolej Dojazdowa'),(8,'Koleje Wielkopolskie'),(9,'Koleje Dolnośląskie');
-/*!40000 ALTER TABLE `przewoznicy` ENABLE KEYS */;
-UNLOCK TABLES;
 
 
 --
 -- Table structure for table `pociagi`
 --
+
+DROP TABLE IF EXISTS `admins`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `admins` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `username` VARCHAR(255) UNIQUE NOT NULL,
+  `haslo` VARCHAR(255) NOT NULL
+)ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+INSERT INTO `admins` VALUES (1,'root','4813494d137e1631');
+
 
 DROP TABLE IF EXISTS `pociagi`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -227,4 +224,28 @@ CREATE TABLE `wagony` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
+
+DROP USER IF EXISTS 'admin_user'@'%';
+DROP USER IF EXISTS 'przewoznik_user'@'%';
+DROP USER IF EXISTS 'pasazer_user'@'%';
+DROP USER IF EXISTS 'auth_user'@'%';
+
+
+
+CREATE USER IF NOT EXISTS 'admin_user'@'%' IDENTIFIED BY 'admin_pass';
+GRANT ALL PRIVILEGES ON szkot.* TO 'admin_user'@'%';
+
+CREATE USER IF NOT EXISTS 'przewoznik_user'@'%' IDENTIFIED BY 'przewoznik_pass';
+GRANT SELECT, INSERT, UPDATE ON szkot.* TO 'przewoznik_user'@'%';
+
+CREATE USER IF NOT EXISTS 'pasazer_user'@'%' IDENTIFIED BY 'pasazer_pass';
+GRANT SELECT ON szkot.* TO 'pasazer_user'@'%';
+
+CREATE USER IF NOT EXISTS 'auth_user'@'%' IDENTIFIED BY 'auth_pass';
+GRANT SELECT,INSERT ON szkot.pasazerowie TO 'auth_user'@'%';
+GRANT SELECT ON szkot.admins TO 'auth_user'@'%';
+GRANT SELECT ON szkot.przewoznicy TO 'auth_user'@'%';
+
+
+FLUSH PRIVILEGES;
 -- Dump completed on 2025-06-02 16:47:38

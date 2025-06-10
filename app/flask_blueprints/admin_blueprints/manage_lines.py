@@ -1,10 +1,16 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from app import mysql
-from flask_blueprints.admin_blueprint import admin_bp
+from flask_blueprints.admin_blueprint import admin_bp,get_db_connection
 
 @admin_bp.route('/linie')
 def admin_linie():
-    cursor = mysql.connection.cursor()
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login')) 
+      
+
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
     cursor.execute("""
         SELECT
             l.id_linii,
@@ -22,7 +28,14 @@ def admin_linie():
 
 @admin_bp.route('/linie/<int:line_id>/polaczenia')
 def pokaz_polaczenia_linii(line_id):
-    cursor = mysql.connection.cursor()
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login')) 
+      
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
     cursor.execute("""
         SELECT 
             p.id_połączenia,
@@ -50,19 +63,31 @@ def pokaz_polaczenia_linii(line_id):
 
 
 @admin_bp.route('/linie/<int:line_id>/usun', methods=['POST'])
-def usun_linie(line_id):   
-    cursor = mysql.connection.cursor()
+def usun_linie(line_id):
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login')) 
+         
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
     cursor.execute("DELETE FROM polaczenia WHERE id_lini = %s", (line_id,))
 
     cursor.execute("DELETE FROM linie_kolejowe WHERE id_linii = %s", (line_id,))
-    mysql.connection.commit()
+    conn.commit()
     cursor.close()
     return redirect(url_for('admin.admin_linie'))
 
 
 @admin_bp.route('/linie/<int:line_id>/edytuj', methods=['GET', 'POST'])
-def edytuj_linie(line_id):   
-    cursor = mysql.connection.cursor()
+def edytuj_linie(line_id):
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login')) 
+      
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
 
     cursor.execute("""SELECT * FROM linie_kolejowe WHERE id_linii=%s""", (line_id,))
     line = cursor.fetchone()
@@ -80,7 +105,7 @@ def edytuj_linie(line_id):
             WHERE id_linii = %s
         """, (nazwa_linii, id_stacji, id_przewoznika, line_id))
         
-        mysql.connection.commit()
+        conn.commit()
         cursor.close()
         return redirect(url_for('admin.admin_linie'))
 
@@ -101,8 +126,10 @@ def edytuj_linie(line_id):
 
 
 @admin_bp.route('/linie/dodaj', methods=['GET', 'POST'])
-def dodaj_linie():   
-    cursor = mysql.connection.cursor()
+def dodaj_linie():
+
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
 
 
     if request.method == 'POST':
@@ -116,7 +143,7 @@ def dodaj_linie():
             ) VALUES (%s, %s, %s)
         """, (nazwa_linii, id_stacji, id_przewoznika))
         
-        mysql.connection.commit()
+        conn.commit()
         cursor.close()
         return redirect(url_for('admin.admin_linie'))
 

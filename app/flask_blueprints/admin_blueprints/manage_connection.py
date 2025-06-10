@@ -1,11 +1,17 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from app import mysql
-from flask_blueprints.admin_blueprint import admin_bp
+from flask_blueprints.admin_blueprint import admin_bp,get_db_connection
 
 
 @admin_bp.route('/polaczenia')
 def admin_polaczenia():
-    cursor = mysql.connection.cursor()
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login')) 
+      
+
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+
     cursor.execute("""
         SELECT 
             p.id_połączenia,
@@ -34,7 +40,13 @@ def admin_polaczenia():
 
 @admin_bp.route('/polaczenia/<int:connection_id>/edytuj', methods=['GET', 'POST'])
 def edytuj_polaczenie(connection_id):
-    cursor = mysql.connection.cursor()
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login')) 
+      
+
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
 
     cursor.execute("""
         SELECT * FROM polaczenia WHERE id_połączenia = %s
@@ -62,7 +74,7 @@ def edytuj_polaczenie(connection_id):
             WHERE id_połączenia = %s
         """, (id_linii, id_stacji_poczatkowej, id_stacji_koncowej, id_pociagu, czas_przejazdu,
               godzina_odjazdu, dni_tygodnia, connection_id))
-        mysql.connection.commit()
+        conn.commit()
         cursor.close()
         return redirect(url_for('admin.admin_polaczenia'))
 
@@ -88,7 +100,13 @@ def edytuj_polaczenie(connection_id):
 
 @admin_bp.route('/polaczenia/dodaj', methods=['GET', 'POST'])
 def dodaj_polaczenie():
-    cursor = mysql.connection.cursor()
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login')) 
+      
+
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
 
     if request.method == 'POST':
         id_linii = request.form.get('id_linii')
@@ -107,7 +125,7 @@ def dodaj_polaczenie():
             ) VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (id_linii, id_stacji_poczatkowej, id_stacji_koncowej, id_pociagu,
               czas_przejazdu, godzina_odjazdu,  dni_tygodnia))
-        mysql.connection.commit()
+        conn.commit()
         cursor.close()
         return redirect(url_for('admin.admin_polaczenia'))
 
@@ -121,6 +139,7 @@ def dodaj_polaczenie():
     linie = cursor.fetchall()
 
     cursor.close()
+
     return render_template('admin/dodaj_polaczenie.html',
                            stacje=stacje,
                            pociagi=pociagi,
@@ -131,9 +150,16 @@ def dodaj_polaczenie():
 
 
 @admin_bp.route('/polaczenia/usun/<int:connection_id>', methods=['POST'])
-def usun_polaczenie(connection_id):   
-    cursor = mysql.connection.cursor()
+def usun_polaczenie(connection_id):
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login')) 
+         
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
     cursor.execute("DELETE FROM polaczenia WHERE id_połączenia = %s", (connection_id,))
-    mysql.connection.commit()
+    conn.commit()
     cursor.close()
     return redirect(url_for('admin.admin_polaczenia'))

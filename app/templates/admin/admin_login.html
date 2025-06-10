@@ -9,9 +9,9 @@
     <div class="login">
         <h1>Zaloguj się</h1>
         <div class="links">
-            <a href="{{ url_for('user.login') }}" class="active">Zaloguj się</a> |
+            <a href="{{ url_for('user.login') }}" >Zaloguj się</a> |
             <a href="{{ url_for('user.register') }}" >Rejestracja</a> |
-            <a href="{{ url_for('admin.login') }}" >Logowanie dla adminstracji</a> |
+            <a href="{{ url_for('admin.login') }}" class="active">Logowanie dla adminstracji</a> |
         </div>
             {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -19,7 +19,7 @@
             {% endif %}
             {% endwith %}
     <form method="POST">
-        <input type="email" name="email" placeholder="E-mail" required><br>
+        <input type="text" name="username" placeholder="Username" required><br>
         <input type="password" name="password" placeholder="Hasło" required>
         <input type="submit" value="Zaloguj">
     </form>
