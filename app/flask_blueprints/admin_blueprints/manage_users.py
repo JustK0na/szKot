@@ -12,6 +12,7 @@ def admin_pasazerowie():
     return render_template('admin/pasazerowie.html', users=users)
 
 
+
 @admin_bp.route('/pasazerowie/<int:user_id>/bilety')
 def pokaz_bilety_pasazera(user_id):
     cursor = mysql.connection.cursor()
@@ -25,6 +26,7 @@ def pokaz_bilety_pasazera(user_id):
     return render_template('admin/bilety_pasazera.html', tickets=tickets, user=user, user_id=user_id)
 
 
+
 @admin_bp.route('/pasazerowie/<int:user_id>/bilety/<int:ticket_id>/usun', methods=['POST'])
 def usun_bilet(user_id, ticket_id):   
     cursor = mysql.connection.cursor()
@@ -32,6 +34,8 @@ def usun_bilet(user_id, ticket_id):
     mysql.connection.commit()
     cursor.close()
     return redirect(url_for('admin.pokaz_bilety_pasazera', user_id=user_id))
+
+
 
 @admin_bp.route('/pasazerowie/<int:user_id>/bilety/<int:ticket_id>/edytuj', methods=['POST'])
 def edytuj_bilet(user_id, ticket_id):
@@ -46,6 +50,8 @@ def edytuj_bilet(user_id, ticket_id):
     cursor.close()
 
     return redirect(url_for('admin.pokaz_bilety_pasazera', user_id=user_id))
+
+
 
 @admin_bp.route('/pasazerowie/<int:user_id>', methods=['GET', 'POST'])
 def edytuj_pasazera(user_id):   
@@ -78,6 +84,8 @@ def edytuj_pasazera(user_id):
 
     return render_template('admin/edytuj_pasazera.html',
                            user=user,)
+
+
 
 
 @admin_bp.route('/pasazerowie/<int:user_id>/usun', methods=['POST'])

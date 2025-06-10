@@ -31,6 +31,7 @@ def admin_polaczenia():
     return render_template('admin/polaczenia.html', connections=connections)
 
 
+
 @admin_bp.route('/polaczenia/<int:connection_id>/edytuj', methods=['GET', 'POST'])
 def edytuj_polaczenie(connection_id):
     cursor = mysql.connection.cursor()
@@ -90,6 +91,7 @@ def edytuj_polaczenie(connection_id):
                            stacje=stacje,
                            pociagi=pociagi,
                            linie=linie)
+
 
 
 @admin_bp.route('/polaczenia/dodaj', methods=['GET', 'POST'])

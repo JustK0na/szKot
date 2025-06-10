@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dodaj linie kolejowe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "admin">
+        <h1>Dodaj linie kolejowe</h1>
+        <div class = "links">
+            <a href="{{ url_for('admin.admin_linie') }}">Powrót do listy linie kolejowe</a><br><br>
+        </div>
+        <form method="POST">    
+            <label>Nazwa linii kolejowej</label>
+            <input type="text" id="nazwa_linii" name="nazwa_linii" required>
+
+
+            <label>Stacja kolejowa:</label>           
+            <select name="id_stacji" id="id_stacji" required>
+                {% for stacja in stacje %}
+                    <option value="{{ stacja[0] }}"}>
+                        {{ stacja[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+            
+            <label>Przewoźnik:</label>           
+            <select name="id_przewoznika" id="id_przewoznika" required>
+                {% for przewoznik in przewoznicy %}
+                    <option value="{{ przewoznik[0] }}">
+                        {{ przewoznik[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Dodaj</button>
+        </form>
+    </div>
+</body>
+</html>
