@@ -94,112 +94,6 @@ CREATE TABLE `pasazerowie` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `pasazerowie`
---
-
-LOCK TABLES `pasazerowie` WRITE;
-/*!40000 ALTER TABLE `pasazerowie` DISABLE KEYS */;
-
-/*!40000 ALTER TABLE `pasazerowie` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `pociagi`
---
-
-DROP TABLE IF EXISTS `pociagi`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `pociagi` (
-  `id_pociągu` int NOT NULL AUTO_INCREMENT,
-  `model_pociągu` varchar(100) DEFAULT NULL,
-  `id_przewoźnika` int DEFAULT NULL,
-  `id_aktualna_stacja` int DEFAULT NULL,
-  `stan` varchar(50) DEFAULT NULL,
-  `id_wagonu` int DEFAULT NULL,
-  PRIMARY KEY (`id_pociągu`),
-  KEY `id_przewoźnika` (`id_przewoźnika`),
-  KEY `id_aktualna_stacja` (`id_aktualna_stacja`),
-  KEY `id_wagonu` (`id_wagonu`),
-  CONSTRAINT `pociagi_ibfk_1` FOREIGN KEY (`id_przewoźnika`) REFERENCES `przewoznicy` (`id_przewoznika`),
-  CONSTRAINT `pociagi_ibfk_2` FOREIGN KEY (`id_aktualna_stacja`) REFERENCES `stacje_kolejowe` (`id_stacji`),
-  CONSTRAINT `pociagi_ibfk_3` FOREIGN KEY (`id_wagonu`) REFERENCES `wagony` (`id_wagonu`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `pociagi`
---
-
-LOCK TABLES `pociagi` WRITE;
-/*!40000 ALTER TABLE `pociagi` DISABLE KEYS */;
-INSERT INTO `pociagi` VALUES (1,'Flirt',3,34,'Operational',1),(2,'Desiro',4,127,'Operational',2),(3,'Flirt',8,97,'Operational',3),(4,'IC NGT',8,140,'Operational',4),(5,'Pendolino',1,33,'Operational',5),(6,'Pendolino',6,132,'Operational',6),(7,'Desiro',5,87,'Operational',7),(8,'IC NGT',4,87,'Operational',8),(9,'IC NGT',8,64,'Operational',9),(10,'EIP',1,38,'Operational',10),(11,'EIP',7,174,'Operational',11),(12,'Intercity',4,121,'Operational',12),(13,'Pesa Elf',6,41,'Operational',13),(14,'IC NGT',2,114,'Operational',14),(15,'Pesa Elf',2,106,'Operational',15),(16,'Pesa Elf',2,37,'Operational',16),(17,'Flirt',6,83,'Operational',17),(18,'Pendolino',5,166,'Operational',18),(19,'Flirt',2,28,'Operational',19),(20,'Intercity',8,142,'Operational',20),(21,'IC NGT',5,174,'Operational',21),(22,'Flirt',9,80,'Operational',22),(23,'Pendolino',4,74,'Operational',23),(24,'IC NGT',1,74,'Operational',24),(25,'Desiro',8,15,'Operational',25),(26,'Pendolino',1,75,'Operational',26),(27,'EIP',8,82,'Operational',27),(28,'Pesa Elf',9,65,'Operational',28),(29,'Flirt',4,59,'Operational',29),(30,'Intercity',5,19,'Operational',30),(31,'Pesa Elf',1,67,'Operational',31),(32,'IC NGT',6,44,'Operational',32),(33,'Desiro',1,152,'Operational',33),(34,'EIP',4,108,'Operational',34),(35,'Pendolino',9,191,'Operational',35),(36,'Flirt',5,68,'Operational',36),(37,'IC NGT',1,21,'Operational',37),(38,'Intercity',5,69,'Operational',38),(39,'EIP',5,184,'Operational',39),(40,'Flirt',2,191,'Operational',40),(41,'Desiro',8,82,'Operational',41),(42,'Desiro',6,142,'Operational',42),(43,'EIP',4,165,'Operational',43),(44,'Flirt',1,116,'Operational',44),(45,'EIP',1,135,'Operational',45),(46,'IC NGT',2,57,'Operational',46),(47,'Desiro',1,153,'Operational',47),(48,'Intercity',6,111,'Operational',48),(49,'Flirt',9,9,'Operational',49),(50,'Pendolino',8,91,'Operational',50);
-/*!40000 ALTER TABLE `pociagi` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `polaczenia`
---
-
-DROP TABLE IF EXISTS `polaczenia`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `polaczenia` (
-  `id_połączenia` int NOT NULL AUTO_INCREMENT,
-  `id_lini` int DEFAULT NULL,
-  `id_stacji_początkowej` int DEFAULT NULL,
-  `id_stacji_końcowej` int DEFAULT NULL,
-  `id_pociągu` int DEFAULT NULL,
-  `czas_przejazdu` time DEFAULT NULL,
-  `data` date DEFAULT NULL,
-  `opóźnienie` time DEFAULT NULL,
-  PRIMARY KEY (`id_połączenia`),
-  KEY `id_lini` (`id_lini`),
-  KEY `id_stacji_początkowej` (`id_stacji_początkowej`),
-  KEY `id_stacji_końcowej` (`id_stacji_końcowej`),
-  KEY `id_pociągu` (`id_pociągu`),
-  CONSTRAINT `polaczenia_ibfk_1` FOREIGN KEY (`id_lini`) REFERENCES `linie_kolejowe` (`id_linii`),
-  CONSTRAINT `polaczenia_ibfk_2` FOREIGN KEY (`id_stacji_początkowej`) REFERENCES `stacje_kolejowe` (`id_stacji`),
-  CONSTRAINT `polaczenia_ibfk_3` FOREIGN KEY (`id_stacji_końcowej`) REFERENCES `stacje_kolejowe` (`id_stacji`),
-  CONSTRAINT `polaczenia_ibfk_4` FOREIGN KEY (`id_pociągu`) REFERENCES `pociagi` (`id_pociągu`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `polaczenia`
---
-
-LOCK TABLES `polaczenia` WRITE;
-/*!40000 ALTER TABLE `polaczenia` DISABLE KEYS */;
-INSERT INTO `polaczenia` VALUES (1,119,16,78,27,'01:42:59','2025-03-09','00:29:28'),(2,25,54,157,16,'01:55:52','2025-01-06','00:30:14'),(3,160,172,143,14,'00:00:20','2025-11-03','02:17:33'),(4,11,178,57,20,'01:50:56','2025-07-24','01:37:24'),(5,119,16,167,20,'01:31:00','2025-01-20','02:01:49'),(6,33,186,150,8,'04:17:16','2025-04-14','00:23:03'),(7,114,62,53,3,'03:57:01','2025-04-07','02:28:30'),(8,136,165,148,11,'01:21:14','2025-09-05','00:50:52'),(9,190,145,118,1,'02:06:25','2025-06-23','02:12:43'),(10,103,130,68,43,'02:21:01','2025-06-16','02:20:22'),(11,139,52,186,36,'01:03:55','2025-10-14','02:27:24'),(12,9,187,127,17,'02:15:08','2025-06-19','01:53:58'),(13,66,3,95,40,'04:54:28','2025-09-07','01:57:13'),(14,15,108,126,14,'00:09:12','2025-05-18','01:39:37'),(15,193,42,158,49,'01:02:24','2025-03-12','00:32:50'),(16,30,178,9,1,'01:14:04','2025-07-04','00:53:28'),(17,19,61,83,41,'05:40:36','2025-10-04','02:58:20'),(18,123,166,35,34,'05:59:53','2025-02-15','02:07:47'),(19,21,138,190,23,'00:25:24','2025-04-01','01:59:10'),(20,81,161,104,13,'01:00:42','2025-02-15','02:21:02'),(21,191,25,22,41,'00:58:46','2025-03-05','00:38:18'),(22,40,22,68,6,'02:48:29','2025-05-28','00:32:19'),(23,33,186,171,8,'03:51:00','2025-08-18','00:10:03'),(24,174,53,87,23,'02:20:41','2025-11-27','00:27:34'),(25,196,192,149,28,'05:28:04','2025-05-19','02:25:09'),(26,113,103,59,13,'00:29:12','2025-09-03','02:55:26'),(27,61,63,135,1,'03:01:25','2025-03-16','02:20:02'),(28,49,145,180,21,'01:53:54','2025-08-10','01:27:21'),(29,39,87,116,40,'05:34:40','2025-10-09','00:20:57'),(30,189,32,48,43,'05:48:54','2025-06-10','02:10:23'),(31,162,164,167,39,'00:47:58','2025-09-20','02:07:27'),(32,150,69,194,29,'00:28:46','2025-03-24','02:13:02'),(33,108,120,189,11,'02:10:38','2025-09-27','01:17:19'),(34,142,167,64,43,'01:13:29','2025-06-12','02:04:14'),(35,117,122,123,32,'03:28:19','2025-04-27','02:29:03'),(36,41,168,118,2,'01:40:56','2025-02-23','01:37:30'),(37,191,25,127,20,'03:47:40','2025-04-26','02:29:03'),(38,57,90,48,11,'01:12:30','2025-06-17','02:35:48'),(39,47,153,59,23,'05:15:55','2025-01-10','02:30:02'),(40,22,30,94,32,'01:28:36','2025-12-19','00:57:45'),(41,60,52,35,30,'01:21:10','2025-04-27','01:16:56'),(42,150,69,125,8,'04:18:54','2025-05-16','00:34:48'),(43,97,94,122,1,'02:25:43','2025-08-05','01:31:19'),(44,195,54,167,17,'01:09:14','2025-04-19','01:18:47'),(45,93,164,71,17,'02:12:37','2025-09-19','02:23:15'),(46,6,38,131,41,'05:37:54','2025-07-01','00:51:21'),(47,8,187,47,24,'02:13:22','2025-04-21','01:33:29'),(48,70,44,174,35,'02:15:29','2025-10-07','02:27:28'),(49,190,145,162,1,'03:00:17','2025-05-26','02:12:34'),(50,102,158,37,50,'03:05:41','2025-08-12','02:55:59'),(51,70,44,167,49,'04:26:10','2025-06-23','01:35:49'),(52,76,24,171,8,'00:27:20','2025-07-04','00:24:24'),(53,130,4,129,1,'02:18:29','2025-05-16','00:27:47'),(54,100,26,193,1,'02:34:12','2025-05-09','02:07:49'),(55,88,38,85,11,'02:54:23','2025-02-28','00:14:12'),(56,120,41,76,4,'01:55:55','2025-02-10','01:41:14'),(57,195,54,183,42,'01:01:40','2025-08-15','00:24:20'),(58,161,149,21,49,'01:16:28','2025-08-11','01:03:37'),(59,67,55,98,44,'04:24:01','2025-06-10','00:50:37'),(60,196,192,51,35,'01:50:37','2025-03-16','02:34:27'),(61,34,180,190,22,'05:01:09','2025-06-01','00:29:57'),(62,83,179,144,3,'03:24:53','2025-02-25','02:41:49'),(63,19,61,79,3,'01:34:32','2025-07-25','02:18:57'),(64,172,95,65,13,'03:46:27','2025-05-14','01:22:54'),(65,47,153,154,8,'02:23:10','2025-03-23','00:59:46'),(66,192,82,44,46,'01:48:16','2025-06-02','01:50:19'),(67,108,120,175,11,'01:09:24','2025-06-24','02:52:42'),(68,125,181,39,1,'05:25:14','2025-10-01','00:12:30'),(69,71,95,128,18,'03:53:56','2025-11-02','02:06:12'),(70,63,154,123,35,'01:30:36','2025-11-03','00:45:16'),(71,65,131,97,49,'00:13:33','2025-04-25','01:27:57'),(72,49,145,43,18,'04:41:49','2025-06-05','02:47:50'),(73,117,122,170,42,'03:17:49','2025-08-12','02:12:51'),(74,120,41,182,41,'02:49:52','2025-10-20','01:02:44'),(75,179,94,151,47,'03:59:18','2025-11-08','01:02:39'),(76,61,63,29,1,'00:32:49','2025-01-28','00:56:09'),(77,144,151,132,31,'02:56:35','2025-06-13','01:39:59'),(78,171,97,45,6,'00:57:03','2025-02-14','02:08:05'),(79,44,61,18,43,'00:02:58','2025-02-15','02:46:54'),(80,6,38,57,3,'03:39:28','2025-01-27','00:45:40'),(81,145,130,192,32,'04:02:01','2025-09-08','02:09:57'),(82,61,63,77,1,'03:01:11','2025-09-02','01:08:24'),(83,193,42,62,49,'05:26:52','2025-04-05','02:30:41'),(84,121,98,69,41,'03:00:41','2025-10-07','02:54:35'),(85,89,6,52,47,'02:27:34','2025-05-24','01:01:01'),(86,100,26,16,1,'05:40:29','2025-06-13','02:46:08'),(87,173,100,85,1,'05:38:54','2025-10-23','01:14:00'),(88,10,134,175,9,'02:53:12','2025-05-14','01:56:09'),(89,37,108,2,11,'00:45:23','2025-08-28','02:43:01'),(90,101,129,181,47,'02:51:38','2025-07-18','01:17:04'),(91,101,129,133,10,'01:22:06','2025-07-10','01:01:21'),(92,48,107,162,10,'05:03:58','2025-09-26','02:06:40'),(93,101,129,71,45,'05:08:58','2025-03-15','00:59:16'),(94,149,173,48,38,'04:31:59','2025-05-19','02:35:46'),(95,154,7,143,1,'03:31:59','2025-02-25','00:25:36'),(96,114,62,74,41,'03:38:21','2025-03-21','02:44:01'),(97,37,108,140,11,'02:23:15','2025-05-17','02:56:30'),(98,162,164,122,18,'03:18:31','2025-12-14','00:52:54'),(99,61,63,45,1,'01:58:12','2025-07-11','00:45:48'),(100,143,79,10,48,'01:31:40','2025-12-09','00:15:25');
-/*!40000 ALTER TABLE `polaczenia` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `przewoznicy`
---
-
-DROP TABLE IF EXISTS `przewoznicy`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `przewoznicy` (
-  `id_przewoznika` int NOT NULL AUTO_INCREMENT,
-  `nazwa` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id_przewoznika`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `przewoznicy`
---
-
-LOCK TABLES `przewoznicy` WRITE;
-/*!40000 ALTER TABLE `przewoznicy` DISABLE KEYS */;
-INSERT INTO `przewoznicy` VALUES (1,'PKP Intercity'),(2,'Arriva'),(3,'Koleje Mazowieckie'),(4,'Koleje Śląskie'),(5,'Łódzka Kolej Aglomeracyjna'),(6,'Przewozy Regionalne'),(7,'Warszawska Kolej Dojazdowa'),(8,'Koleje Wielkopolskie'),(9,'Koleje Dolnośląskie');
-/*!40000 ALTER TABLE `przewoznicy` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `stacje_kolejowe`
 --
 
@@ -225,28 +119,104 @@ INSERT INTO `stacje_kolejowe` VALUES (1,'Brodnica Główny','Brodnica'),(2,'Toma
 UNLOCK TABLES;
 
 --
+-- Table structure for table `przewoznicy`
+--
+
+
+
+DROP TABLE IF EXISTS `przewoznicy`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `przewoznicy` (
+  `id_przewoznika` int NOT NULL AUTO_INCREMENT,
+  `nazwa` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id_przewoznika`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `przewoznicy`
+--
+
+LOCK TABLES `przewoznicy` WRITE;
+/*!40000 ALTER TABLE `przewoznicy` DISABLE KEYS */;
+INSERT INTO `przewoznicy` VALUES (1,'PKP Intercity'),(2,'Arriva'),(3,'Koleje Mazowieckie'),(4,'Koleje Śląskie'),(5,'Łódzka Kolej Aglomeracyjna'),(6,'Przewozy Regionalne'),(7,'Warszawska Kolej Dojazdowa'),(8,'Koleje Wielkopolskie'),(9,'Koleje Dolnośląskie');
+/*!40000 ALTER TABLE `przewoznicy` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+--
+-- Table structure for table `pociagi`
+--
+
+DROP TABLE IF EXISTS `pociagi`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pociagi` (
+  `id_pociągu` int NOT NULL AUTO_INCREMENT,
+  `model_pociągu` varchar(100) DEFAULT NULL,
+  `id_przewoźnika` int DEFAULT NULL,
+  `id_aktualna_stacja` int DEFAULT NULL,
+  `stan` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id_pociągu`),
+  KEY `id_przewoźnika` (`id_przewoźnika`),
+  KEY `id_aktualna_stacja` (`id_aktualna_stacja`),
+  CONSTRAINT `pociagi_ibfk_1` FOREIGN KEY (`id_przewoźnika`) REFERENCES `przewoznicy` (`id_przewoznika`),
+  CONSTRAINT `pociagi_ibfk_2` FOREIGN KEY (`id_aktualna_stacja`) REFERENCES `stacje_kolejowe` (`id_stacji`)
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pociagi`
+--
+
+--
+-- Table structure for table `polaczenia`
+--
+
+DROP TABLE IF EXISTS `polaczenia`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+
+CREATE TABLE polaczenia (
+  id_połączenia int NOT NULL AUTO_INCREMENT,
+  id_lini int DEFAULT NULL,
+  id_stacji_początkowej int DEFAULT NULL,
+  id_stacji_końcowej int DEFAULT NULL,
+  id_pociągu int DEFAULT NULL,
+  czas_przejazdu time DEFAULT NULL,
+  godzina_odjazdu time DEFAULT NULL,
+  dni_tygodnia SET('Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela') DEFAULT NULL,
+  PRIMARY KEY (id_połączenia),
+  KEY id_lini (id_lini),
+  KEY id_stacji_początkowej (id_stacji_początkowej),
+  KEY id_stacji_końcowej (id_stacji_końcowej),
+  KEY id_pociągu (id_pociągu),
+  CONSTRAINT polaczenia_ibfk_1 FOREIGN KEY (id_lini) REFERENCES linie_kolejowe (id_linii),
+  CONSTRAINT polaczenia_ibfk_2 FOREIGN KEY (id_stacji_początkowej) REFERENCES stacje_kolejowe (id_stacji),
+  CONSTRAINT polaczenia_ibfk_3 FOREIGN KEY (id_stacji_końcowej) REFERENCES stacje_kolejowe (id_stacji),
+  CONSTRAINT polaczenia_ibfk_4 FOREIGN KEY (id_pociągu) REFERENCES pociagi (id_pociągu)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+
+
+
+--
 -- Table structure for table `wagony`
 --
 
 DROP TABLE IF EXISTS `wagony`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `wagony` (
-  `id_wagonu` int NOT NULL AUTO_INCREMENT,
-  `liczba_miejsc` int DEFAULT NULL,
-  PRIMARY KEY (`id_wagonu`)
+  `id_wagonu` INT NOT NULL AUTO_INCREMENT,
+  `id_pociągu` INT DEFAULT NULL,
+  `liczba_miejsc` INT DEFAULT NULL,
+  PRIMARY KEY (`id_wagonu`),
+  KEY `id_pociągu` (`id_pociągu`),
+  CONSTRAINT `wagony_ibfk_1` FOREIGN KEY (`id_pociągu`) REFERENCES `pociagi` (`id_pociągu`)
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping data for table `wagony`
---
-
-LOCK TABLES `wagony` WRITE;
-/*!40000 ALTER TABLE `wagony` DISABLE KEYS */;
-INSERT INTO `wagony` VALUES (1,70),(2,100),(3,30),(4,50),(5,30),(6,30),(7,70),(8,30),(9,50),(10,100),(11,100),(12,70),(13,70),(14,100),(15,50),(16,50),(17,70),(18,30),(19,100),(20,100),(21,100),(22,50),(23,30),(24,70),(25,100),(26,30),(27,100),(28,50),(29,100),(30,100),(31,30),(32,70),(33,50),(34,30),(35,100),(36,50),(37,30),(38,70),(39,100),(40,30),(41,50),(42,30),(43,50),(44,70),(45,50),(46,100),(47,70),(48,30),(49,50),(50,70),(51,30),(52,30),(53,30),(54,30),(55,70),(56,100),(57,30),(58,70),(59,30),(60,100),(61,70),(62,70),(63,30),(64,100),(65,30),(66,30),(67,30),(68,50),(69,100),(70,70),(71,30),(72,30),(73,70),(74,30),(75,50),(76,70),(77,100),(78,100),(79,50),(80,70),(81,30),(82,70),(83,50),(84,30),(85,30),(86,30),(87,70),(88,30),(89,100),(90,100),(91,70),(92,30),(93,70),(94,50),(95,100),(96,30),(97,30),(98,70),(99,100),(100,70);
-/*!40000 ALTER TABLE `wagony` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

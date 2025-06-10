@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel administratora - Wagony pociagu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "admin">
+        <h1>Wszystkie wagony pociągu</h1>
+    <div class = "links">
+         <a href="{{ url_for('admin.admin') }}">Powrót</a><br><br>
+    </div>
+    <h2>Dodaj wagon</h2>
+    <form method="POST" action="{{ url_for('admin.dodaj_wagon', train_id=train_id) }}" style="display:inline;">
+        Liczba miejsc: <input type="number" step="0.01" name="liczba_miejsc" required>
+        <button type="submit">Dodaj</button>
+    </form>
+    {% if wagons %}
+    <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>Liczba miejsc</th>
+                <th>Akcje</th>
+            </tr>
+            {% for p in wagons %}
+            <tr>
+                <td>{{ p[0] }}</td>
+                <td>{{ p[2] }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('admin.edytuj_wagon', train_id=p[1], wagon_id=p[0]) }}" style="display:inline;">
+                    Liczba miejsc: <input type="number" step="0.01" name="liczba_miejsc" value="{{ p[2] }}" required>
+                    <button type="submit">Zapisz</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.usun_wagon', wagon_id=p[0],train_id=p[1]) }}" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Na pewno usunąć wagon?');">Usuń</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>Brak zarejestrowanych wagonów.</p>
+    {% endif %}
+    </div>
+</body>
+</html>

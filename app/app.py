@@ -2,11 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from common import hash_password
 from flask_mysqldb import MySQL 
 
+
 ###########
 #TODO:
-#    -add all admin powers to panel admina
+#    -add pociagi and wagony to admin powers
 #    -add some admin powers to panel przewoznika
-#    - make admin access to admin powers secure
+#    -make admin access to admin powers secure
 ###########
 
 app = Flask(__name__)

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dodaj pociąg</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "admin">
+        <h1>Dodaj pociąg</h1>
+        <div class = "links">
+            <a href="{{ url_for('admin.admin_pociagi') }}">Powrót do listy pociagi</a><br><br>
+        </div>
+        <form method="POST">    
+            <label>Model pociągu</label>
+            <input type="text" id="model_pociagu" name="model_pociagu" required>
+            
+            <label>Przewoźnik</label>           
+            <select name="id_przewoznika" id="id_przewoznika" required>
+                {% for przewoznik in przewoznicy %}
+                    <option value="{{ przewoznik[0] }}">
+                        {{ przewoznik[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            
+            <label>Aktualna stacja</label>           
+            <select name="id_stacji" id="id_stacji" required>
+                {% for stacja in stacje %}
+                    <option value="{{ stacja[0] }}">
+                        {{ stacja[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label>Stan</label>
+            <input type="text" id="stan" name="stan" required>
+
+            <button type="submit">Dodaj</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -6,6 +6,7 @@ from flask_blueprints.admin_blueprints.manage_connection import *
 from flask_blueprints.admin_blueprints.manage_users import *
 from flask_blueprints.admin_blueprints.manage_lines import *
 from flask_blueprints.admin_blueprints.manage_stations import *
+from flask_blueprints.admin_blueprints.manage_trains import *
 
 @admin_bp.route('/', methods=['GET', 'POST'])
 def admin():

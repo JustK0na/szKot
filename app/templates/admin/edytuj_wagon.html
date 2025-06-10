@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Edytuj stacje kolejowe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "admin">
+        <h1>Edytuj stacje kolejowe</h1>
+        <div class = "links">
+            <a href="{{ url_for('admin.admin_wagony'),train_id=train_id }}">Powrót do listy stacji kolejowych</a><br><br>
+        </div>
+        <form method="POST">    
+            <label>Liczba miejsc</label>
+            <input type="number" id="liczba_miejsc" name="liczba_miejsc" value="{{ station[1] }}"  required>
+
+
+            <button type="submit">Zapisz</button>
+        </form>
+    </div>
+</body>
+</html>

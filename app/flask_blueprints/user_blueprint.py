@@ -105,7 +105,7 @@ def bilety():
 @user_bp.route('/bilety/<int:bilet_id>')
 def bilety_szczegol(bilet_id):
     if 'user_id' not in session:
-        return redirect(url_for('user.login'))
+        return redirect(url_for('login'))
 
     cursor = mysql.connection.cursor()
     query = """
@@ -135,11 +135,11 @@ def bilety_szczegol(bilet_id):
 @user_bp.route('/welcome')
 def welcome():
     if 'user_id' not in session:
-        return redirect(url_for('user.login'))
+        return redirect(url_for('login'))
     return render_template('user/welcome.html', name=session['user_name'])
 
 @user_bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('user.login'))
+    return redirect(url_for('login'))
 
