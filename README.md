@@ -6,10 +6,14 @@
 ### Build and Run Instructions
 1. **Build and Start the Application:**
    ```sh
-   docker compose up --build
+   docker-compose up --build
    ```
-  This will build the image and start the Flask app in a container named `szkot-web` or however your project folder is named.
-3. **Access the Application:**
+   This will build the image and start the Flask app in a container named `szkot-web` or however your project folder is named.
+2. **In case of any changes to dump.sql used by docker you need to use this command before building it again:**
+   ```sh
+   docker-compose down
+   ```
+  3. **Access the Application:**
    - The Flask app will be available at [http://localhost:5000](http://localhost:5000)
 
 ### Ports
