@@ -165,6 +165,8 @@ UNLOCK TABLES;
 -- Table structure for table `polaczenia`
 --
 
+
+
 DROP TABLE IF EXISTS `polaczenia`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -175,7 +177,7 @@ CREATE TABLE `polaczenia` (
   `id_pociągu` int DEFAULT NULL,
   `czas_przejazdu` time DEFAULT NULL,
   `godzina_odjazdu` time DEFAULT NULL,
-  `dni_tygodnia` set('Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota','Niedziela') DEFAULT NULL,
+  `dni_tygodnia` set('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') DEFAULT NULL,
   PRIMARY KEY (`id_połączenia`),
   KEY `id_stacji_początkowej` (`id_stacji_początkowej`),
   KEY `id_stacji_końcowej` (`id_stacji_końcowej`),
@@ -234,29 +236,16 @@ DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `sprawdz_dzien_przejazdu` BEFORE INSERT ON `przejazdy` FOR EACH ROW BEGIN
   -- to jest cos mega dziwnego z chatem i indianami na youtubie wykminilem ze mozna sprawdzac by bylo dobrze czy data jest odpowiednia podczas insertowania
   DECLARE dzien_en VARCHAR(20);
-  DECLARE dzien_pl VARCHAR(20);
   DECLARE dni_polaczenia SET('Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota','Niedziela');
 
   SET dzien_en = DAYNAME(NEW.data_przejazdu);
 
-  -- zamiana na polski jezyk 
-  SET dzien_pl = CASE dzien_en
-    WHEN 'Monday' THEN 'Poniedziałek'
-    WHEN 'Tuesday' THEN 'Wtorek'
-    WHEN 'Wednesday' THEN 'Środa'
-    WHEN 'Thursday' THEN 'Czwartek'
-    WHEN 'Friday' THEN 'Piątek'
-    WHEN 'Saturday' THEN 'Sobota'
-    WHEN 'Sunday' THEN 'Niedziela'
-  END;
-
-  
   SELECT dni_tygodnia INTO dni_polaczenia
   FROM polaczenia
   WHERE id_połączenia = NEW.id_połączenia;
 
   -- warunek by pozwolilo na inserta
-  IF FIND_IN_SET(dzien_pl, dni_polaczenia) = 0 THEN
+  IF FIND_IN_SET(dzien_en, dni_polaczenia) = 0 THEN
     SIGNAL SQLSTATE '45000'
     SET MESSAGE_TEXT = 'Data przejazdu nie pasuje do dni tygodnia połączenia';
   END IF;
