@@ -16,15 +16,15 @@ def admin_przejazdy():
             pr.data,
             spocz.nazwa_stacji AS stacja_początkowa,
             skonc.nazwa_stacji AS stacja_końcowa,
-            pz.nazwa AS nazwa_przewoznika,
-            pz.czas_przejazdu,
-            pz.godzina_odjazdu,
+            przv.nazwa AS nazwa_przewoznika,
+            po.czas_przejazdu,
+            po.godzina_odjazdu,
             pr.opoznienie
         FROM przejazdy pr
-        JOIN polaczenia_przewoznikiem pz ON pr.id_połączenia = pz.id_połączenia
-        JOIN stacje_kolejowe spocz ON pz.id_stacji_początkowej = spocz.id_stacji
-        JOIN stacje_kolejowe skonc ON pz.id_stacji_końcowej = skonc.id_stacji
-        JOIN przewoznicy pzv ON pz.id_przewoznika = pzv.id_przewoznika
+        JOIN przejazdy_przewoznik przv ON pr.id_przejazdu = przv.id_przejazdu
+        JOIN polaczenia po ON pr.id_połączenia = po.id_połączenia
+        JOIN stacje_kolejowe spocz ON po.id_stacji_początkowej = spocz.id_stacji
+        JOIN stacje_kolejowe skonc ON po.id_stacji_końcowej = skonc.id_stacji
     """)
 
     przejazdy = cursor.fetchall()
@@ -82,7 +82,7 @@ def edytuj_przejazd(przejazd_id):
         return redirect(url_for('admin.admin_przejazdy'))
 
 
-    cursor.execute("SELECT id_przewoznika, nazwa FROM przewoznicy ORDER BY nazwa")
+    cursor.execute("SELECT id_przewoźnika, nazwa_przewoznika FROM przejazd_przewoznicy WHERE id_przejazdu = %s" , (przejazd_id))
     polaczenia = cursor.fetchall()
 
     cursor.close()
@@ -94,17 +94,18 @@ def edytuj_przejazd(przejazd_id):
 
 
 
-@admin_bp.route('/linie/dodaj', methods=['GET', 'POST'])
-def dodaj_linie():
+@admin_bp.route('/przejazd/dodaj', methods=['GET', 'POST'])
+def dodaj_przejazd():
 
     conn = get_db_connection('admin')
     cursor = conn.cursor()
 
 
     if request.method == 'POST':
-        nazwa_linii = request.form.get('nazwa_linii')
-        id_stacji = request.form.get('id_stacji')
-        id_przewoznika = request.form.get('id_przewoznika')
+        id_polaczenia = request.form.get('id_polaczenia')
+        data_przejazdu = request.form.get('data_przejazdu')
+        stan = request.form.get('stan')
+        opoznienie = request.form.get('opoznienie')
         
         cursor.execute("""
             INSERT INTO linie_kolejowe (

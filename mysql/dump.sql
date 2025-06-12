@@ -1,6 +1,7 @@
 DROP DATABASE IF EXISTS szkot;
 START TRANSACTION;
 
+
 CREATE DATABASE  IF NOT EXISTS `szkot` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `szkot`;
 -- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
@@ -204,17 +205,25 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = @saved_cs_client;
 
 --
--- Temporary view structure for view `przejazd_przewoznik`
+-- Temporary view structure for view `przejazd_szczeg`
 --
 
-DROP TABLE IF EXISTS `przejazd_przewoznik`;
-/*!50001 DROP VIEW IF EXISTS `przejazd_przewoznik`*/;
+DROP TABLE IF EXISTS `przejazd_szczeg`;
+/*!50001 DROP VIEW IF EXISTS `przejazd_szczeg`*/;
 SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `przejazd_przewoznik` AS SELECT 
+/*!50001 CREATE VIEW `przejazd_szczeg` AS SELECT 
  1 AS `id_przejazdu`,
- 1 AS `id_przewoźnika`,
- 1 AS `nazwa_przewoznika`*/;
+ 1 AS `id_połączenia`,
+ 1 AS `data`,
+ 1 AS `nazwa_stacji_początkowej`,
+ 1 AS `nazwa_stacji_końcowej`,
+ 1 AS `nazwa_przewoznika`,
+ 1 AS `nazwa_modelu`,
+ 1 AS `id_pociągu`,
+ 1 AS `czas_przejazdu`,
+ 1 AS `godzina_odjazdu`,
+ 1 AS `opoznienie`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -228,7 +237,7 @@ CREATE TABLE `przejazdy` (
   `id_przejazdu` int NOT NULL AUTO_INCREMENT,
   `id_połączenia` int NOT NULL,
   `id_pociągu` int NOT NULL,
-  `data_przejazdu` date NOT NULL,
+  `data` date NOT NULL,
   `stan` enum('Zaplanowany','W trakcie','Zakończony','Opóźniony','Anulowany') DEFAULT 'Zaplanowany',
   `opoznienie` time DEFAULT NULL,
   PRIMARY KEY (`id_przejazdu`),
@@ -343,10 +352,10 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
--- Final view structure for view `przejazd_przewoznik`
+-- Final view structure for view `przejazd_szczeg`
 --
 
-/*!50001 DROP VIEW IF EXISTS `przejazd_przewoznik`*/;
+/*!50001 DROP VIEW IF EXISTS `przejazd_szczeg`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
@@ -355,7 +364,7 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `przejazd_przewoznik` AS select `pr`.`id_przejazdu` AS `id_przejazdu`,`po`.`id_przewoźnika` AS `id_przewoźnika`,`przew`.`nazwa` AS `nazwa_przewoznika` from ((`przejazdy` `pr` join `pociagi` `po` on((`pr`.`id_pociągu` = `po`.`id_pociągu`))) join `przewoznicy` `przew` on((`po`.`id_przewoźnika` = `przew`.`id_przewoznika`))) */;
+/*!50001 VIEW `przejazd_szczeg` AS select `pr`.`id_przejazdu` AS `id_przejazdu`,`pr`.`id_połączenia` AS `id_połączenia`,`pr`.`data` AS `data`,`spocz`.`nazwa_stacji` AS `nazwa_stacji_początkowej`,`skonc`.`nazwa_stacji` AS `nazwa_stacji_końcowej`,`przew`.`nazwa` AS `nazwa_przewoznika`,`mp`.`nazwa_modelu` AS `nazwa_modelu`,`pr`.`id_pociągu` AS `id_pociągu`,`po`.`czas_przejazdu` AS `czas_przejazdu`,`po`.`godzina_odjazdu` AS `godzina_odjazdu`,`pr`.`opoznienie` AS `opoznienie` from ((((((`przejazdy` `pr` join `polaczenia` `po` on((`pr`.`id_połączenia` = `po`.`id_połączenia`))) join `stacje_kolejowe` `spocz` on((`po`.`id_stacji_początkowej` = `spocz`.`id_stacji`))) join `stacje_kolejowe` `skonc` on((`po`.`id_stacji_końcowej` = `skonc`.`id_stacji`))) join `pociagi` `p` on((`pr`.`id_pociągu` = `p`.`id_pociągu`))) join `przewoznicy` `przew` on((`p`.`id_przewoźnika` = `przew`.`id_przewoznika`))) join `modele_pociagow` `mp` on((`p`.`id_modelu` = `mp`.`id_modelu`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -401,5 +410,4 @@ GRANT SELECT ON szkot.przewoznicy TO 'auth_user'@'%';
 FLUSH PRIVILEGES;
 
 
-
--- Dump completed on 2025-06-13  1:28:22
+-- Dump completed on 2025-06-13  1:46:09
