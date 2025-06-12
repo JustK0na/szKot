@@ -27,12 +27,8 @@ def usun_stacje(station_id):
     conn = get_db_connection('admin')
     cursor = conn.cursor()
 
-    cursor.execute("DELETE FROM polaczenia WHERE id_stacji_początkowej = %s", (station_id,))
-    cursor.execute("DELETE FROM polaczenia WHERE id_stacji_końcowej = %s", (station_id,))
-
-    cursor.execute("DELETE FROM linie_kolejowe WHERE id_stacji = %s", (station_id,))
-
     cursor.execute("DELETE FROM stacje_kolejowe WHERE id_stacji = %s", (station_id,))
+    
     conn.commit()
     cursor.close()
     return redirect(url_for('admin.admin_stacje'))

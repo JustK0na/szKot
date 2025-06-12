@@ -211,10 +211,6 @@ def usun_pociag(train_id):
     conn = get_db_connection('admin')
     cursor = conn.cursor()
 
-    cursor.execute("DELETE FROM wagony WHERE id_pociągu = %s", (train_id,))
-
-    cursor.execute("DELETE FROM polaczenia WHERE id_pociągu = %s", (train_id,)) 
-
     cursor.execute("DELETE FROM pociagi WHERE id_pociągu = %s", (train_id,))
 
 

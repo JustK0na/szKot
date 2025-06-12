@@ -11,7 +11,7 @@
         <div class="links">
             <a href="{{ url_for('user.login') }}">Zaloguj się</a> |
             <a href="{{ url_for('user.register') }}"class="active">Rejestracja</a> |
-            <a href="{{ url_for('admin.login') }}" >Logowanie dla adminstracji</a> |
+            <a href="{{ url_for('admin.login') }}" >Logowanie dla adminstracji</a> 
         </div>
         {% with messages = get_flashed_messages() %}
         {% if messages %}

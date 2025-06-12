@@ -71,8 +71,6 @@ def usun_linie(line_id):
     
     conn = get_db_connection('admin')
     cursor = conn.cursor()
-    
-    cursor.execute("DELETE FROM polaczenia WHERE id_lini = %s", (line_id,))
 
     cursor.execute("DELETE FROM linie_kolejowe WHERE id_linii = %s", (line_id,))
     conn.commit()

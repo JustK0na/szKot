@@ -37,8 +37,8 @@ CREATE TABLE `bilety` (
   PRIMARY KEY (`id_biletu`),
   KEY `id_pasażera` (`id_pasażera`),
   KEY `id_połączenia` (`id_połączenia`),
-  CONSTRAINT `bilety_ibfk_1` FOREIGN KEY (`id_pasażera`) REFERENCES `pasazerowie` (`id_pasażera`),
-  CONSTRAINT `bilety_ibfk_2` FOREIGN KEY (`id_połączenia`) REFERENCES `polaczenia` (`id_połączenia`)
+  CONSTRAINT `bilety_ibfk_1` FOREIGN KEY (`id_pasażera`) REFERENCES `pasazerowie` (`id_pasażera`) ON DELETE CASCADE,
+  CONSTRAINT `bilety_ibfk_2` FOREIGN KEY (`id_połączenia`) REFERENCES `polaczenia` (`id_połączenia`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -59,8 +59,8 @@ CREATE TABLE `linie_kolejowe` (
   PRIMARY KEY (`id_linii`),
   KEY `id_stacji` (`id_stacji`),
   KEY `id_przewoznika` (`id_przewoznika`),
-  CONSTRAINT `linie_kolejowe_ibfk_1` FOREIGN KEY (`id_stacji`) REFERENCES `stacje_kolejowe` (`id_stacji`),
-  CONSTRAINT `linie_kolejowe_ibfk_2` FOREIGN KEY (`id_przewoznika`) REFERENCES `przewoznicy` (`id_przewoznika`)
+  CONSTRAINT `linie_kolejowe_ibfk_1` FOREIGN KEY (`id_stacji`) REFERENCES `stacje_kolejowe` (`id_stacji`) ON DELETE CASCADE,
+  CONSTRAINT `linie_kolejowe_ibfk_2` FOREIGN KEY (`id_przewoznika`) REFERENCES `przewoznicy` (`id_przewoznika`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -158,8 +158,8 @@ CREATE TABLE `pociagi` (
   PRIMARY KEY (`id_pociągu`),
   KEY `id_przewoźnika` (`id_przewoźnika`),
   KEY `id_aktualna_stacja` (`id_aktualna_stacja`),
-  CONSTRAINT `pociagi_ibfk_1` FOREIGN KEY (`id_przewoźnika`) REFERENCES `przewoznicy` (`id_przewoznika`),
-  CONSTRAINT `pociagi_ibfk_2` FOREIGN KEY (`id_aktualna_stacja`) REFERENCES `stacje_kolejowe` (`id_stacji`)
+  CONSTRAINT `pociagi_ibfk_1` FOREIGN KEY (`id_przewoźnika`) REFERENCES `przewoznicy` (`id_przewoznika`) ON DELETE CASCADE,
+  CONSTRAINT `pociagi_ibfk_2` FOREIGN KEY (`id_aktualna_stacja`) REFERENCES `stacje_kolejowe` (`id_stacji`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -189,10 +189,10 @@ CREATE TABLE polaczenia (
   KEY id_stacji_początkowej (id_stacji_początkowej),
   KEY id_stacji_końcowej (id_stacji_końcowej),
   KEY id_pociągu (id_pociągu),
-  CONSTRAINT polaczenia_ibfk_1 FOREIGN KEY (id_lini) REFERENCES linie_kolejowe (id_linii),
-  CONSTRAINT polaczenia_ibfk_2 FOREIGN KEY (id_stacji_początkowej) REFERENCES stacje_kolejowe (id_stacji),
-  CONSTRAINT polaczenia_ibfk_3 FOREIGN KEY (id_stacji_końcowej) REFERENCES stacje_kolejowe (id_stacji),
-  CONSTRAINT polaczenia_ibfk_4 FOREIGN KEY (id_pociągu) REFERENCES pociagi (id_pociągu)
+  CONSTRAINT polaczenia_ibfk_1 FOREIGN KEY (id_lini) REFERENCES linie_kolejowe (id_linii) ON DELETE CASCADE, 
+  CONSTRAINT polaczenia_ibfk_2 FOREIGN KEY (id_stacji_początkowej) REFERENCES stacje_kolejowe (id_stacji) ON DELETE CASCADE,
+  CONSTRAINT polaczenia_ibfk_3 FOREIGN KEY (id_stacji_końcowej) REFERENCES stacje_kolejowe (id_stacji) ON DELETE CASCADE,
+  CONSTRAINT polaczenia_ibfk_4 FOREIGN KEY (id_pociągu) REFERENCES pociagi (id_pociągu) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -211,7 +211,7 @@ CREATE TABLE `wagony` (
   `liczba_miejsc` INT DEFAULT NULL,
   PRIMARY KEY (`id_wagonu`),
   KEY `id_pociągu` (`id_pociągu`),
-  CONSTRAINT `wagony_ibfk_1` FOREIGN KEY (`id_pociągu`) REFERENCES `pociagi` (`id_pociągu`)
+  CONSTRAINT `wagony_ibfk_1` FOREIGN KEY (`id_pociągu`) REFERENCES `pociagi` (`id_pociągu`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

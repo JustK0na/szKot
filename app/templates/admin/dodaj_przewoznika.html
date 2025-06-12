@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dodaj przewoźnika</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "admin">
+        <h1>Dodaj przewoźnika</h1>
+        <div class = "links">
+            <a href="{{ url_for('admin.admin_przewoznicy') }}">Powrót do listy przewoźników</a><br><br>
+        </div>
+        <form method="POST">    
+            <label>Nazwa</label>
+            <input type="text" id="nazwa" name="nazwa" required>
+
+            <label>Username</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label>Haslo</label>
+            <input type="password" id="haslo" name="haslo" required>
+
+            <button type="submit">Dodaj</button>
+        </form>
+    </div>
+</body>
+</html>

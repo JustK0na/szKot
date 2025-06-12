@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel administratora - Przewoźnicy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "admin">
+        <h1>Wszyscy przewoźnicy</h1>
+    <div class = "links">
+         <a href="{{ url_for('admin.admin') }}">Powrót</a><br><br>
+         <a href="{{ url_for('admin.dodaj_przewoznika') }}">Dodaj przewoźnika</a><br><br>
+    </div>
+    {% if przewoznicy %}
+    <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>Nazwa</th>
+                <th>Username</th>
+                <th>Hash hasła</th>
+                <th>Akcje</th>
+            </tr>
+            {% for p in przewoznicy %}
+            <tr>
+                <td>{{ p[0] }}</td>
+                <td>{{ p[1] }}</td>
+                <td>{{ p[2] }}</td>
+                <td>{{ p[3] }}</td>
+            <td>
+                <a href="{{ url_for('admin.edytuj_przewoznika', przewoznik_id=p[0]) }}">Edytuj przewoźnika</a>
+                <form method="POST" action="{{ url_for('admin.usun_przewoznika', przewoznik_id=p[0]) }}" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Na pewno usunąć przewoźnika?');">Usuń</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>Brak zarejestrowanych przewoźników.</p>
+    {% endif %}
+    </div>
+</body>
+</html>
