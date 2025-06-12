@@ -239,7 +239,13 @@ CREATE USER IF NOT EXISTS 'przewoznik_user'@'%' IDENTIFIED BY 'przewoznik_pass';
 GRANT SELECT, INSERT, UPDATE ON szkot.* TO 'przewoznik_user'@'%';
 
 CREATE USER IF NOT EXISTS 'pasazer_user'@'%' IDENTIFIED BY 'pasazer_pass';
-GRANT SELECT ON szkot.* TO 'pasazer_user'@'%';
+GRANT SELECT ON szkot.stacje_kolejowe TO 'pasazer_user'@'%';
+GRANT SELECT ON szkot.polaczenia TO 'pasazer_user'@'%';
+GRANT SELECT ON szkot.pociagi TO 'pasazer_user'@'%';
+GRANT SELECT ON szkot.przewoznicy TO 'pasazer_user'@'%';
+GRANT SELECT ON szkot.bilety TO 'pasazer_user'@'%';
+GRANT INSERT ON szkot.bilety TO 'pasazer_user'@'%';
+
 
 CREATE USER IF NOT EXISTS 'auth_user'@'%' IDENTIFIED BY 'auth_pass';
 GRANT SELECT,INSERT ON szkot.pasazerowie TO 'auth_user'@'%';

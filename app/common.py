@@ -9,6 +9,10 @@ import  random
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()[:16] 
 
+
+
+#function to get db connection by some user
+#it makes it so we don't have to use root on everything
 def get_db_connection(role):
     config = {
         'admin': {
@@ -19,7 +23,7 @@ def get_db_connection(role):
             'user': 'przewoznik_user',
             'password': 'przewoznik_pass'
         },
-        'passenger': {
+        'pasazer': {
             'user': 'pasazer_user',
             'password': 'pasazer_pass'
         },

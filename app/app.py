@@ -4,6 +4,9 @@ from flask import Flask, render_template, redirect, url_for,  flash
 ###########
 #TODO:
 #    -add some admin powers to panel przewoznika
+#    -add deletetion handling to table creation
+#    -adjust privleages
+#    -add table przejazdy
 ###########
 
 app = Flask(__name__)

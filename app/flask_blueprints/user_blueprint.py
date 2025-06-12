@@ -65,7 +65,7 @@ def search():
     if 'user_id' not in session:
         return redirect(url_for('user.login'))
 
-    conn = get_db_connection('passenger')
+    conn = get_db_connection('pasazer')
     cursor = conn.cursor()
 
     cursor.execute("SELECT DISTINCT miasto FROM stacje_kolejowe ORDER BY miasto ASC")
@@ -106,7 +106,7 @@ def buy_ticket(connection_id):
     if 'user_id' not in session:
         return redirect(url_for('user.login'))
 
-    conn = get_db_connection('passenger')
+    conn = get_db_connection('pasazer')
     cursor = conn.cursor()
 
     if request.method == 'POST':
@@ -146,7 +146,7 @@ def bilety():
     if 'user_id' not in session:
         return redirect(url_for('user.login'))
 
-    conn = get_db_connection('passenger')
+    conn = get_db_connection('pasazer')
     cursor = conn.cursor()
 
     query = """
@@ -169,7 +169,7 @@ def bilety_szczegol(bilet_id):
     if 'user_id' not in session:
         return redirect(url_for('user.login'))
 
-    conn = get_db_connection('passenger')
+    conn = get_db_connection('pasazer')
     cursor = conn.cursor()
 
     query = """
