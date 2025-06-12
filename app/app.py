@@ -3,11 +3,7 @@ from flask import Flask, render_template, redirect, url_for,  flash
 
 ###########
 #TODO:
-#    -add some admin powers to panel przewoznika
-#    -usunac tabele linie kolejowe
-#    -add table przejazdy
-#    -modele jako dano słownikowe
-#    -stany(przejazdow, pociagow) jako dane slownikowe enum
+#   -naprawić aplikacje by działała ze zmianami w bazie danych
 ###########
 
 app = Flask(__name__)
