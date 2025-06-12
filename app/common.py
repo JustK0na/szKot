@@ -19,7 +19,7 @@ def get_db_connection(role):
             'user': 'admin_user',
             'password': 'admin_pass'
         },
-        'carrier': {
+        'przewoznik': {
             'user': 'przewoznik_user',
             'password': 'przewoznik_pass'
         },

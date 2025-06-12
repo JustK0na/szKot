@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dodaj pociąg</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "przewoznik">
+        <h1>Dodaj pociąg</h1>
+        <div class = "links">
+            <a href="{{ url_for('przewoznik.przewoznik_pociagi') }}">Powrót do listy pociagi</a><br><br>
+        </div>
+        <form method="POST">    
+            <label>Model pociągu</label>
+            <input type="text" id="model_pociagu" name="model_pociagu" required>
+
+            
+            <label>Aktualna stacja</label>           
+            <select name="id_stacji" id="id_stacji" required>
+                {% for stacja in stacje %}
+                    <option value="{{ stacja[0] }}">
+                        {{ stacja[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label>Stan</label>
+            <input type="text" id="stan" name="stan" required>
+
+            <button type="submit">Dodaj</button>
+        </form>
+    </div>
+</body>
+</html>

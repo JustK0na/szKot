@@ -4,9 +4,10 @@ from flask import Flask, render_template, redirect, url_for,  flash
 ###########
 #TODO:
 #    -add some admin powers to panel przewoznika
-#    -add deletetion handling to table creation
-#    -adjust privleages
+#    -usunac tabele linie kolejowe
 #    -add table przejazdy
+#    -modele jako dano słownikowe
+#    -stany(przejazdow, pociagow) jako dane slownikowe enum
 ###########
 
 app = Flask(__name__)
@@ -18,12 +19,13 @@ app.config['MYSQL_DB'] = 'szkot'
 app.config['MYSQL_PORT'] = 3306
 
 
-
 from flask_blueprints.admin_blueprint import admin_bp
 from flask_blueprints.user_blueprint import user_bp
+from flask_blueprints.przewoznicy_blueprint import przewoznik_bp
 
 app.register_blueprint(admin_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(przewoznik_bp)
 
 
 

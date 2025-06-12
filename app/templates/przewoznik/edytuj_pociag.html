@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Edytuj pociąg</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "przewoznik">
+        <h1>Edytuj pociąg</h1>
+        <div class = "links">
+            <a href="{{ url_for('przewoznik.przewoznik_pociagi') }}">Powrót do listy pociagi</a><br><br>
+        </div>
+        <form method="POST">    
+            <label>Model pociągu</label>
+            <input type="text" id="model_pociagu" name="model_pociagu" value="{{ train[1] }}"  required>
+            
+            <label>Aktualna stacja</label>           
+            <select name="id_stacji" id="id_stacji" required>
+                {% for stacja in stacje %}
+                    <option value="{{ stacja[0] }}" {% if stacja[0] == train[3] %}selected{% endif %}>
+                        {{ stacja[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label>Stan</label>
+            <input type="text" id="stan" name="stan" value="{{ train[4] }}"  required>
+        
+
+            <button type="submit">Zapisz</button>
+        </form>
+    </div>
+</body>
+</html>

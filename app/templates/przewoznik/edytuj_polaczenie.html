@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Edytuj połączenie #{{ connection[0] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "przewoznik">
+        <h1>Edytuj połączenie #{{ connection[0] }}</h1>
+
+        <div class="links">
+            <a href="{{ url_for('przewoznik.przewoznik_polaczenia') }}">Powrót do listy połączeń</a><br><br>
+        </div>
+
+        <form method="POST">    
+            <label>Linia kolejowa:</label>
+            <select name="id_linii" required>
+                {% for linia in linie %}
+                    <option value="{{ linia[0] }}" {% if linia[0] == connection[1] %}selected{% endif %}>
+                        {{ linia[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+            
+            <label>Stacja początkowa:</label>
+            <select name="id_stacji_początkowej" required>
+                {% for stacja in stacje %}
+                    <option value="{{ stacja[0] }}" {% if stacja[0] == connection[2] %}selected{% endif %}>
+                        {{ stacja[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label>Stacja końcowa:</label>
+            <select name="id_stacji_końcowej" required>
+                {% for stacja in stacje %}
+                    <option value="{{ stacja[0] }}" {% if stacja[0] == connection[3] %}selected{% endif %}>
+                        {{ stacja[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label>Pociąg:</label>
+            <select name="id_pociągu" required>
+                {% for pociag in pociagi %}
+                    <option value="{{ pociag[0] }}" {% if pociag[0] == connection[4] %}selected{% endif %}>
+                        {{ pociag[0] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label>Czas przejazdu:</label>
+            <input type="time" name="czas_przejazdu" value="{{ connection[5] }}" step="1" required>
+
+            <label>Godzina odjazdu:</label>
+            <input type="time" name="godzina_odjazdu" value="{{ connection[6] }}" step="1" required>
+
+            <label>Dni tygodnia:</label>
+            <input type="checkbox" name="dni_tygodnia" value="Poniedziałek"> Poniedziałek
+            <input type="checkbox" name="dni_tygodnia" value="Wtorek"> Wtorek
+            <input type="checkbox" name="dni_tygodnia" value="Środa"> Środa
+            <input type="checkbox" name="dni_tygodnia" value="Czwartek"> Czwartek
+            <input type="checkbox" name="dni_tygodnia" value="Piątek"> Piątek
+            <input type="checkbox" name="dni_tygodnia" value="Sobota"> Sobota
+            <input type="checkbox" name="dni_tygodnia" value="Niedziela"> Niedziela
+
+            <button type="submit">Zapisz</button>
+        </form>
+    </div>
+</body>
+</html>
