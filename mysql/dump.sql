@@ -236,7 +236,7 @@ DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `sprawdz_dzien_przejazdu` BEFORE INSERT ON `przejazdy` FOR EACH ROW BEGIN
   -- to jest cos mega dziwnego z chatem i indianami na youtubie wykminilem ze mozna sprawdzac by bylo dobrze czy data jest odpowiednia podczas insertowania
   DECLARE dzien_en VARCHAR(20);
-  DECLARE dni_polaczenia SET('Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota','Niedziela');
+  DECLARE dni_polaczenia SET('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday');
 
   SET dzien_en = DAYNAME(NEW.data_przejazdu);
 
