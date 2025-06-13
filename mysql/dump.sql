@@ -317,7 +317,7 @@ CREATE TABLE `przewoznicy` (
   `nazwa` varchar(100) DEFAULT NULL,
   `username` varchar(255) NOT NULL,
   `haslo` varchar(255) NOT NULL,
-  PRIMARY KEY (`id_przewoznika`)
+  PRIMARY KEY (`id_przewoznika`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
