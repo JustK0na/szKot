@@ -79,21 +79,17 @@ def search():
         to_city = request.form['to_city']
 
         query = """
-                SELECT p.id_połączenia, s1.miasto, s2.miasto, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia
+                SELECT id_przejazdu, nazwa_stacji_początkowej, nazwa_stacji_końcowej, czas_przejazdu, godzina_odjazdu, data
                 FROM polaczenia p
-                         JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
-                         JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
-                WHERE s1.miasto = %s AND s2.miasto = %s
+                WHERE nazwa_stacji_początkowej = %s AND nazwa_stacji_końcowej = %s
                 """
         cursor.execute(query, (from_city, to_city))
         results = cursor.fetchall()
 
     cursor.execute("""
-        SELECT p.id_połączenia, s1.miasto, s2.miasto, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia
-        FROM polaczenia p
-                 JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
-                 JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
-        ORDER BY p.godzina_odjazdu DESC
+        SELECT id_przejazdu, nazwa_stacji_początkowej, nazwa_stacji_końcowej, czas_przejazdu, godzina_odjazdu, data
+        FROM przejazd_szczeg
+        ORDER BY godzina_odjazdu DESC
     """)
     all_connections = cursor.fetchall()
 
@@ -114,7 +110,7 @@ def buy_ticket(connection_id):
         cena = random.randint(50, 300)
 
         cursor.execute("""
-            INSERT INTO bilety (id_pasażera, id_połączenia, cena, ulgi)
+            INSERT INTO bilety (id_pasażera, id_przejazdu, cena, ulgi)
             VALUES (%s, %s, %s, %s)
         """, (session['user_id'], connection_id, cena, selected_discount))
 
@@ -124,14 +120,10 @@ def buy_ticket(connection_id):
         return redirect(url_for('user.bilety'))
 
     cursor.execute("""
-        SELECT p.id_połączenia, s1.miasto, s2.miasto, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia,
-               poc.model_pociągu, prz.nazwa, poc.id_pociągu
-        FROM polaczenia p
-        JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
-        JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
-        JOIN pociagi poc ON p.id_pociągu = poc.id_pociągu
-        JOIN przewoznicy prz ON poc.id_przewoźnika = prz.id_przewoznika
-        WHERE p.id_połączenia = %s
+        SELECT id_przejazdu, nazwa_stacji_początkowej, nazwa_stacji_końcowej, czas_przejazdu, godzina_odjazdu, data,
+               nazwa_modelu, nazwa_przewoznika, id_pociągu
+        FROM przejazd_szczeg
+        WHERE id_przejazdu = %s
     """, (connection_id,))
 
     connection = cursor.fetchone()
@@ -139,6 +131,8 @@ def buy_ticket(connection_id):
 
     ulgi = ["Brak", "Student", "Senior", "Dziecko", "Weteran"]
     return render_template('user/kupBilet.html', connection=connection, ulgi=ulgi)
+
+
 
 
 @user_bp.route('/bilety')
@@ -150,11 +144,17 @@ def bilety():
     cursor = conn.cursor()
 
     query = """
-            SELECT s1.miasto AS stacja_początkowa, s2. miasto AS stacja_docelowa ,b.id_biletu, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia, b.cena, b.ulgi
+            SELECT
+            p.nazwa_stacji_początkowej, 
+            p.nazwa_stacji_końcowej,
+            b.id_biletu, 
+            p.czas_przejazdu, 
+            p.godzina_odjazdu, 
+            p.data, 
+            b.cena, 
+            b.ulgi
             FROM bilety b
-                     JOIN polaczenia p ON b.id_połączenia = p.id_połączenia
-                     JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
-                     JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
+            JOIN przejazd_szczeg p ON b.id_przejazdu = p.id_przejazdu
             WHERE b.id_pasażera = %s \
             ORDER BY p.godzina_odjazdu DESC
             """
@@ -173,17 +173,20 @@ def bilety_szczegol(bilet_id):
     cursor = conn.cursor()
 
     query = """
-            SELECT b.id_biletu, b.cena, b.ulgi, p.czas_przejazdu, p.godzina_odjazdu, p.dni_tygodnia,
-            s1.nazwa_stacji AS stacja_początkowa, 
-            s2.nazwa_stacji AS stacja_docelowa,
-            po.model_pociągu, po.id_pociągu,
-            prz.nazwa AS przewoznik
+            SELECT
+            b.id_biletu,
+            b.cena,
+            b.ulgi,
+            p.czas_przejazdu,
+            p.godzina_odjazdu, 
+            p.data,
+            p.nazwa_stacji_początkowej, 
+            p.nazwa_stacji_końcowej,
+            p.nazwa_modelu, 
+            p.id_pociągu,
+            p.nazwa_przewoznika
             FROM bilety b
-            JOIN polaczenia p ON b.id_połączenia = p.id_połączenia
-            JOIN stacje_kolejowe s1 ON p.id_stacji_początkowej = s1.id_stacji
-            JOIN stacje_kolejowe s2 ON p.id_stacji_końcowej = s2.id_stacji
-            JOIN pociagi po ON p.id_pociągu = po.id_pociągu
-            JOIN przewoznicy prz ON po.id_przewoźnika = prz.id_przewoznika
+            JOIN przejazd_szczeg p ON b.id_przejazdu = p.id_przejazdu
             WHERE b.id_biletu = %s AND b.id_pasażera = %s
             """
     cursor.execute(query, (bilet_id, session['user_id']))

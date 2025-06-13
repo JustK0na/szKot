@@ -3,7 +3,7 @@ from flask import Flask, render_template, redirect, url_for,  flash
 
 ###########
 #TODO:
-#   -naprawić aplikacje by działała ze zmianami w bazie danych
+#   -naprawić panel przewoźnika
 #   - add unique keys to usernames so they won't be having any problems
 ###########
 

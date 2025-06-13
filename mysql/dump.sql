@@ -468,6 +468,7 @@ GRANT SELECT ON szkot.polaczenia TO 'pasazer_user'@'%';
 GRANT SELECT ON szkot.pociagi TO 'pasazer_user'@'%';
 GRANT SELECT ON szkot.przewoznicy TO 'pasazer_user'@'%';
 GRANT SELECT ON szkot.bilety TO 'pasazer_user'@'%';
+GRANT SELECT ON szkot.przejazd_szczeg TO 'pasazer_user'@'%';
 GRANT INSERT ON szkot.bilety TO 'pasazer_user'@'%';
 
 
