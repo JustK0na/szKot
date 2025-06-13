@@ -4,7 +4,6 @@ from common import AM_IN_DOCKER
 ###########
 #TODO:
 #   -naprawić panel przewoźnika
-#   -add unique keys to usernames so they won't be having any problems
 ###########
 
 app = Flask(__name__)

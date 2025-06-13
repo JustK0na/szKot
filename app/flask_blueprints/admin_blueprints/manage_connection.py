@@ -20,10 +20,12 @@ def admin_polaczenia():
             p.czas_przejazdu,
             p.godzina_odjazdu,
             p.dni_tygodnia,
-            p.cena
+            p.cena,
+            pr.nazwa
         FROM polaczenia p
         JOIN stacje_kolejowe sp ON p.id_stacji_początkowej = sp.id_stacji
-        JOIN stacje_kolejowe sk ON p.id_stacji_końcowej = sk.id_stacji """)
+        JOIN stacje_kolejowe sk ON p.id_stacji_końcowej = sk.id_stacji 
+        JOIN przewoznicy pr ON p.id_przewoznika = pr.id_przewoznika""")
     connections = cursor.fetchall()
 
     cursor.close()
@@ -53,6 +55,7 @@ def edytuj_polaczenie(connection_id):
         godzina_odjazdu = request.form.get('godzina_odjazdu')
         dni_tygodnia = ','.join(request.form.getlist('dni_tygodnia'))  
         cena = request.form.get('cena')
+        id_przewoznika = request.form.get('id_przewoznika')
 
         cursor.execute("""
             UPDATE polaczenia SET
@@ -61,10 +64,11 @@ def edytuj_polaczenie(connection_id):
                 czas_przejazdu = %s,
                 godzina_odjazdu = %s,
                 dni_tygodnia = %s,
-                cena = %s
+                cena = %s,
+                id_przewoznika = %s
             WHERE id_połączenia = %s
         """, (id_stacji_poczatkowej, id_stacji_koncowej, czas_przejazdu,
-              godzina_odjazdu, dni_tygodnia,cena ,connection_id))
+              godzina_odjazdu, dni_tygodnia,cena ,id_przewoznika ,connection_id))
         conn.commit()
         cursor.close()
         return redirect(url_for('admin.admin_polaczenia'))
@@ -74,8 +78,13 @@ def edytuj_polaczenie(connection_id):
     cursor.execute("SELECT id_stacji, nazwa_stacji FROM stacje_kolejowe ORDER BY nazwa_stacji")
     stacje = cursor.fetchall()
 
+
+    cursor.execute("SELECT id_przewoznika, nazwa FROM przewoznicy ORDER BY nazwa")
+    przewoznicy = cursor.fetchall()
+
     cursor.close()
     return render_template('admin/edytuj_polaczenie.html',
+                           przewoznicy=przewoznicy,
                            connection=connection,
                            stacje=stacje)
 
@@ -98,7 +107,8 @@ def dodaj_polaczenie():
         godzina_odjazdu = request.form.get('godzina_odjazdu')
         dni_tygodnia = ','.join(request.form.getlist('dni_tygodnia'))
         cena = request.form.get('cena')
-
+        id_przewoznika = request.form.get('id_przewoznika')
+        
         cursor.execute("""
             INSERT INTO polaczenia (
                 id_stacji_początkowej,
@@ -106,10 +116,12 @@ def dodaj_polaczenie():
                 czas_przejazdu,
                 godzina_odjazdu,
                 dni_tygodnia,
-                cena
-            ) VALUES (%s, %s, %s, %s, %s,%s)
+                cena,
+                id_przewoznika
+            ) VALUES (%s, %s, %s, %s, %s,%s,%s)
         """, ( id_stacji_poczatkowej, id_stacji_koncowej,
-              czas_przejazdu, godzina_odjazdu,  dni_tygodnia,cena))
+              czas_przejazdu, godzina_odjazdu,  dni_tygodnia,cena,id_przewoznika))
+        
         conn.commit()
         cursor.close()
         return redirect(url_for('admin.admin_polaczenia'))
@@ -117,10 +129,15 @@ def dodaj_polaczenie():
     cursor.execute("SELECT id_stacji, nazwa_stacji FROM stacje_kolejowe ORDER BY nazwa_stacji")
     stacje = cursor.fetchall()
 
+    cursor.execute("SELECT id_przewoznika, nazwa FROM przewoznicy ORDER BY nazwa")
+    przewoznicy = cursor.fetchall()
+
+
     cursor.close()
 
     return render_template('admin/dodaj_polaczenie.html',
-                           stacje=stacje)
+                           stacje=stacje,
+                           przewoznicy=przewoznicy)
 
 
 

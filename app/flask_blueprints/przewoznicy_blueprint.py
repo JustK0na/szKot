@@ -14,7 +14,17 @@ def przewoznik():
         flash('Brak dostępu')
         return redirect(url_for('przewoznik.login'))
 
-    return render_template('przewoznik/przewoznik.html', name=session['user_name'])
+    conn = get_db_connection('przewoznik')
+    cursor = conn.cursor()
+
+    id_przewoznika = session.get('user_id')
+
+    cursor.execute("""SELECT nazwa FROM przewoznicy WHERE id_przewoznika= %s""", (id_przewoznika,))
+    nazwa = cursor.fetchone()
+
+    cursor.close()
+
+    return render_template('przewoznik/przewoznik.html', name=nazwa)
 
 
 @przewoznik_bp.route('/login', methods=['GET', 'POST'])

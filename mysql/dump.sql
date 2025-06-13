@@ -185,15 +185,18 @@ CREATE TABLE `polaczenia` (
   `id_połączenia` int NOT NULL AUTO_INCREMENT,
   `id_stacji_początkowej` int NOT NULL,
   `id_stacji_końcowej` int NOT NULL,
+  `id_przewoznika` int NOT NULL,
   `czas_przejazdu` time NOT NULL,
   `godzina_odjazdu` time NOT NULL,
-  `cena` int NOT NULL DEFAULT 0,
+  `cena` int NOT NULL DEFAULT '0',
   `dni_tygodnia` set('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') DEFAULT NULL,
   PRIMARY KEY (`id_połączenia`),
   KEY `id_stacji_początkowej` (`id_stacji_początkowej`),
   KEY `id_stacji_końcowej` (`id_stacji_końcowej`),
+  KEY `polaczenia_przewoznik_idx` (`id_przewoznika`),
   CONSTRAINT `polaczenia_ibfk_2` FOREIGN KEY (`id_stacji_początkowej`) REFERENCES `stacje_kolejowe` (`id_stacji`) ON DELETE CASCADE,
-  CONSTRAINT `polaczenia_ibfk_3` FOREIGN KEY (`id_stacji_końcowej`) REFERENCES `stacje_kolejowe` (`id_stacji`) ON DELETE CASCADE
+  CONSTRAINT `polaczenia_ibfk_3` FOREIGN KEY (`id_stacji_końcowej`) REFERENCES `stacje_kolejowe` (`id_stacji`) ON DELETE CASCADE,
+  CONSTRAINT `polaczenia_przewoznik` FOREIGN KEY (`id_przewoznika`) REFERENCES `przewoznicy` (`id_przewoznika`)
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -280,11 +283,11 @@ UNLOCK TABLES;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `sprawdz_dzien_przejazdu` BEFORE INSERT ON `przejazdy` FOR EACH ROW BEGIN
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `sprawdz_dzien_przejazdu_insert` BEFORE INSERT ON `przejazdy` FOR EACH ROW BEGIN
   DECLARE dzien_en VARCHAR(20);
   DECLARE dni_polaczenia SET('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday');
 
@@ -297,6 +300,95 @@ DELIMITER ;;
   IF FIND_IN_SET(dzien_en, dni_polaczenia) = 0 THEN
     SIGNAL SQLSTATE '45000'
     SET MESSAGE_TEXT = 'Data przejazdu nie pasuje do dni tygodnia połączenia';
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `sprawdzanie_przewoznika_przejazd_insert` BEFORE INSERT ON `przejazdy` FOR EACH ROW BEGIN
+  DECLARE polaczenie_przewoznik INT;
+  DECLARE pociag_przewoznik INT;
+
+  SELECT id_przewoznika INTO polaczenie_przewoznik
+  FROM polaczenia
+  WHERE id_połączenia = NEW.id_połączenia;
+
+  SELECT id_przewoźnika INTO pociag_przewoznik
+  FROM pociagi
+  WHERE id_pociągu = NEW.id_pociągu;
+
+  IF polaczenie_przewoznik IS NULL OR pociag_przewoznik IS NULL OR polaczenie_przewoznik <> pociag_przewoznik THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Carrier mismatch between connection and train';
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `sprawdz_dzien_przejazdu_update` BEFORE UPDATE ON `przejazdy` FOR EACH ROW BEGIN
+  DECLARE dzien_en VARCHAR(20);
+  DECLARE dni_polaczenia SET('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday');
+
+  SET dzien_en = DAYNAME(NEW.data);
+
+  SELECT dni_tygodnia INTO dni_polaczenia
+  FROM polaczenia
+  WHERE id_połączenia = NEW.id_połączenia;
+
+  IF FIND_IN_SET(dzien_en, dni_polaczenia) = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Data przejazdu nie pasuje do dni tygodnia połączenia';
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb3_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `sprawdzanie_przewoznika_przejazd_update` BEFORE UPDATE ON `przejazdy` FOR EACH ROW BEGIN
+  DECLARE polaczenie_przewoznik INT;
+  DECLARE pociag_przewoznik INT;
+
+  SELECT id_przewoznika INTO polaczenie_przewoznik
+  FROM polaczenia
+  WHERE id_połączenia = NEW.id_połączenia;
+
+  SELECT id_przewoźnika INTO pociag_przewoznik
+  FROM pociagi
+  WHERE id_pociągu = NEW.id_pociągu;
+
+  IF polaczenie_przewoznik IS NULL OR pociag_przewoznik IS NULL OR polaczenie_przewoznik <> pociag_przewoznik THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Carrier mismatch between connection and train';
   END IF;
 END */;;
 DELIMITER ;
@@ -328,6 +420,7 @@ CREATE TABLE `przewoznicy` (
 
 LOCK TABLES `przewoznicy` WRITE;
 /*!40000 ALTER TABLE `przewoznicy` DISABLE KEYS */;
+INSERT INTO `przewoznicy` VALUES (1,'PKP Intercity','pkpintercity','a665a45920422f9d'),(2,'Koleje Mazowieckie','kolejemazowi','a665a45920422f9d'),(3,'Polregio','polregio','a665a45920422f9d'),(4,'Koleje Dolnośląskie','kolejedolnoś','a665a45920422f9d'),(5,'Koleje Wielkopolskie','kolejewielko','a665a45920422f9d'),(6,'Koleje Małopolskie','kolejemałopo','a665a45920422f9d'),(7,'SKM Trójmiasto','skmtrójmiast','a665a45920422f9d'),(8,'Łódzka Kolej Aglomeracyjna','łódzkakoleja','a665a45920422f9d'),(9,'Koleje Śląskie','kolejeśląski','a665a45920422f9d');
 /*!40000 ALTER TABLE `przewoznicy` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -439,7 +532,7 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `przejazd_szczeg` AS select `pr`.`id_przejazdu` AS `id_przejazdu`,`pr`.`id_połączenia` AS `id_połączenia`,`pr`.`data` AS `data`, `po`.`cena` AS `cena`, `spocz`.`nazwa_stacji` AS `nazwa_stacji_początkowej`,`skonc`.`nazwa_stacji` AS `nazwa_stacji_końcowej`,`przew`.`nazwa` AS `nazwa_przewoznika`,`mp`.`nazwa_modelu` AS `nazwa_modelu`,`pr`.`id_pociągu` AS `id_pociągu`,`po`.`czas_przejazdu` AS `czas_przejazdu`,`po`.`godzina_odjazdu` AS `godzina_odjazdu`,`pr`.`opoznienie` AS `opoznienie`,`pr`.`stan` AS `stan`,`przew`.`id_przewoznika` AS `id_przewoznika` from ((((((`przejazdy` `pr` join `polaczenia` `po` on((`pr`.`id_połączenia` = `po`.`id_połączenia`))) join `stacje_kolejowe` `spocz` on((`po`.`id_stacji_początkowej` = `spocz`.`id_stacji`))) join `stacje_kolejowe` `skonc` on((`po`.`id_stacji_końcowej` = `skonc`.`id_stacji`))) join `pociagi` `p` on((`pr`.`id_pociągu` = `p`.`id_pociągu`))) join `przewoznicy` `przew` on((`p`.`id_przewoźnika` = `przew`.`id_przewoznika`))) join `modele_pociagow` `mp` on((`p`.`id_modelu` = `mp`.`id_modelu`))) */;
+/*!50001 VIEW `przejazd_szczeg` AS select `pr`.`id_przejazdu` AS `id_przejazdu`,`pr`.`id_połączenia` AS `id_połączenia`,`pr`.`data` AS `data`,`po`.`cena` AS `cena`,`spocz`.`nazwa_stacji` AS `nazwa_stacji_początkowej`,`skonc`.`nazwa_stacji` AS `nazwa_stacji_końcowej`,`przew`.`nazwa` AS `nazwa_przewoznika`,`mp`.`nazwa_modelu` AS `nazwa_modelu`,`pr`.`id_pociągu` AS `id_pociągu`,`po`.`czas_przejazdu` AS `czas_przejazdu`,`po`.`godzina_odjazdu` AS `godzina_odjazdu`,`pr`.`opoznienie` AS `opoznienie`,`pr`.`stan` AS `stan`,`przew`.`id_przewoznika` AS `id_przewoznika` from ((((((`przejazdy` `pr` join `polaczenia` `po` on((`pr`.`id_połączenia` = `po`.`id_połączenia`))) join `stacje_kolejowe` `spocz` on((`po`.`id_stacji_początkowej` = `spocz`.`id_stacji`))) join `stacje_kolejowe` `skonc` on((`po`.`id_stacji_końcowej` = `skonc`.`id_stacji`))) join `pociagi` `p` on((`pr`.`id_pociągu` = `p`.`id_pociągu`))) join `przewoznicy` `przew` on((`p`.`id_przewoźnika` = `przew`.`id_przewoznika`))) join `modele_pociagow` `mp` on((`p`.`id_modelu` = `mp`.`id_modelu`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -452,6 +545,8 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+
 
 
 DROP USER IF EXISTS 'admin_user'@'%';
@@ -485,4 +580,5 @@ GRANT SELECT ON szkot.przewoznicy TO 'auth_user'@'%';
 
 FLUSH PRIVILEGES;
 
--- Dump completed on 2025-06-13  2:51:31
+
+-- Dump completed on 2025-06-13 23:53:18

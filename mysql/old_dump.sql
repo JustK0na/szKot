@@ -1,25 +1,50 @@
 DROP DATABASE IF EXISTS szkot;
 START TRANSACTION;
 
-CREATE DATABASE IF NOT EXISTS szkot;
-USE szkot;
-
--- MySQL dump 10.13  Distrib 8.0.42, for Linux (x86_64)
+CREATE DATABASE  IF NOT EXISTS `szkot` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `szkot`;
+-- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
 --
 -- Host: localhost    Database: szkot
 -- ------------------------------------------------------
--- Server version	8.0.42-0ubuntu0.22.04.1
+-- Server version	8.0.41
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
+/*!50503 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `admins`
+--
+
+DROP TABLE IF EXISTS `admins`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `admins` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL,
+  `haslo` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `admins`
+--
+
+LOCK TABLES `admins` WRITE;
+/*!40000 ALTER TABLE `admins` DISABLE KEYS */;
+INSERT INTO `admins` VALUES (1,'root','4813494d137e1631');
+/*!40000 ALTER TABLE `admins` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `bilety`
@@ -30,36 +55,51 @@ DROP TABLE IF EXISTS `bilety`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `bilety` (
   `id_biletu` int NOT NULL AUTO_INCREMENT,
-  `id_pasażera` int DEFAULT NULL,
-  `id_połączenia` int DEFAULT NULL,
-  `cena` decimal(10,2) DEFAULT NULL,
-  `ulgi` enum('None','Student','Senior','Weteran','Dziecko') DEFAULT NULL,
+  `id_pasażera` int NOT NULL,
+  `id_przejazdu` int NOT NULL,
+  `cena` decimal(10,2) NOT NULL,
+  `ulgi` enum('Brak','Student','Senior','Weteran','Dziecko') DEFAULT 'Brak',
   PRIMARY KEY (`id_biletu`),
   KEY `id_pasażera` (`id_pasażera`),
-  KEY `id_połączenia` (`id_połączenia`),
+  KEY `fk_bilety_przejazdy` (`id_przejazdu`),
   CONSTRAINT `bilety_ibfk_1` FOREIGN KEY (`id_pasażera`) REFERENCES `pasazerowie` (`id_pasażera`) ON DELETE CASCADE,
-  CONSTRAINT `bilety_ibfk_2` FOREIGN KEY (`id_połączenia`) REFERENCES `polaczenia` (`id_połączenia`) ON DELETE CASCADE
+  CONSTRAINT `fk_bilety_przejazdy` FOREIGN KEY (`id_przejazdu`) REFERENCES `przejazdy` (`id_przejazdu`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `bilety`
+--
 
+LOCK TABLES `bilety` WRITE;
+/*!40000 ALTER TABLE `bilety` DISABLE KEYS */;
+/*!40000 ALTER TABLE `bilety` ENABLE KEYS */;
+UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `linie_kolejowe`;
+--
+-- Table structure for table `modele_pociagow`
+--
+
+DROP TABLE IF EXISTS `modele_pociagow`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `linie_kolejowe` (
-  `id_linii` int NOT NULL AUTO_INCREMENT,
-  `nazwa_linii` varchar(100) DEFAULT NULL,
-  `id_stacji` int DEFAULT NULL,
-  `id_przewoznika` int DEFAULT NULL,
-  PRIMARY KEY (`id_linii`),
-  KEY `id_stacji` (`id_stacji`),
-  KEY `id_przewoznika` (`id_przewoznika`),
-  CONSTRAINT `linie_kolejowe_ibfk_1` FOREIGN KEY (`id_stacji`) REFERENCES `stacje_kolejowe` (`id_stacji`) ON DELETE CASCADE,
-  CONSTRAINT `linie_kolejowe_ibfk_2` FOREIGN KEY (`id_przewoznika`) REFERENCES `przewoznicy` (`id_przewoznika`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=201 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `modele_pociagow` (
+  `id_modelu` int NOT NULL AUTO_INCREMENT,
+  `nazwa_modelu` varchar(100) NOT NULL,
+  PRIMARY KEY (`id_modelu`),
+  UNIQUE KEY `nazwa_modelu` (`nazwa_modelu`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `modele_pociagow`
+--
+
+LOCK TABLES `modele_pociagow` WRITE;
+/*!40000 ALTER TABLE `modele_pociagow` DISABLE KEYS */;
+INSERT INTO `modele_pociagow` VALUES (13,'Bizon'),(15,'Dragon'),(6,'ED161'),(3,'EN57'),(4,'EN71'),(5,'EN75'),(2,'EU44 - Lokomotywa Tauron'),(11,'FLIRT'),(7,'HCP 303E'),(10,'IC 150'),(12,'Impuls 45WE'),(1,'Pendolino ED250'),(14,'Pesa Dart'),(9,'SA109'),(8,'SA137');
+/*!40000 ALTER TABLE `modele_pociagow` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `pasazerowie`
@@ -70,15 +110,226 @@ DROP TABLE IF EXISTS `pasazerowie`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pasazerowie` (
   `id_pasażera` int NOT NULL AUTO_INCREMENT,
-  `imie` varchar(100) DEFAULT NULL,
-  `nazwisko` varchar(100) DEFAULT NULL,
-  `mail` varchar(100) DEFAULT NULL,
-  `telefon` varchar(20) DEFAULT NULL,
-  `haslo` varchar(100) DEFAULT NULL,
+  `imie` varchar(100) NOT NULL,
+  `nazwisko` varchar(100) NOT NULL,
+  `mail` varchar(100) NOT NULL,
+  `telefon` varchar(20) NOT NULL,
+  `haslo` varchar(100) NOT NULL,
   PRIMARY KEY (`id_pasażera`),
   UNIQUE KEY `mail` (`mail`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10007 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pasazerowie`
+--
+
+LOCK TABLES `pasazerowie` WRITE;
+/*!40000 ALTER TABLE `pasazerowie` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pasazerowie` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `pociag_szczeg`
+--
+
+DROP TABLE IF EXISTS `pociag_szczeg`;
+/*!50001 DROP VIEW IF EXISTS `pociag_szczeg`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `pociag_szczeg` AS SELECT 
+ 1 AS `id_pociągu`,
+ 1 AS `id_przewoznika`,
+ 1 AS `nazwa_modelu`,
+ 1 AS `nazwa_przewoznika`,
+ 1 AS `stan`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `pociagi`
+--
+
+DROP TABLE IF EXISTS `pociagi`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pociagi` (
+  `id_pociągu` int NOT NULL AUTO_INCREMENT,
+  `id_przewoźnika` int NOT NULL,
+  `id_modelu` int NOT NULL,
+  `stan` enum('operacyjny','konserwacja','uszkodzony','nieużytkowy') NOT NULL DEFAULT 'operacyjny',
+  PRIMARY KEY (`id_pociągu`),
+  KEY `id_przewoźnika` (`id_przewoźnika`),
+  KEY `fk_pociagi_modele` (`id_modelu`),
+  CONSTRAINT `fk_pociagi_modele` FOREIGN KEY (`id_modelu`) REFERENCES `modele_pociagow` (`id_modelu`),
+  CONSTRAINT `pociagi_ibfk_1` FOREIGN KEY (`id_przewoźnika`) REFERENCES `przewoznicy` (`id_przewoznika`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pociagi`
+--
+
+LOCK TABLES `pociagi` WRITE;
+/*!40000 ALTER TABLE `pociagi` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pociagi` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `polaczenia`
+--
+
+DROP TABLE IF EXISTS `polaczenia`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `polaczenia` (
+  `id_połączenia` int NOT NULL AUTO_INCREMENT,
+  `id_stacji_początkowej` int NOT NULL,
+  `id_stacji_końcowej` int NOT NULL,
+  `czas_przejazdu` time NOT NULL,
+  `godzina_odjazdu` time NOT NULL,
+  `cena` int NOT NULL DEFAULT 0,
+  `dni_tygodnia` set('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') DEFAULT NULL,
+  PRIMARY KEY (`id_połączenia`),
+  KEY `id_stacji_początkowej` (`id_stacji_początkowej`),
+  KEY `id_stacji_końcowej` (`id_stacji_końcowej`),
+  CONSTRAINT `polaczenia_ibfk_2` FOREIGN KEY (`id_stacji_początkowej`) REFERENCES `stacje_kolejowe` (`id_stacji`) ON DELETE CASCADE,
+  CONSTRAINT `polaczenia_ibfk_3` FOREIGN KEY (`id_stacji_końcowej`) REFERENCES `stacje_kolejowe` (`id_stacji`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `polaczenia`
+--
+
+LOCK TABLES `polaczenia` WRITE;
+/*!40000 ALTER TABLE `polaczenia` DISABLE KEYS */;
+/*!40000 ALTER TABLE `polaczenia` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `polaczenie_przewoznik`
+--
+
+DROP TABLE IF EXISTS `polaczenie_przewoznik`;
+/*!50001 DROP VIEW IF EXISTS `polaczenie_przewoznik`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `polaczenie_przewoznik` AS SELECT 
+ 1 AS `id_połączenia`,
+ 1 AS `id_przewoźnika`,
+ 1 AS `nazwa_przewoznika`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `przejazd_szczeg`
+--
+
+DROP TABLE IF EXISTS `przejazd_szczeg`;
+/*!50001 DROP VIEW IF EXISTS `przejazd_szczeg`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `przejazd_szczeg` AS SELECT 
+ 1 AS `id_przejazdu`,
+ 1 AS `id_połączenia`,
+ 1 AS `data`,
+ 1 AS `cena`,
+ 1 AS `nazwa_stacji_początkowej`,
+ 1 AS `nazwa_stacji_końcowej`,
+ 1 AS `nazwa_przewoznika`,
+ 1 AS `nazwa_modelu`,
+ 1 AS `id_pociągu`,
+ 1 AS `czas_przejazdu`,
+ 1 AS `godzina_odjazdu`,
+ 1 AS `opoznienie`,
+ 1 AS `stan`,
+ 1 AS `id_przewoznika`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `przejazdy`
+--
+
+DROP TABLE IF EXISTS `przejazdy`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `przejazdy` (
+  `id_przejazdu` int NOT NULL AUTO_INCREMENT,
+  `id_połączenia` int NOT NULL,
+  `id_pociągu` int NOT NULL,
+  `data` date NOT NULL,
+  `stan` enum('Zaplanowany','W trakcie','Zakończony','Opóźniony','Anulowany') DEFAULT 'Zaplanowany',
+  `opoznienie` time DEFAULT NULL,
+  PRIMARY KEY (`id_przejazdu`),
+  KEY `id_połączenia` (`id_połączenia`),
+  KEY `fk_przejazdy_pociagi` (`id_pociągu`),
+  CONSTRAINT `fk_przejazdy_pociagi` FOREIGN KEY (`id_pociągu`) REFERENCES `pociagi` (`id_pociągu`) ON DELETE CASCADE,
+  CONSTRAINT `przejazdy_ibfk_1` FOREIGN KEY (`id_połączenia`) REFERENCES `polaczenia` (`id_połączenia`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `przejazdy`
+--
+
+LOCK TABLES `przejazdy` WRITE;
+/*!40000 ALTER TABLE `przejazdy` DISABLE KEYS */;
+/*!40000 ALTER TABLE `przejazdy` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `sprawdz_dzien_przejazdu` BEFORE INSERT ON `przejazdy` FOR EACH ROW BEGIN
+  DECLARE dzien_en VARCHAR(20);
+  DECLARE dni_polaczenia SET('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday');
+
+  SET dzien_en = DAYNAME(NEW.data);
+
+  SELECT dni_tygodnia INTO dni_polaczenia
+  FROM polaczenia
+  WHERE id_połączenia = NEW.id_połączenia;
+
+  IF FIND_IN_SET(dzien_en, dni_polaczenia) = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Data przejazdu nie pasuje do dni tygodnia połączenia';
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Table structure for table `przewoznicy`
+--
+
+DROP TABLE IF EXISTS `przewoznicy`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `przewoznicy` (
+  `id_przewoznika` int NOT NULL AUTO_INCREMENT,
+  `nazwa` varchar(100) DEFAULT NULL,
+  `username` varchar(255) NOT NULL,
+  `haslo` varchar(255) NOT NULL,
+  PRIMARY KEY (`id_przewoznika`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `przewoznicy`
+--
+
+LOCK TABLES `przewoznicy` WRITE;
+/*!40000 ALTER TABLE `przewoznicy` DISABLE KEYS */;
+/*!40000 ALTER TABLE `przewoznicy` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `stacje_kolejowe`
@@ -89,8 +340,8 @@ DROP TABLE IF EXISTS `stacje_kolejowe`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stacje_kolejowe` (
   `id_stacji` int NOT NULL AUTO_INCREMENT,
-  `nazwa_stacji` varchar(100) DEFAULT NULL,
-  `miasto` varchar(100) DEFAULT NULL,
+  `nazwa_stacji` varchar(100) NOT NULL,
+  `miasto` varchar(100) NOT NULL,
   PRIMARY KEY (`id_stacji`)
 ) ENGINE=InnoDB AUTO_INCREMENT=199 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -106,110 +357,92 @@ INSERT INTO `stacje_kolejowe` VALUES (1,'Brodnica Główny','Brodnica'),(2,'Toma
 UNLOCK TABLES;
 
 --
--- Table structure for table `przewoznicy`
---
-
-
-
-DROP TABLE IF EXISTS `przewoznicy`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `przewoznicy` (
-  `id_przewoznika` int NOT NULL AUTO_INCREMENT,
-  `nazwa` varchar(100) DEFAULT NULL,
-  `username` VARCHAR(255) UNIQUE NOT NULL,
-  `haslo` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`id_przewoznika`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
---
--- Table structure for table `pociagi`
---
-
-DROP TABLE IF EXISTS `admins`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `admins` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `username` VARCHAR(255) UNIQUE NOT NULL,
-  `haslo` VARCHAR(255) NOT NULL
-)ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
-INSERT INTO `admins` VALUES (1,'root','4813494d137e1631');
-
-
-DROP TABLE IF EXISTS `pociagi`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `pociagi` (
-  `id_pociągu` int NOT NULL AUTO_INCREMENT,
-  `model_pociągu` varchar(100) DEFAULT NULL,
-  `id_przewoźnika` int DEFAULT NULL,
-  `id_aktualna_stacja` int DEFAULT NULL,
-  `stan` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id_pociągu`),
-  KEY `id_przewoźnika` (`id_przewoźnika`),
-  KEY `id_aktualna_stacja` (`id_aktualna_stacja`),
-  CONSTRAINT `pociagi_ibfk_1` FOREIGN KEY (`id_przewoźnika`) REFERENCES `przewoznicy` (`id_przewoznika`) ON DELETE CASCADE,
-  CONSTRAINT `pociagi_ibfk_2` FOREIGN KEY (`id_aktualna_stacja`) REFERENCES `stacje_kolejowe` (`id_stacji`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `pociagi`
---
-
---
--- Table structure for table `polaczenia`
---
-
-DROP TABLE IF EXISTS `polaczenia`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-
-CREATE TABLE polaczenia (
-  id_połączenia int NOT NULL AUTO_INCREMENT,
-  id_lini int DEFAULT NULL,
-  id_stacji_początkowej int DEFAULT NULL,
-  id_stacji_końcowej int DEFAULT NULL,
-  id_pociągu int DEFAULT NULL,
-  czas_przejazdu time DEFAULT NULL,
-  godzina_odjazdu time DEFAULT NULL,
-  dni_tygodnia SET('Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela') DEFAULT NULL,
-  PRIMARY KEY (id_połączenia),
-  KEY id_lini (id_lini),
-  KEY id_stacji_początkowej (id_stacji_początkowej),
-  KEY id_stacji_końcowej (id_stacji_końcowej),
-  KEY id_pociągu (id_pociągu),
-  CONSTRAINT polaczenia_ibfk_1 FOREIGN KEY (id_lini) REFERENCES linie_kolejowe (id_linii) ON DELETE CASCADE, 
-  CONSTRAINT polaczenia_ibfk_2 FOREIGN KEY (id_stacji_początkowej) REFERENCES stacje_kolejowe (id_stacji) ON DELETE CASCADE,
-  CONSTRAINT polaczenia_ibfk_3 FOREIGN KEY (id_stacji_końcowej) REFERENCES stacje_kolejowe (id_stacji) ON DELETE CASCADE,
-  CONSTRAINT polaczenia_ibfk_4 FOREIGN KEY (id_pociągu) REFERENCES pociagi (id_pociągu) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-
-
-
-
---
 -- Table structure for table `wagony`
 --
 
 DROP TABLE IF EXISTS `wagony`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `wagony` (
-  `id_wagonu` INT NOT NULL AUTO_INCREMENT,
-  `id_pociągu` INT DEFAULT NULL,
-  `liczba_miejsc` INT DEFAULT NULL,
+  `id_wagonu` int NOT NULL AUTO_INCREMENT,
+  `id_pociągu` int NOT NULL,
+  `liczba_miejsc` int DEFAULT NULL,
   PRIMARY KEY (`id_wagonu`),
   KEY `id_pociągu` (`id_pociągu`),
   CONSTRAINT `wagony_ibfk_1` FOREIGN KEY (`id_pociągu`) REFERENCES `pociagi` (`id_pociągu`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `wagony`
+--
+
+LOCK TABLES `wagony` WRITE;
+/*!40000 ALTER TABLE `wagony` DISABLE KEYS */;
+/*!40000 ALTER TABLE `wagony` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping events for database 'szkot'
+--
+
+--
+-- Dumping routines for database 'szkot'
+--
+
+--
+-- Final view structure for view `pociag_szczeg`
+--
+
+/*!50001 DROP VIEW IF EXISTS `pociag_szczeg`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `pociag_szczeg` AS select `p`.`id_pociągu` AS `id_pociągu`,`pr`.`id_przewoznika` AS `id_przewoznika`,`m`.`nazwa_modelu` AS `nazwa_modelu`,`pr`.`nazwa` AS `nazwa_przewoznika`,`p`.`stan` AS `stan` from ((`pociagi` `p` join `modele_pociagow` `m` on((`p`.`id_modelu` = `m`.`id_modelu`))) left join `przewoznicy` `pr` on((`p`.`id_przewoźnika` = `pr`.`id_przewoznika`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `polaczenie_przewoznik`
+--
+
+/*!50001 DROP VIEW IF EXISTS `polaczenie_przewoznik`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `polaczenie_przewoznik` AS select `p`.`id_połączenia` AS `id_połączenia`,`po`.`id_przewoźnika` AS `id_przewoźnika`,`przew`.`nazwa` AS `nazwa_przewoznika` from (((`polaczenia` `p` join `przejazdy` `pr` on((`pr`.`id_połączenia` = `p`.`id_połączenia`))) join `pociagi` `po` on((`pr`.`id_pociągu` = `po`.`id_pociągu`))) join `przewoznicy` `przew` on((`po`.`id_przewoźnika` = `przew`.`id_przewoznika`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `przejazd_szczeg`
+--
+
+/*!50001 DROP VIEW IF EXISTS `przejazd_szczeg`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `przejazd_szczeg` AS select `pr`.`id_przejazdu` AS `id_przejazdu`,`pr`.`id_połączenia` AS `id_połączenia`,`pr`.`data` AS `data`, `po`.`cena` AS `cena`, `spocz`.`nazwa_stacji` AS `nazwa_stacji_początkowej`,`skonc`.`nazwa_stacji` AS `nazwa_stacji_końcowej`,`przew`.`nazwa` AS `nazwa_przewoznika`,`mp`.`nazwa_modelu` AS `nazwa_modelu`,`pr`.`id_pociągu` AS `id_pociągu`,`po`.`czas_przejazdu` AS `czas_przejazdu`,`po`.`godzina_odjazdu` AS `godzina_odjazdu`,`pr`.`opoznienie` AS `opoznienie`,`pr`.`stan` AS `stan`,`przew`.`id_przewoznika` AS `id_przewoznika` from ((((((`przejazdy` `pr` join `polaczenia` `po` on((`pr`.`id_połączenia` = `po`.`id_połączenia`))) join `stacje_kolejowe` `spocz` on((`po`.`id_stacji_początkowej` = `spocz`.`id_stacji`))) join `stacje_kolejowe` `skonc` on((`po`.`id_stacji_końcowej` = `skonc`.`id_stacji`))) join `pociagi` `p` on((`pr`.`id_pociągu` = `p`.`id_pociągu`))) join `przewoznicy` `przew` on((`p`.`id_przewoźnika` = `przew`.`id_przewoznika`))) join `modele_pociagow` `mp` on((`p`.`id_modelu` = `mp`.`id_modelu`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -232,7 +465,7 @@ CREATE USER IF NOT EXISTS 'admin_user'@'%' IDENTIFIED BY 'admin_pass';
 GRANT ALL PRIVILEGES ON szkot.* TO 'admin_user'@'%';
 
 CREATE USER IF NOT EXISTS 'przewoznik_user'@'%' IDENTIFIED BY 'przewoznik_pass';
-GRANT SELECT, INSERT, UPDATE ON szkot.* TO 'przewoznik_user'@'%';
+GRANT SELECT, INSERT, UPDATE,DELETE ON szkot.* TO 'przewoznik_user'@'%';
 
 CREATE USER IF NOT EXISTS 'pasazer_user'@'%' IDENTIFIED BY 'pasazer_pass';
 GRANT SELECT ON szkot.stacje_kolejowe TO 'pasazer_user'@'%';
@@ -240,6 +473,7 @@ GRANT SELECT ON szkot.polaczenia TO 'pasazer_user'@'%';
 GRANT SELECT ON szkot.pociagi TO 'pasazer_user'@'%';
 GRANT SELECT ON szkot.przewoznicy TO 'pasazer_user'@'%';
 GRANT SELECT ON szkot.bilety TO 'pasazer_user'@'%';
+GRANT SELECT ON szkot.przejazd_szczeg TO 'pasazer_user'@'%';
 GRANT INSERT ON szkot.bilety TO 'pasazer_user'@'%';
 
 
@@ -250,4 +484,5 @@ GRANT SELECT ON szkot.przewoznicy TO 'auth_user'@'%';
 
 
 FLUSH PRIVILEGES;
--- Dump completed on 2025-06-02 16:47:38
+
+-- Dump completed on 2025-06-13  2:51:31

@@ -52,6 +52,15 @@
             <label>Cena:</label>
             <input type="number" name="cena" step="1" required>
 
+            <label>Przewoznik:</label>
+            <select name="id_przewoznika" required>
+                {% for p in przewoznicy %}
+                    <option value="{{ p[0] }}">
+                        {{ p[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+
             <button type="submit">Zapisz</button>
         </form>
     </div>

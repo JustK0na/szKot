@@ -7,7 +7,7 @@
 </head>
 <body>
     <div class = "przewoznik">
-        <h1>Panel przewoźnika {{ name }}</h1>
+        <h1>Panel przewoźnika {{ name[0] }}</h1>
         <div class = "links">
             <a href="{{ url_for('przewoznik.przewoznik_polaczenia') }}">Połączenia</a><br><br>
             <a href="{{ url_for('przewoznik.przewoznik_pociagi') }}">Pociagi</a><br><br>

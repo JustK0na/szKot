@@ -11,6 +11,8 @@ def przewoznik_polaczenia():
     conn = get_db_connection('przewoznik')
     cursor = conn.cursor()
 
+    id_przewoznika = session.get('user_id')
+
     cursor.execute("""
         SELECT 
             p.id_połączenia,
@@ -22,7 +24,8 @@ def przewoznik_polaczenia():
             p.cena
         FROM polaczenia p
         JOIN stacje_kolejowe sp ON p.id_stacji_początkowej = sp.id_stacji
-        JOIN stacje_kolejowe sk ON p.id_stacji_końcowej = sk.id_stacji""" )
+        JOIN stacje_kolejowe sk ON p.id_stacji_końcowej = sk.id_stacji
+        WHERE id_przewoznika = %s""", (id_przewoznika,) )
     
     connections = cursor.fetchall()
 
@@ -90,6 +93,8 @@ def dodaj_polaczenie():
     conn = get_db_connection('przewoznik')
     cursor = conn.cursor()
 
+    id_przewoznika = session.get('user_id')
+
     if request.method == 'POST':
         id_stacji_poczatkowej = request.form.get('id_stacji_początkowej')
         id_stacji_koncowej = request.form.get('id_stacji_końcowej')
@@ -105,10 +110,11 @@ def dodaj_polaczenie():
                 czas_przejazdu,
                 godzina_odjazdu,
                 dni_tygodnia,
-                cena
-            ) VALUES (%s, %s, %s, %s, %s,%s)
+                cena,
+                id_przewoznika
+            ) VALUES (%s, %s, %s, %s, %s,%s,%s)
         """, ( id_stacji_poczatkowej, id_stacji_koncowej,
-              czas_przejazdu, godzina_odjazdu,  dni_tygodnia,cena))
+              czas_przejazdu, godzina_odjazdu,  dni_tygodnia,cena,id_przewoznika))
         conn.commit()
         cursor.close()
         return redirect(url_for('przewoznik.przewoznik_polaczenia'))
