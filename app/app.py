@@ -4,6 +4,7 @@ from flask import Flask, render_template, redirect, url_for,  flash
 ###########
 #TODO:
 #   -naprawić aplikacje by działała ze zmianami w bazie danych
+#   - add unique keys to usernames so they won't be having any problems
 ###########
 
 app = Flask(__name__)

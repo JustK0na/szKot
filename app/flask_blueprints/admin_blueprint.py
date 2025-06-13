@@ -6,7 +6,7 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 from flask_blueprints.admin_blueprints.manage_connection import *
 from flask_blueprints.admin_blueprints.manage_users import *
-from app.flask_blueprints.admin_blueprints.manage_przejazdy import *
+from flask_blueprints.admin_blueprints.manage_przejazdy import *
 from flask_blueprints.admin_blueprints.manage_stations import *
 from flask_blueprints.admin_blueprints.manage_trains import *
 from flask_blueprints.admin_blueprints.manage_przewoznicy import *

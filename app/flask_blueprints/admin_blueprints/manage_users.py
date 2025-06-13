@@ -28,7 +28,7 @@ def pokaz_bilety_pasazera(user_id):
     conn = get_db_connection('admin')
     cursor = conn.cursor()
 
-    cursor.execute("SELECT id_biletu, id_pasażera, id_połączenia, cena, ulgi FROM bilety WHERE id_pasażera = %s", (user_id,))
+    cursor.execute("SELECT id_biletu, id_pasażera, id_przejazdu, cena, ulgi FROM bilety WHERE id_pasażera = %s", (user_id,))
     tickets = cursor.fetchall()
 
     cursor.execute("SELECT imie, nazwisko FROM pasazerowie WHERE id_pasażera = %s", (user_id,))

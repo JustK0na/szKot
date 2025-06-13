@@ -1,7 +1,6 @@
 DROP DATABASE IF EXISTS szkot;
 START TRANSACTION;
 
-
 CREATE DATABASE  IF NOT EXISTS `szkot` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `szkot`;
 -- MySQL dump 10.13  Distrib 8.0.41, for Win64 (x86_64)
@@ -131,6 +130,22 @@ LOCK TABLES `pasazerowie` WRITE;
 UNLOCK TABLES;
 
 --
+-- Temporary view structure for view `pociag_szczeg`
+--
+
+DROP TABLE IF EXISTS `pociag_szczeg`;
+/*!50001 DROP VIEW IF EXISTS `pociag_szczeg`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `pociag_szczeg` AS SELECT 
+ 1 AS `id_pociągu`,
+ 1 AS `id_przewoznika`,
+ 1 AS `nazwa_modelu`,
+ 1 AS `nazwa_przewoznika`,
+ 1 AS `stan`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `pociagi`
 --
 
@@ -256,6 +271,35 @@ LOCK TABLES `przejazdy` WRITE;
 /*!40000 ALTER TABLE `przejazdy` DISABLE KEYS */;
 /*!40000 ALTER TABLE `przejazdy` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `sprawdz_dzien_przejazdu` BEFORE INSERT ON `przejazdy` FOR EACH ROW BEGIN
+  DECLARE dzien_en VARCHAR(20);
+  DECLARE dni_polaczenia SET('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday');
+
+  SET dzien_en = DAYNAME(NEW.data);
+
+  SELECT dni_tygodnia INTO dni_polaczenia
+  FROM polaczenia
+  WHERE id_połączenia = NEW.id_połączenia;
+
+  IF FIND_IN_SET(dzien_en, dni_polaczenia) = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Data przejazdu nie pasuje do dni tygodnia połączenia';
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `przewoznicy`
@@ -334,6 +378,32 @@ LOCK TABLES `wagony` WRITE;
 UNLOCK TABLES;
 
 --
+-- Dumping events for database 'szkot'
+--
+
+--
+-- Dumping routines for database 'szkot'
+--
+
+--
+-- Final view structure for view `pociag_szczeg`
+--
+
+/*!50001 DROP VIEW IF EXISTS `pociag_szczeg`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `pociag_szczeg` AS select `p`.`id_pociągu` AS `id_pociągu`,`pr`.`id_przewoznika` AS `id_przewoznika`,`m`.`nazwa_modelu` AS `nazwa_modelu`,`pr`.`nazwa` AS `nazwa_przewoznika`,`p`.`stan` AS `stan` from ((`pociagi` `p` join `modele_pociagow` `m` on((`p`.`id_modelu` = `m`.`id_modelu`))) left join `przewoznicy` `pr` on((`p`.`id_przewoźnika` = `pr`.`id_przewoznika`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `polaczenie_przewoznik`
 --
 
@@ -409,5 +479,4 @@ GRANT SELECT ON szkot.przewoznicy TO 'auth_user'@'%';
 
 FLUSH PRIVILEGES;
 
-
--- Dump completed on 2025-06-13  1:46:09
+-- Dump completed on 2025-06-13  2:51:31

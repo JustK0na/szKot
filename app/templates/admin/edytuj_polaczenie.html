@@ -14,14 +14,6 @@
         </div>
 
         <form method="POST">    
-            <label>Linia kolejowa:</label>
-            <select name="id_linii" required>
-                {% for linia in linie %}
-                    <option value="{{ linia[0] }}" {% if linia[0] == connection[1] %}selected{% endif %}>
-                        {{ linia[1] }}
-                    </option>
-                {% endfor %}
-            </select>
             
             <label>Stacja początkowa:</label>
             <select name="id_stacji_początkowej" required>
@@ -41,14 +33,6 @@
                 {% endfor %}
             </select>
 
-            <label>Pociąg:</label>
-            <select name="id_pociągu" required>
-                {% for pociag in pociagi %}
-                    <option value="{{ pociag[0] }}" {% if pociag[0] == connection[4] %}selected{% endif %}>
-                        {{ pociag[0] }}
-                    </option>
-                {% endfor %}
-            </select>
 
             <label>Czas przejazdu:</label>
             <input type="time" name="czas_przejazdu" value="{{ connection[5] }}" step="1" required>
@@ -57,14 +41,13 @@
             <input type="time" name="godzina_odjazdu" value="{{ connection[6] }}" step="1" required>
 
             <label>Dni tygodnia:</label>
-            <input type="checkbox" name="dni_tygodnia" value="Poniedziałek"> Poniedziałek
-            <input type="checkbox" name="dni_tygodnia" value="Wtorek"> Wtorek
-            <input type="checkbox" name="dni_tygodnia" value="Środa"> Środa
-            <input type="checkbox" name="dni_tygodnia" value="Czwartek"> Czwartek
-            <input type="checkbox" name="dni_tygodnia" value="Piątek"> Piątek
-            <input type="checkbox" name="dni_tygodnia" value="Sobota"> Sobota
-            <input type="checkbox" name="dni_tygodnia" value="Niedziela"> Niedziela
-
+            <input type="checkbox" name="dni_tygodnia" value="Monday"> Poniedziałek
+            <input type="checkbox" name="dni_tygodnia" value="Tuesday"> Wtorek
+            <input type="checkbox" name="dni_tygodnia" value="Wednesday"> Środa
+            <input type="checkbox" name="dni_tygodnia" value="Thursday"> Czwartek
+            <input type="checkbox" name="dni_tygodnia" value="Friday"> Piątek
+            <input type="checkbox" name="dni_tygodnia" value="Saturday"> Sobota
+            <input type="checkbox" name="dni_tygodnia" value="Sunday"> Niedziela
             <button type="submit">Zapisz</button>
         </form>
     </div>

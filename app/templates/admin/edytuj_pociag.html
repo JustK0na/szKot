@@ -13,8 +13,14 @@
         </div>
         <form method="POST">    
             <label>Model pociągu</label>
-            <input type="text" id="model_pociagu" name="model_pociagu" value="{{ train[1] }}"  required>
-            
+            <select name="id_modelu" id="id_modelu" required>
+                {% for m in models %}
+                    <option value="{{ m[0] }}" {% if m[0] == train[3] %}selected{% endif %}>
+                        {{ m[1] }}
+                    </option>
+                {% endfor %}
+            </select>
+
             <label>Przewoźnik</label>           
             <select name="id_przewoznika" id="id_przewoznika" required>
                 {% for przewoznik in przewoznicy %}
@@ -24,19 +30,13 @@
                 {% endfor %}
             </select>
 
-            
-            <label>Aktualna stacja</label>           
-            <select name="id_stacji" id="id_stacji" required>
-                {% for stacja in stacje %}
-                    <option value="{{ stacja[0] }}" {% if stacja[0] == train[3] %}selected{% endif %}>
-                        {{ stacja[1] }}
-                    </option>
-                {% endfor %}
-            </select>
 
-            <label>Stan</label>
-            <input type="text" id="stan" name="stan" value="{{ train[4] }}"  required>
-        
+            <select id="stan" name="stan" required>
+            <option value="operacyjny" >operacyjny</option>
+            <option value="konserwacja">konserwacja</option>
+            <option value="uszkodzony" >uszkodzony</option>
+            <option value="nieużytkowy">nieużytkowy</option>
+            </select>
 
             <button type="submit">Zapisz</button>
         </form>

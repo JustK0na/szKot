@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Edytuj przejazd</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "admin">
+        <h1>Edytuj przejazd</h1>
+        <div class="links">
+            <a href="{{ url_for('admin.admin_przejazdy') }}">Powrót do listy przejazdów</a><br><br>
+        </div>
+        <form method="POST">    
+
+            <label for="id_pociagu">ID Pociągu:</label>
+            <select name="id_pociagu" id="id_pociagu" required>
+                {% for pociag in pociagi %}
+                    <option value="{{ pociag[0] }}">
+                        {{ pociag[0] }} - {{ pociag[1] }} - {{ pociag[2] }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="data_przejazdu">Data przejazdu:</label>
+            <input type="date" id="data_przejazdu" name="data_przejazdu" required>
+
+            <label for="stan">Stan:</label>
+            <select id="stan" name="stan" required>
+            <option value="Zaplanowany" > Zaplanowany</option>
+            <option value="W trakcie"> W trakcie</option>
+            <option value="Zakończony" > Zakończony</option>
+            <option value="Opóźniony" > Opóźniony</option>
+            <option value="Anulowany"> Anulowany</option>
+            </select>
+
+
+            <label for="opoznienie">Opóźnienie:</label>
+            <input type="time" id="opoznienie" name="opoznienie" min="0">
+
+            <button type="submit">Zapisz</button>
+        </form>
+    </div>
+</body>
+</html>
