@@ -28,6 +28,9 @@ RUN apt-get update && \
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
+
+ENV AM_I_IN_A_DOCKER_CONTAINER=Yes
+
 COPY . .
 
 ENV FLASK_RUN_HOST=0.0.0.0

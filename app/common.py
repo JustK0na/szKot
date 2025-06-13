@@ -4,6 +4,12 @@ import MySQLdb
 
 import hashlib
 import  random
+import os
+
+
+# ENV 'AM_I_IN_A_DOCKER_CONTAINER' is in dockerfile to check if we are running the program in docker
+AM_IN_DOCKER = os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False)
+
 
 
 def hash_password(password):
