@@ -41,6 +41,7 @@
                     <th>Data</th>
                     <th>Czas</th>
                     <th>Opóźnienie</th>
+                    <th>Cena</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,6 +53,7 @@
                     <td>{{ conn[3] }}</td>
                     <td>{{ conn[4] }}</td>
                     <td>{{ conn[5] }}</td>
+                    <td>{{ conn[6] }} zł</td>
                     <td>
                         <form action="{{ url_for('user.buy_ticket', connection_id=conn[0]) }}" method="GET">
                             <button type="submit">Kup bilet</button>

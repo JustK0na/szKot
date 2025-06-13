@@ -21,6 +21,7 @@
                 <th>Czas przejazdu</th>
                 <th>Godzina odjazdu</th>
                 <th>Dni tygodnia</th>
+                <th>Cena</th>
                 <th>Akcje</th>
             </tr>
             {% for p in connections %}
@@ -31,6 +32,7 @@
                 <td>{{ p[3] }}</td>
                 <td>{{ p[4] }}</td>
                 <td>{{ p[5] }}</td>
+                <td>{{ p[6] }} zł</td>
                 <td>
                     <a href="{{ url_for('admin.przejazdy_polaczenia', connection_id=p[0]) }}">Przejazdy połaczenia</a>
                     <a href="{{ url_for('admin.edytuj_polaczenie', connection_id=p[0]) }}">Edytuj połaczenie</a>

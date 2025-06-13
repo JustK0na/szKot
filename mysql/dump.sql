@@ -55,10 +55,10 @@ DROP TABLE IF EXISTS `bilety`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `bilety` (
   `id_biletu` int NOT NULL AUTO_INCREMENT,
-  `id_pasażera` int DEFAULT NULL,
+  `id_pasażera` int NOT NULL,
   `id_przejazdu` int NOT NULL,
-  `cena` decimal(10,2) DEFAULT NULL,
-  `ulgi` enum('None','Student','Senior','Weteran','Dziecko') DEFAULT NULL,
+  `cena` decimal(10,2) NOT NULL,
+  `ulgi` enum('Brak','Student','Senior','Weteran','Dziecko') DEFAULT 'Brak',
   PRIMARY KEY (`id_biletu`),
   KEY `id_pasażera` (`id_pasażera`),
   KEY `fk_bilety_przejazdy` (`id_przejazdu`),
@@ -110,11 +110,11 @@ DROP TABLE IF EXISTS `pasazerowie`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pasazerowie` (
   `id_pasażera` int NOT NULL AUTO_INCREMENT,
-  `imie` varchar(100) DEFAULT NULL,
-  `nazwisko` varchar(100) DEFAULT NULL,
-  `mail` varchar(100) DEFAULT NULL,
-  `telefon` varchar(20) DEFAULT NULL,
-  `haslo` varchar(100) DEFAULT NULL,
+  `imie` varchar(100) NOT NULL,
+  `nazwisko` varchar(100) NOT NULL,
+  `mail` varchar(100) NOT NULL,
+  `telefon` varchar(20) NOT NULL,
+  `haslo` varchar(100) NOT NULL,
   PRIMARY KEY (`id_pasażera`),
   UNIQUE KEY `mail` (`mail`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10007 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -154,7 +154,7 @@ DROP TABLE IF EXISTS `pociagi`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pociagi` (
   `id_pociągu` int NOT NULL AUTO_INCREMENT,
-  `id_przewoźnika` int DEFAULT NULL,
+  `id_przewoźnika` int NOT NULL,
   `id_modelu` int NOT NULL,
   `stan` enum('operacyjny','konserwacja','uszkodzony','nieużytkowy') NOT NULL DEFAULT 'operacyjny',
   PRIMARY KEY (`id_pociągu`),
@@ -183,10 +183,11 @@ DROP TABLE IF EXISTS `polaczenia`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `polaczenia` (
   `id_połączenia` int NOT NULL AUTO_INCREMENT,
-  `id_stacji_początkowej` int DEFAULT NULL,
-  `id_stacji_końcowej` int DEFAULT NULL,
-  `czas_przejazdu` time DEFAULT NULL,
-  `godzina_odjazdu` time DEFAULT NULL,
+  `id_stacji_początkowej` int NOT NULL,
+  `id_stacji_końcowej` int NOT NULL,
+  `czas_przejazdu` time NOT NULL,
+  `godzina_odjazdu` time NOT NULL,
+  `cena` int NOT NULL DEFAULT 0,
   `dni_tygodnia` set('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') DEFAULT NULL,
   PRIMARY KEY (`id_połączenia`),
   KEY `id_stacji_początkowej` (`id_stacji_początkowej`),
@@ -231,6 +232,7 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `id_przejazdu`,
  1 AS `id_połączenia`,
  1 AS `data`,
+ 1 AS `cena`,
  1 AS `nazwa_stacji_początkowej`,
  1 AS `nazwa_stacji_końcowej`,
  1 AS `nazwa_przewoznika`,
@@ -238,7 +240,8 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `id_pociągu`,
  1 AS `czas_przejazdu`,
  1 AS `godzina_odjazdu`,
- 1 AS `opoznienie`*/;
+ 1 AS `opoznienie`,
+ 1 AS `stan`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -335,8 +338,8 @@ DROP TABLE IF EXISTS `stacje_kolejowe`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stacje_kolejowe` (
   `id_stacji` int NOT NULL AUTO_INCREMENT,
-  `nazwa_stacji` varchar(100) DEFAULT NULL,
-  `miasto` varchar(100) DEFAULT NULL,
+  `nazwa_stacji` varchar(100) NOT NULL,
+  `miasto` varchar(100) NOT NULL,
   PRIMARY KEY (`id_stacji`)
 ) ENGINE=InnoDB AUTO_INCREMENT=199 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -360,7 +363,7 @@ DROP TABLE IF EXISTS `wagony`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `wagony` (
   `id_wagonu` int NOT NULL AUTO_INCREMENT,
-  `id_pociągu` int DEFAULT NULL,
+  `id_pociągu` int NOT NULL,
   `liczba_miejsc` int DEFAULT NULL,
   PRIMARY KEY (`id_wagonu`),
   KEY `id_pociągu` (`id_pociągu`),
@@ -434,7 +437,7 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `przejazd_szczeg` AS select `pr`.`id_przejazdu` AS `id_przejazdu`,`pr`.`id_połączenia` AS `id_połączenia`,`pr`.`data` AS `data`,`spocz`.`nazwa_stacji` AS `nazwa_stacji_początkowej`,`skonc`.`nazwa_stacji` AS `nazwa_stacji_końcowej`,`przew`.`nazwa` AS `nazwa_przewoznika`,`mp`.`nazwa_modelu` AS `nazwa_modelu`,`pr`.`id_pociągu` AS `id_pociągu`,`po`.`czas_przejazdu` AS `czas_przejazdu`,`po`.`godzina_odjazdu` AS `godzina_odjazdu`,`pr`.`opoznienie` AS `opoznienie` from ((((((`przejazdy` `pr` join `polaczenia` `po` on((`pr`.`id_połączenia` = `po`.`id_połączenia`))) join `stacje_kolejowe` `spocz` on((`po`.`id_stacji_początkowej` = `spocz`.`id_stacji`))) join `stacje_kolejowe` `skonc` on((`po`.`id_stacji_końcowej` = `skonc`.`id_stacji`))) join `pociagi` `p` on((`pr`.`id_pociągu` = `p`.`id_pociągu`))) join `przewoznicy` `przew` on((`p`.`id_przewoźnika` = `przew`.`id_przewoznika`))) join `modele_pociagow` `mp` on((`p`.`id_modelu` = `mp`.`id_modelu`))) */;
+/*!50001 VIEW `przejazd_szczeg` AS select `pr`.`id_przejazdu` AS `id_przejazdu`,`pr`.`id_połączenia` AS `id_połączenia`,`pr`.`data` AS `data`, `po`.`cena` AS `cena`, `spocz`.`nazwa_stacji` AS `nazwa_stacji_początkowej`,`skonc`.`nazwa_stacji` AS `nazwa_stacji_końcowej`,`przew`.`nazwa` AS `nazwa_przewoznika`,`mp`.`nazwa_modelu` AS `nazwa_modelu`,`pr`.`id_pociągu` AS `id_pociągu`,`po`.`czas_przejazdu` AS `czas_przejazdu`,`po`.`godzina_odjazdu` AS `godzina_odjazdu`,`pr`.`opoznienie` AS `opoznienie`,`pr`.`stan` AS `stan` from ((((((`przejazdy` `pr` join `polaczenia` `po` on((`pr`.`id_połączenia` = `po`.`id_połączenia`))) join `stacje_kolejowe` `spocz` on((`po`.`id_stacji_początkowej` = `spocz`.`id_stacji`))) join `stacje_kolejowe` `skonc` on((`po`.`id_stacji_końcowej` = `skonc`.`id_stacji`))) join `pociagi` `p` on((`pr`.`id_pociągu` = `p`.`id_pociągu`))) join `przewoznicy` `przew` on((`p`.`id_przewoźnika` = `przew`.`id_przewoznika`))) join `modele_pociagow` `mp` on((`p`.`id_modelu` = `mp`.`id_modelu`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;

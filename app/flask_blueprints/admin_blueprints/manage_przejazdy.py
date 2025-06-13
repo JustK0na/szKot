@@ -10,7 +10,19 @@ def admin_przejazdy():
     conn = get_db_connection('admin')
     cursor = conn.cursor()
 
-    cursor.execute("""SELECT * FROM przejazd_szczeg""")
+    cursor.execute("""SELECT id_przejazdu,
+                   data,
+                   godzina_odjazdu,
+                   czas_przejazdu,
+                   cena,
+                   opoznienie,
+                   nazwa_stacji_początkowej,
+                   nazwa_stacji_końcowej,
+                   nazwa_przewoznika,
+                   nazwa_modelu,
+                   id_pociągu,
+                   stan
+                FROM przejazd_szczeg """)
 
     przejazdy = cursor.fetchall()
     cursor.close()

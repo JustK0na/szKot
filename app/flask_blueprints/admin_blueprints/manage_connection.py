@@ -19,7 +19,8 @@ def admin_polaczenia():
             sk.nazwa_stacji AS stacja_końcowa,
             p.czas_przejazdu,
             p.godzina_odjazdu,
-            p.dni_tygodnia
+            p.dni_tygodnia,
+            p.cena
         FROM polaczenia p
         JOIN stacje_kolejowe sp ON p.id_stacji_początkowej = sp.id_stacji
         JOIN stacje_kolejowe sk ON p.id_stacji_końcowej = sk.id_stacji """)
@@ -51,6 +52,7 @@ def edytuj_polaczenie(connection_id):
         czas_przejazdu = request.form.get('czas_przejazdu')
         godzina_odjazdu = request.form.get('godzina_odjazdu')
         dni_tygodnia = ','.join(request.form.getlist('dni_tygodnia'))  
+        cena = request.form.get('cena')
 
         cursor.execute("""
             UPDATE polaczenia SET
@@ -58,10 +60,11 @@ def edytuj_polaczenie(connection_id):
                 id_stacji_końcowej = %s,
                 czas_przejazdu = %s,
                 godzina_odjazdu = %s,
-                dni_tygodnia = %s
+                dni_tygodnia = %s,
+                cena = %s
             WHERE id_połączenia = %s
         """, (id_stacji_poczatkowej, id_stacji_koncowej, czas_przejazdu,
-              godzina_odjazdu, dni_tygodnia, connection_id))
+              godzina_odjazdu, dni_tygodnia,cena ,connection_id))
         conn.commit()
         cursor.close()
         return redirect(url_for('admin.admin_polaczenia'))
@@ -94,15 +97,19 @@ def dodaj_polaczenie():
         czas_przejazdu = request.form.get('czas_przejazdu')
         godzina_odjazdu = request.form.get('godzina_odjazdu')
         dni_tygodnia = ','.join(request.form.getlist('dni_tygodnia'))
+        cena = request.form.get('cena')
 
         cursor.execute("""
             INSERT INTO polaczenia (
-                id_stacji_początkowej, id_stacji_końcowej,
-                czas_przejazdu, godzina_odjazdu,
-                dni_tygodnia 
-            ) VALUES (%s, %s, %s, %s, %s)
+                id_stacji_początkowej,
+                id_stacji_końcowej,
+                czas_przejazdu,
+                godzina_odjazdu,
+                dni_tygodnia,
+                cena
+            ) VALUES (%s, %s, %s, %s, %s,%s)
         """, ( id_stacji_poczatkowej, id_stacji_koncowej,
-              czas_przejazdu, godzina_odjazdu,  dni_tygodnia))
+              czas_przejazdu, godzina_odjazdu,  dni_tygodnia,cena))
         conn.commit()
         cursor.close()
         return redirect(url_for('admin.admin_polaczenia'))
@@ -143,7 +150,18 @@ def przejazdy_polaczenia(connection_id):
     conn = get_db_connection('admin')
     cursor = conn.cursor()
 
-    cursor.execute("""SELECT * FROM przejazd_szczeg WHERE id_połączenia=%s""", (connection_id,))
+    cursor.execute("""SELECT id_przejazdu,
+                   data,
+                   godzina_odjazdu,
+                   czas_przejazdu,
+                   cena,opoznienie,
+                   nazwa_stacji_początkowej,
+                   nazwa_stacji_końcowej,
+                   nazwa_przewoznika,
+                   nazwa_modelu,
+                   id_pociągu,
+                   stan
+                FROM przejazd_szczeg WHERE id_połączenia=%s""", (connection_id,))
 
     przejazdy = cursor.fetchall()
     cursor.close()

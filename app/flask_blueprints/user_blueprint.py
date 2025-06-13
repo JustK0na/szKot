@@ -87,7 +87,7 @@ def search():
         results = cursor.fetchall()
 
     cursor.execute("""
-        SELECT id_przejazdu, nazwa_stacji_początkowej, nazwa_stacji_końcowej, czas_przejazdu, godzina_odjazdu, data
+        SELECT id_przejazdu, nazwa_stacji_początkowej, nazwa_stacji_końcowej, czas_przejazdu, godzina_odjazdu, data,cena
         FROM przejazd_szczeg
         ORDER BY godzina_odjazdu DESC
     """)
@@ -107,7 +107,15 @@ def buy_ticket(connection_id):
 
     if request.method == 'POST':
         selected_discount = request.form['ulga']
-        cena = random.randint(50, 300)
+
+
+        cursor.execute("""
+        SELECT cena
+        FROM przejazd_szczeg
+        WHERE id_przejazdu = %s
+    """, (connection_id,))
+        cena = cursor.fetchone()
+
 
         cursor.execute("""
             INSERT INTO bilety (id_pasażera, id_przejazdu, cena, ulgi)
@@ -121,7 +129,7 @@ def buy_ticket(connection_id):
 
     cursor.execute("""
         SELECT id_przejazdu, nazwa_stacji_początkowej, nazwa_stacji_końcowej, czas_przejazdu, godzina_odjazdu, data,
-               nazwa_modelu, nazwa_przewoznika, id_pociągu
+               nazwa_modelu, nazwa_przewoznika, id_pociągu,cena
         FROM przejazd_szczeg
         WHERE id_przejazdu = %s
     """, (connection_id,))
@@ -129,7 +137,7 @@ def buy_ticket(connection_id):
     connection = cursor.fetchone()
     cursor.close()
 
-    ulgi = ["Brak", "Student", "Senior", "Dziecko", "Weteran"]
+    ulgi = ["Brak", "Student", "Senior", "Weteran", "Dziecko"]
     return render_template('user/kupBilet.html', connection=connection, ulgi=ulgi)
 
 

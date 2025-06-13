@@ -7,8 +7,14 @@
 </head>
 <body>
     <div class = "admin">
-        <h1>Wszystkie przejazdy</h1>
-    <div class = "links">
+    {% if przejazdy %}
+        <h1>Przejazdy połączenia {{przejazdy[0][8]}} - {{przejazdy[0][6]}}  -  {{przejazdy[0][7]}}  </h1>
+        <h2>O godzinie:{{przejazdy[0][2]}} Czas przejazdu: {{przejazdy[0][3]}} Cena połączenia: {{przejazdy[0][4]}} zł</h2>
+    {% else %}
+        <h1> Przejazdy połączenia {{connection_id}} </h1>
+    {% endif %}
+    
+        <div class = "links">
          <a href="{{ url_for('admin.admin_polaczenia') }}">Powrót</a><br><br>
          <a href="{{ url_for('admin.dodaj_przejazd', connection_id=connection_id) }}">Dodaj przejazd</a><br><br>
     </div>
@@ -17,28 +23,20 @@
         <tr>
             <th>ID</th>
             <th>Data</th>
-            <th>Godzina odjazdu</th>
-            <th>Czas przejazdu</th>
             <th>Opóźnienie</th>
-            <th>Stacja początkowa</th>
-            <th>Stacja końcowa</th>
-            <th>Przewoznik</th>
             <th>Model pociagu</th>
             <th>ID pociągu</th>
+            <th>Stan</th>
             <th>Akcje</th>
         </tr>
         {% for p in przejazdy %}
         <tr>
             <td>{{ p[0] }}</td>
-            <td>{{ p[2] }}</td>
-            <td>{{ p[9] }}</td>
-            <td>{{ p[8] }}</td>
-            <td>{{ p[10] }}</td>
-            <td>{{ p[3] }}</td>
-            <td>{{ p[4] }}</td>
+            <td>{{ p[1] }}</td>
             <td>{{ p[5] }}</td>
-            <td>{{ p[6] }}</td>
-            <td>{{ p[7] }}</td>
+            <td>{{ p[9] }}</td>
+            <td>{{ p[10] }}</td>
+            <td>{{ p[11] }}</td>
             <td>
                 <a href="{{ url_for('admin.edytuj_przejazd_polaczenia',connection_id=connection_id ,przejazd_id=p[0]) }}">Edytuj przejazd</a>
                 <form method="POST" action="{{ url_for('admin.usun_przejazd_polaczanie', connection_id = connection_id, przejazd_id=p[0]) }}" style="display:inline;">

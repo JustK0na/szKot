@@ -18,26 +18,30 @@
             <th>Data</th>
             <th>Godzina odjazdu</th>
             <th>Czas przejazdu</th>
+            <th>Cena</th>
             <th>Opóźnienie</th>
             <th>Stacja początkowa</th>
             <th>Stacja końcowa</th>
             <th>Przewoznik</th>
             <th>Model pociagu</th>
             <th>ID pociągu</th>
+            <th>Stan</th>
             <th>Akcje</th>
         </tr>
         {% for p in przejazdy %}
         <tr>
             <td>{{ p[0] }}</td>
+            <td>{{ p[1] }}</td>
             <td>{{ p[2] }}</td>
-            <td>{{ p[9] }}</td>
-            <td>{{ p[8] }}</td>
-            <td>{{ p[10] }}</td>
             <td>{{ p[3] }}</td>
-            <td>{{ p[4] }}</td>
+            <td>{{ p[4] }} zł</td>
             <td>{{ p[5] }}</td>
             <td>{{ p[6] }}</td>
             <td>{{ p[7] }}</td>
+            <td>{{ p[8] }}</td>
+            <td>{{ p[9] }}</td>
+            <td>{{ p[10] }}</td>
+            <td>{{ p[11] }}</td>
             <td>
                 <a href="{{ url_for('admin.edytuj_przejazd', przejazd_id=p[0]) }}">Edytuj przejazd</a>
                 <form method="POST" action="{{ url_for('admin.usun_przejazd', przejazd_id=p[0]) }}" style="display:inline;">
@@ -48,7 +52,7 @@
         {% endfor %}
     </table>
     {% else %}
-    <p>Brak zarejestrowanych linii kolejowych.</p>
+    <p>Brak zarejestrowanych przejazdów.</p>
     {% endif %}
     </div>
 </body>
