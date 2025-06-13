@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Panel przewoznika - Połączenia</title>
+    <title>Panel przewoźnika - Połączenia</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -16,15 +16,12 @@
         <table border="1">
             <tr>
                 <th>ID</th>
-                <th>Nazwa linii</th>
                 <th>Stacja początkowa</th>
                 <th>Stacja końcowa</th>
-                <th>Id pociągu</th>
-                <th>Model pociąg</th>
-                <th>Przewoźnik</th>
                 <th>Czas przejazdu</th>
                 <th>Godzina odjazdu</th>
                 <th>Dni tygodnia</th>
+                <th>Cena</th>
                 <th>Akcje</th>
             </tr>
             {% for p in connections %}
@@ -35,11 +32,9 @@
                 <td>{{ p[3] }}</td>
                 <td>{{ p[4] }}</td>
                 <td>{{ p[5] }}</td>
-                <td>{{ p[6] }}</td>
-                <td>{{ p[7] }}</td> 
-                <td>{{ p[8] }}</td>
-                <td>{{ p[9] }}</td>
+                <td>{{ p[6] }} zł</td>
                 <td>
+                    <a href="{{ url_for('przewoznik.przejazdy_polaczenia', connection_id=p[0]) }}">Przejazdy połaczenia</a>
                     <a href="{{ url_for('przewoznik.edytuj_polaczenie', connection_id=p[0]) }}">Edytuj połaczenie</a>
                     <form method="POST" action="{{ url_for('przewoznik.usun_polaczenie', connection_id=p[0]) }}" style="display:inline;">
                         <button type="submit" onclick="return confirm('Na pewno usunąć połączenie?');">Usuń</button>

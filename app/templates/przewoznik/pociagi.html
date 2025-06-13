@@ -2,12 +2,12 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Panel przewoźnika - Pociągi</title>
+    <title>Panel przewoznik - Pociągi</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class = "przewoznik">
-        <h1>Twoje pociagi</h1>
+        <h1>Wszystkie pociagi</h1>
     <div class = "links">
          <a href="{{ url_for('przewoznik.przewoznik') }}">Powrót</a><br><br>
          <a href="{{ url_for('przewoznik.dodaj_pociag') }}">Dodaj pociąg</a><br><br>
@@ -18,19 +18,15 @@
                 <th>ID</th>
                 <th>Model</th>
                 <th>Przewoźnik</th>
-                <th>Aktualna stacja</th>
-                <th>Miasto</th>
                 <th>Stan</th>
                 <th>Akcje</th>
             </tr>
             {% for p in trains %}
             <tr>
                 <td>{{ p[0] }}</td>
-                <td>{{ p[1] }}</td>
                 <td>{{ p[2] }}</td>
                 <td>{{ p[3] }}</td>
                 <td>{{ p[4] }}</td>
-                <td>{{ p[5] }}</td>
             <td>
                 <a href="{{ url_for('przewoznik.pokaz_wagony', train_id=p[0]) }}">Zobacz wagony</a>
                 <a href="{{ url_for('przewoznik.edytuj_pociag', train_id=p[0]) }}">Edytuj pociag</a>

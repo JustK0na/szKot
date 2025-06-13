@@ -206,7 +206,8 @@ def dodaj_przejazd(connection_id):
     cursor.close()
 
     return render_template('admin/dodaj_przejazd.html',
-                           pociagi=pociagi)
+                           pociagi=pociagi,
+                           connection_id=connection_id)
 
 
 
@@ -229,7 +230,7 @@ def usun_przejazd_polaczanie(connection_id,przejazd_id):
 
 
 
-@admin_bp.route('/polaczenia/<int:connection_id>/przejazdy/<int:przejazd_id>/usun', methods=['GET', 'POST'])
+@admin_bp.route('/polaczenia/<int:connection_id>/przejazdy/<int:przejazd_id>/edytuj', methods=['GET', 'POST'])
 def edytuj_przejazd_polaczenia(connection_id,przejazd_id):
     if 'role' not in session or session['role'] != 'admin':
         flash('Brak dostępu')

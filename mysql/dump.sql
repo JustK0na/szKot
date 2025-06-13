@@ -241,7 +241,8 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `czas_przejazdu`,
  1 AS `godzina_odjazdu`,
  1 AS `opoznienie`,
- 1 AS `stan`*/;
+ 1 AS `stan`,
+ 1 AS `id_przewoznika`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -437,7 +438,7 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `przejazd_szczeg` AS select `pr`.`id_przejazdu` AS `id_przejazdu`,`pr`.`id_połączenia` AS `id_połączenia`,`pr`.`data` AS `data`, `po`.`cena` AS `cena`, `spocz`.`nazwa_stacji` AS `nazwa_stacji_początkowej`,`skonc`.`nazwa_stacji` AS `nazwa_stacji_końcowej`,`przew`.`nazwa` AS `nazwa_przewoznika`,`mp`.`nazwa_modelu` AS `nazwa_modelu`,`pr`.`id_pociągu` AS `id_pociągu`,`po`.`czas_przejazdu` AS `czas_przejazdu`,`po`.`godzina_odjazdu` AS `godzina_odjazdu`,`pr`.`opoznienie` AS `opoznienie`,`pr`.`stan` AS `stan` from ((((((`przejazdy` `pr` join `polaczenia` `po` on((`pr`.`id_połączenia` = `po`.`id_połączenia`))) join `stacje_kolejowe` `spocz` on((`po`.`id_stacji_początkowej` = `spocz`.`id_stacji`))) join `stacje_kolejowe` `skonc` on((`po`.`id_stacji_końcowej` = `skonc`.`id_stacji`))) join `pociagi` `p` on((`pr`.`id_pociągu` = `p`.`id_pociągu`))) join `przewoznicy` `przew` on((`p`.`id_przewoźnika` = `przew`.`id_przewoznika`))) join `modele_pociagow` `mp` on((`p`.`id_modelu` = `mp`.`id_modelu`))) */;
+/*!50001 VIEW `przejazd_szczeg` AS select `pr`.`id_przejazdu` AS `id_przejazdu`,`pr`.`id_połączenia` AS `id_połączenia`,`pr`.`data` AS `data`, `po`.`cena` AS `cena`, `spocz`.`nazwa_stacji` AS `nazwa_stacji_początkowej`,`skonc`.`nazwa_stacji` AS `nazwa_stacji_końcowej`,`przew`.`nazwa` AS `nazwa_przewoznika`,`mp`.`nazwa_modelu` AS `nazwa_modelu`,`pr`.`id_pociągu` AS `id_pociągu`,`po`.`czas_przejazdu` AS `czas_przejazdu`,`po`.`godzina_odjazdu` AS `godzina_odjazdu`,`pr`.`opoznienie` AS `opoznienie`,`pr`.`stan` AS `stan`,`przew`.`id_przewoznika` AS `id_przewoznika` from ((((((`przejazdy` `pr` join `polaczenia` `po` on((`pr`.`id_połączenia` = `po`.`id_połączenia`))) join `stacje_kolejowe` `spocz` on((`po`.`id_stacji_początkowej` = `spocz`.`id_stacji`))) join `stacje_kolejowe` `skonc` on((`po`.`id_stacji_końcowej` = `skonc`.`id_stacji`))) join `pociagi` `p` on((`pr`.`id_pociągu` = `p`.`id_pociągu`))) join `przewoznicy` `przew` on((`p`.`id_przewoźnika` = `przew`.`id_przewoznika`))) join `modele_pociagow` `mp` on((`p`.`id_modelu` = `mp`.`id_modelu`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -463,7 +464,7 @@ CREATE USER IF NOT EXISTS 'admin_user'@'%' IDENTIFIED BY 'admin_pass';
 GRANT ALL PRIVILEGES ON szkot.* TO 'admin_user'@'%';
 
 CREATE USER IF NOT EXISTS 'przewoznik_user'@'%' IDENTIFIED BY 'przewoznik_pass';
-GRANT SELECT, INSERT, UPDATE ON szkot.* TO 'przewoznik_user'@'%';
+GRANT SELECT, INSERT, UPDATE,DELETE ON szkot.* TO 'przewoznik_user'@'%';
 
 CREATE USER IF NOT EXISTS 'pasazer_user'@'%' IDENTIFIED BY 'pasazer_pass';
 GRANT SELECT ON szkot.stacje_kolejowe TO 'pasazer_user'@'%';

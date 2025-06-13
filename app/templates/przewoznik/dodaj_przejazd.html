@@ -6,10 +6,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class = "admin">
+    <div class = "przewoznik">
         <h1>Dodaj przejazd</h1>
         <div class="links">
-            <a href="{{ url_for('admin.przejazdy_polaczenia', connection_id=connection_id) }}">Powrót do listy przejazdów</a><br><br>
+            <a href="{{ url_for('przewoznik.przejazdy_polaczenia', connection_id=connection_id) }}">Powrót do listy przejazdów</a><br><br>
         </div>
         <form method="POST">    
 
