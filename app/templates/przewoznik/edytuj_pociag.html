@@ -21,14 +21,6 @@
                 {% endfor %}
             </select>
 
-            <label>Przewoźnik</label>           
-            <select name="id_przewoznika" id="id_przewoznika" required>
-                {% for przewoznik in przewoznicy %}
-                    <option value="{{ przewoznik[0] }}" {% if przewoznik[0] == train[2] %}selected{% endif %}>
-                        {{ przewoznik[1] }}
-                    </option>
-                {% endfor %}
-            </select>
 
 
             <select id="stan" name="stan" required>

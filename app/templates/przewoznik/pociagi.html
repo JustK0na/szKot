@@ -17,16 +17,14 @@
             <tr>
                 <th>ID</th>
                 <th>Model</th>
-                <th>Przewoźnik</th>
                 <th>Stan</th>
                 <th>Akcje</th>
             </tr>
             {% for p in trains %}
             <tr>
                 <td>{{ p[0] }}</td>
-                <td>{{ p[2] }}</td>
+                <td>{{ p[1] }}</td>
                 <td>{{ p[3] }}</td>
-                <td>{{ p[4] }}</td>
             <td>
                 <a href="{{ url_for('przewoznik.pokaz_wagony', train_id=p[0]) }}">Zobacz wagony</a>
                 <a href="{{ url_for('przewoznik.edytuj_pociag', train_id=p[0]) }}">Edytuj pociag</a>

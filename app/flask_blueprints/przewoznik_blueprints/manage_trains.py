@@ -16,14 +16,12 @@ def przewoznik_pociagi():
     cursor.execute("""
         SELECT 
             p.id_pociągu,
-            p.model_pociągu,
+            m.nazwa_modelu,
             pr.nazwa AS przewoznik,
-            s.nazwa_stacji,
-            s.miasto,
             p.stan
         FROM pociagi p
         JOIN przewoznicy pr ON p.id_przewoźnika = pr.id_przewoznika
-        JOIN stacje_kolejowe s ON p.id_aktualna_stacja = s.id_stacji
+        JOIN modele_pociagow m ON p.id_modelu = m.id_modelu
         WHERE p.id_przewoźnika = %s
     """, (id_przewoznika,))
 
@@ -129,39 +127,34 @@ def edytuj_pociag(train_id):
     train = cursor.fetchall()
 
     if request.method == 'POST':
-        model = request.form.get('model_pociagu')
+        id_modelu = request.form.get('id_modelu')
 
         id_przewoznika = session.get('user_id')
 
-        id_stacji = request.form.get('id_stacji')
         stan = request.form.get('stan')
         
         cursor.execute("""
             UPDATE pociagi SET
-                model_pociągu = %s,
+                id_modelu = %s,
                 id_przewoźnika = %s,
-                id_aktualna_stacja = %s,
                 stan = %s
             WHERE id_pociągu = %s
-        """, (model, id_przewoznika, id_stacji, stan, train_id))
+        """, (id_modelu, id_przewoznika, stan, train_id))
         
         conn.commit()
         
         cursor.close()
         return redirect(url_for('przewoznik.przewoznik_pociagi'))
 
-    cursor.execute("SELECT id_przewoznika,nazwa FROM przewoznicy ORDER BY nazwa")
-    przewoznicy = cursor.fetchall()
 
-    cursor.execute("SELECT id_stacji,nazwa_stacji FROM stacje_kolejowe ORDER BY nazwa_stacji")
-    stacje = cursor.fetchall()
+    cursor.execute("SELECT * FROM modele_pociagow")
+    models = cursor.fetchall()
 
     cursor.close()
 
     return render_template('przewoznik/edytuj_pociag.html',
                            train=train,
-                           przewoznicy=przewoznicy,
-                           stacje=stacje)
+                           models=models)
 
 
 
@@ -177,34 +170,30 @@ def dodaj_pociag():
     cursor = conn.cursor()
 
     if request.method == 'POST':
-        model = request.form.get('model_pociagu')
+        id_modelu = request.form.get('id_modelu')
 
         id_przewoznika = session.get('user_id')
         
-        id_stacji = request.form.get('id_stacji')
         stan = request.form.get('stan')
         
         cursor.execute("""
             INSERT INTO pociagi (
-                model_pociągu, id_przewoźnika, id_aktualna_stacja,stan
-            ) VALUES (%s,%s,%s,%s)
-        """, (model, id_przewoznika, id_stacji, stan))
+                id_modelu, id_przewoźnika,stan
+            ) VALUES (%s,%s,%s)
+        """, (id_modelu, id_przewoznika, stan))
         
         conn.commit()
         cursor.close()
         return redirect(url_for('przewoznik.przewoznik_pociagi'))
 
-    cursor.execute("SELECT id_przewoznika,nazwa FROM przewoznicy ORDER BY nazwa")
-    przewoznicy = cursor.fetchall()
 
-    cursor.execute("SELECT id_stacji,nazwa_stacji FROM stacje_kolejowe ORDER BY nazwa_stacji")
-    stacje = cursor.fetchall()
+    cursor.execute("SELECT * FROM modele_pociagow")
+    models = cursor.fetchall()
+
 
     cursor.close()
 
-    return render_template('przewoznik/dodaj_pociag.html',
-                           przewoznicy=przewoznicy,
-                           stacje=stacje)
+    return render_template('przewoznik/dodaj_pociag.html',models=models)
 
 
 
