@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel administratora - Modele pociągów</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class = "admin">
+        <h1>Wszystkie modele pociągów</h1>
+    <div class = "links">
+         <a href="{{ url_for('admin.admin_pociagi') }}">Powrót</a><br><br>
+    </div>
+    <h3>Dodaj model</h3>
+    <form method="POST" action="{{ url_for('admin.dodaj_model') }}" style="display:inline;">
+        Nazwa modelu: <input type="text" name="model_pociagu" required>
+        <button type="submit">Dodaj</button>
+    </form>
+    {% if models %}
+    <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>Nazwa modelu</th>
+                <th>Akcje</th>
+            </tr>
+            {% for m in models %}
+            <tr>
+                <td>{{ m[0] }}</td>
+                <td>{{ m[1] }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('admin.edytuj_model', model_id=m[0]) }}" style="display:inline;">
+                     Nazwa modelu: <input type="text" name="model_pociagu" required>
+                    <button type="submit">Zapisz</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.usun_model', model_id=m[0]) }}" style="display:inline;">
+                    <button type="submit" onclick="return confirm('Na pewno usunąć model?');">Usuń</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>Brak zarejestrowanych modelów pociągów.</p>
+    {% endif %}
+    </div>
+</body>
+</html>

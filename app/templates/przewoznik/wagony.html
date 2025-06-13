@@ -9,7 +9,7 @@
     <div class = "przewoznik">
         <h1>Wszystkie wagony pociągu</h1>
     <div class = "links">
-         <a href="{{ url_for('przewoznik.przewoznik') }}">Powrót</a><br><br>
+         <a href="{{ url_for('przewoznik.przewoznik_pociagi') }}">Powrót</a><br><br>
     </div>
     <h2>Dodaj wagon</h2>
     <form method="POST" action="{{ url_for('przewoznik.dodaj_wagon', train_id=train_id) }}" style="display:inline;">

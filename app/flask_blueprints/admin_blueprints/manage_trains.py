@@ -203,3 +203,83 @@ def usun_pociag(train_id):
     conn.commit()
     cursor.close()
     return redirect(url_for('admin.admin_pociagi'))
+
+
+
+@admin_bp.route('/pociągi/modele')
+def modele_pociagow():
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM modele_pociagow")
+    models = cursor.fetchall()
+
+    cursor.close()
+    return render_template('admin/modele_pociagow.html', models=models)
+
+
+
+@admin_bp.route('/pociągi/modele/<int:model_id>/usun', methods=['POST'])
+def usun_model(model_id):
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
+    cursor.execute("DELETE FROM modele_pociagow WHERE id_modelu = %s", (model_id,))
+
+    conn.commit()
+
+    cursor.close()
+    return redirect(url_for('admin.modele_pociagow'))
+
+
+
+@admin_bp.route('/pociągi/modele/<int:model_id>/edytuj', methods=['POST'])
+def edytuj_model(model_id):
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+    
+    model_pociagu = request.form.get('model_pociagu')
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        UPDATE modele_pociagow SET nazwa_modelu = %s WHERE id_modelu = %s
+    """, (model_pociagu , model_id))
+    
+    conn.commit()
+    
+    cursor.close()
+
+    return redirect(url_for('admin.modele_pociagow'))
+
+
+@admin_bp.route('/pociągi/modele/dodaj', methods=['POST'])
+def dodaj_model():
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Brak dostępu')
+        return redirect(url_for('admin.login'))
+    
+    model_pociagu = request.form.get('model_pociagu')
+    
+    conn = get_db_connection('admin')
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO modele_pociagow(nazwa_modelu) VALUES(%s)    """
+                   , (model_pociagu,))
+    
+    conn.commit()
+    
+    cursor.close()
+
+    return redirect(url_for('admin.modele_pociagow'))

@@ -212,3 +212,83 @@ def usun_pociag(train_id):
     conn.commit()
     cursor.close()
     return redirect(url_for('przewoznik.przewoznik_pociagi'))
+
+
+
+@przewoznik_bp.route('/pociągi/modele')
+def modele_pociagow():
+    if 'role' not in session or session['role'] != 'przewoznik':
+        flash('Brak dostępu')
+        return redirect(url_for('przewoznik.login'))
+    
+    conn = get_db_connection('przewoznik')
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM modele_pociagow")
+    models = cursor.fetchall()
+
+    cursor.close()
+    return render_template('przewoznik/modele_pociagow.html', models=models)
+
+
+
+@przewoznik_bp.route('/pociągi/modele/<int:model_id>/usun', methods=['POST'])
+def usun_model(model_id):
+    if 'role' not in session or session['role'] != 'przewoznik':
+        flash('Brak dostępu')
+        return redirect(url_for('przewoznik.login'))
+
+    conn = get_db_connection('przewoznik')
+    cursor = conn.cursor()
+    
+    cursor.execute("DELETE FROM modele_pociagow WHERE id_modelu = %s", (model_id,))
+
+    conn.commit()
+
+    cursor.close()
+    return redirect(url_for('przewoznik.modele_pociagow'))
+
+
+
+@przewoznik_bp.route('/pociągi/modele/<int:model_id>/edytuj', methods=['POST'])
+def edytuj_model(model_id):
+    if 'role' not in session or session['role'] != 'przewoznik':
+        flash('Brak dostępu')
+        return redirect(url_for('przewoznik.login'))
+    
+    model_pociagu = request.form.get('model_pociagu')
+    
+    conn = get_db_connection('przewoznik')
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        UPDATE modele_pociagow SET nazwa_modelu = %s WHERE id_modelu = %s
+    """, (model_pociagu , model_id))
+    
+    conn.commit()
+    
+    cursor.close()
+
+    return redirect(url_for('przewoznik.modele_pociagow'))
+
+
+@przewoznik_bp.route('/pociągi/modele/dodaj', methods=['POST'])
+def dodaj_model():
+    if 'role' not in session or session['role'] != 'przewoznik':
+        flash('Brak dostępu')
+        return redirect(url_for('przewoznik.login'))
+    
+    model_pociagu = request.form.get('model_pociagu')
+    
+    conn = get_db_connection('przewoznik')
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO modele_pociagow(nazwa_modelu) VALUES(%s)    """
+                   , (model_pociagu,))
+    
+    conn.commit()
+    
+    cursor.close()
+
+    return redirect(url_for('przewoznik.modele_pociagow'))

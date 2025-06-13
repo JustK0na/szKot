@@ -3,7 +3,6 @@ from common import AM_IN_DOCKER
 
 ###########
 #TODO:
-#   -dodać dodawnie i edycje modelow pociagow
 #   -add error handling to all trigers
 #   -make UI changes to dodaj polaczenie, edytuj przelaczanie some css
 #   -some database stuff I forgot what more
