@@ -6,26 +6,27 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-   <div class = "bilety">
-        <h1>Bilety zakupione przez {{ session['user_name'] }}</h1>
-        <div class = "links">
-            <a href="{{ url_for('user.welcome') }}">Powrót</a>
-        </div>
+<div class="bilety">
+    <h1>Bilety zakupione przez {{ session['user_name'] }}</h1>
+    <div class="links">
+        <a href="{{ url_for('user.welcome') }}">Powrót</a>
+    </div>
 
-        {% if tickets %}
-        <table border="1">
+    <h2>Zaplanowane przejazdy</h2>
+    {% if tickets_planned %}
+    <table border="1">
         <tr>
             <th>ID Biletu</th>
             <th>Miasto Początkowe</th>
-            <th>Miasto Docelowe</th>
-            <th>Czas Przejazdu</th>
+            <th>Miasto Docelowe</th>            
             <th>Godzina Odjazdu</th>
             <th>Data</th>
+            <th>Czas Przejazdu</th>
             <th>Cena</th>
             <th>Ulga</th>
             <th>Szczegóły</th>
         </tr>
-        {% for t in tickets %}
+        {% for t in tickets_planned %}
         <tr>
             <td>{{ t[2] }}</td>
             <td>{{ t[0] }}</td>
@@ -36,14 +37,48 @@
             <td>{{ t[6] }}zł</td>
             <td>{{ t[7] }}</td>
             <td>
-            <a href="{{ url_for('user.bilety_szczegol', bilet_id=t[2]) }}">Szczegóły</a>
+                <a href="{{ url_for('user.bilety_szczegol', bilet_id=t[2]) }}">Szczegóły</a>
             </td>
         </tr>
         {% endfor %}
-        </table>
-        {% else %}
-        <p>Nie znaleziono biletów.</p>
-        {% endif %}
-    </div>
+    </table>
+    {% else %}
+        <p>Brak zaplanowanych biletów.</p>
+    {% endif %}
+
+    <h2>Historia przejazdów</h2>
+    {% if tickets_done %}
+    <table border="1">
+        <tr>
+            <th>ID Biletu</th>
+            <th>Miasto Początkowe</th>
+            <th>Miasto Docelowe</th>
+            <th>Godzina Odjazdu</th>
+            <th>Data</th>
+            <th>Czas Przejazdu</th>
+            <th>Cena</th>
+            <th>Ulga</th>
+            <th>Szczegóły</th>
+        </tr>
+        {% for t in tickets_done %}
+        <tr>
+            <td>{{ t[2] }}</td>
+            <td>{{ t[0] }}</td>
+            <td>{{ t[1] }}</td>
+            <td>{{ t[3] }}</td>
+            <td>{{ t[4] }}</td>
+            <td>{{ t[5] }}</td>
+            <td>{{ t[6] }}zł</td>
+            <td>{{ t[7] }}</td>
+            <td>
+                <a href="{{ url_for('user.bilety_szczegol', bilet_id=t[2]) }}">Szczegóły</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>Brak zakończonych lub anulowanych biletów.</p>
+    {% endif %}
+</div>
 </body>
 </html>

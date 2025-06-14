@@ -73,7 +73,7 @@ def search():
 
     results = []
     all_connections = []
-    
+
     cursor.execute("""
         SELECT id_przejazdu, nazwa_stacji_początkowej, nazwa_stacji_końcowej, godzina_odjazdu,data , czas_przejazdu, cena
         FROM przejazd_szczeg WHERE stan = "Zaplanowany"
@@ -143,22 +143,42 @@ def bilety():
             SELECT
             p.nazwa_stacji_początkowej, 
             p.nazwa_stacji_końcowej,
-            b.id_biletu, 
-            p.czas_przejazdu, 
+            b.id_biletu,          
             p.godzina_odjazdu, 
             p.data, 
+            p.czas_przejazdu, 
             b.cena, 
             b.ulgi
             FROM bilety b
             JOIN przejazd_szczeg p ON b.id_przejazdu = p.id_przejazdu
-            WHERE b.id_pasażera = %s \
-            ORDER BY p.godzina_odjazdu DESC
+            WHERE b.id_pasażera = %s AND p.stan ="Zaplanowany" \
+            ORDER BY data ASC, godzina_odjazdu ASC
             """
     cursor.execute(query, (session['user_id'],))
-    tickets = cursor.fetchall()
+    tickets_planned = cursor.fetchall()
+
+    query = """
+            SELECT
+            p.nazwa_stacji_początkowej, 
+            p.nazwa_stacji_końcowej,
+            b.id_biletu,             
+            p.godzina_odjazdu, 
+            p.data, 
+            p.czas_przejazdu, 
+            b.cena, 
+            b.ulgi
+            FROM bilety b
+            JOIN przejazd_szczeg p ON b.id_przejazdu = p.id_przejazdu
+            WHERE b.id_pasażera = %s AND p.stan !="Zaplanowany" \
+            ORDER BY data ASC, godzina_odjazdu ASC
+            """
+    cursor.execute(query, (session['user_id'],))
+    tickets_done = cursor.fetchall()
+
+
     cursor.close()
 
-    return render_template('user/bilety.html', tickets=tickets)
+    return render_template('user/bilety.html', tickets_planned=tickets_planned,tickets_done=tickets_done)
 
 @user_bp.route('/bilety/<int:bilet_id>')
 def bilety_szczegol(bilet_id):
