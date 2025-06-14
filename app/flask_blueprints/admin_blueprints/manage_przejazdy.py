@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from flask_blueprints.admin_blueprint import admin_bp,get_db_connection
+from flask_blueprints.admin_blueprint import admin_bp,get_db_connection,MySQLdb
 
 @admin_bp.route('/przejazdy')
 def admin_przejazdy():
@@ -68,18 +68,21 @@ def edytuj_przejazd(przejazd_id):
         stan = request.form.get('stan')
         opoznienie = request.form.get('opoznienie')
 
-        cursor.execute("""
-            UPDATE przejazdy SET
-                id_pociągu = %s,
-                data = %s,
-                stan = %s,
-                opoznienie = %s
-            WHERE id_przejazdu = %s
-        """, (id_pociagu, data, stan, opoznienie,przejazd_id))
-        
-        conn.commit()
-        cursor.close()
-        return redirect(url_for('admin.admin_przejazdy'))
+        try:
+            cursor.execute("""
+                UPDATE przejazdy SET
+                    id_pociągu = %s,
+                    data = %s,
+                    stan = %s,
+                    opoznienie = %s
+                WHERE id_przejazdu = %s
+            """, (id_pociagu, data, stan, opoznienie,przejazd_id))
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('admin.admin_przejazdy'))
+        except MySQLdb.Error as e:
+                conn.rollback()
+                flash(f"Błąd MySQL: {e.args[1]}")
 
 
     cursor.execute("SELECT id_pociągu, nazwa_modelu,nazwa_przewoznika FROM pociag_szczeg")

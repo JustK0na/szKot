@@ -329,7 +329,7 @@ DELIMITER ;;
   WHERE id_pociągu = NEW.id_pociągu;
 
   IF polaczenie_przewoznik IS NULL OR pociag_przewoznik IS NULL OR polaczenie_przewoznik <> pociag_przewoznik THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Carrier mismatch between connection and train';
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Przewoźnik pociągu jest inny przewoźnik połączenia';
   END IF;
 END */;;
 DELIMITER ;
@@ -388,7 +388,7 @@ DELIMITER ;;
   WHERE id_pociągu = NEW.id_pociągu;
 
   IF polaczenie_przewoznik IS NULL OR pociag_przewoznik IS NULL OR polaczenie_przewoznik <> pociag_przewoznik THEN
-    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Carrier mismatch between connection and train';
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Przewoźnik pociągu jest inny przewoźnik połączenia';
   END IF;
 END */;;
 DELIMITER ;

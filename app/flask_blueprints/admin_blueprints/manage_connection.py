@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from flask_blueprints.admin_blueprint import admin_bp,get_db_connection
+from flask_blueprints.admin_blueprint import admin_bp,get_db_connection,MySQLdb
 
 
 @admin_bp.route('/polaczenia')
@@ -197,27 +197,33 @@ def dodaj_przejazd(connection_id):
     conn = get_db_connection('admin')
     cursor = conn.cursor()
 
+    cursor.execute("""SELECT id_przewoznika FROM polaczenia WHERE id_połączenia=%s""", (connection_id,))
+    id_przewoznika = cursor.fetchone()
+
     if request.method == 'POST':
         id_pociagu = request.form.get('id_pociagu')
         data = request.form.get('data_przejazdu')
         stan = request.form.get('stan')
         opoznienie = request.form.get('opoznienie')
 
-        cursor.execute("""
-            INSERT INTO przejazdy(
-                id_połączenia,
-                id_pociągu,
-                data,
-                stan,
-                opoznienie) VALUES (%s,%s,%s,%s,%s)
-        """, (connection_id,id_pociagu, data, stan, opoznienie))
-        
-        conn.commit()
-        cursor.close()
-        return redirect(url_for('admin.przejazdy_polaczenia', connection_id=connection_id))
+        try:
+            cursor.execute("""
+                INSERT INTO przejazdy(
+                    id_połączenia,
+                    id_pociągu,
+                    data,
+                    stan,
+                    opoznienie) VALUES (%s,%s,%s,%s,%s)
+            """, (connection_id, id_pociagu, data, stan, opoznienie))
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('admin.przejazdy_polaczenia',connection_id=connection_id))
+        except MySQLdb.Error as e:
+                conn.rollback()
+                flash(f"Błąd MySQL: {e.args[1]}")
 
 
-    cursor.execute("SELECT id_pociągu, nazwa_modelu,nazwa_przewoznika FROM pociag_szczeg")
+    cursor.execute("SELECT id_pociągu, nazwa_modelu,nazwa_przewoznika FROM pociag_szczeg WHERE id_przewoznika=%s" , (id_przewoznika,))
     pociagi = cursor.fetchall()
 
     cursor.close()
@@ -256,6 +262,9 @@ def edytuj_przejazd_polaczenia(connection_id,przejazd_id):
     conn = get_db_connection('admin')
     cursor = conn.cursor()
 
+    cursor.execute("""SELECT id_przewoznika FROM polaczenia WHERE id_połączenia=%s""", (connection_id,))
+    id_przewoznika = cursor.fetchone()
+
     cursor.execute("""SELECT * FROM przejazdy WHERE id_przejazdu=%s""", (przejazd_id,))
     przejazd = cursor.fetchone()
 
@@ -264,25 +273,28 @@ def edytuj_przejazd_polaczenia(connection_id,przejazd_id):
         data = request.form.get('data_przejazdu')
         stan = request.form.get('stan')
         opoznienie = request.form.get('opoznienie')
+        try:
+            cursor.execute("""
+                UPDATE przejazdy SET
+                    id_pociągu = %s,
+                    data = %s,
+                    stan = %s,
+                    opoznienie = %s
+                WHERE id_przejazdu = %s
+            """, (id_pociagu, data, stan, opoznienie,przejazd_id))
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('admin.przejazdy_polaczenia',connection_id=connection_id))
+        except MySQLdb.Error as e:
+                conn.rollback()
+                flash(f"Błąd MySQL: {e.args[1]}")
 
-        cursor.execute("""
-            UPDATE przejazdy SET
-                id_pociągu = %s,
-                data = %s,
-                stan = %s,
-                opoznienie = %s
-            WHERE id_przejazdu = %s
-        """, (id_pociagu, data, stan, opoznienie,przejazd_id))
-        
-        conn.commit()
-        cursor.close()
-        return redirect(url_for('admin.przejazdy_polaczenia',connection_id))
 
-
-    cursor.execute("SELECT id_pociągu, nazwa_modelu,nazwa_przewoznika FROM pociag_szczeg")
+    cursor.execute("SELECT id_pociągu, nazwa_modelu,nazwa_przewoznika FROM pociag_szczeg WHERE id_przewoznika=%s" , (id_przewoznika,))
     pociagi = cursor.fetchall()
 
     cursor.close()
+
 
     return render_template('admin/edytuj_przejazd_polaczenia.html',
                            connection_id = connection_id,

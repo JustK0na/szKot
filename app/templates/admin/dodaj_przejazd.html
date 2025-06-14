@@ -11,6 +11,11 @@
         <div class="links">
             <a href="{{ url_for('admin.przejazdy_polaczenia', connection_id=connection_id) }}">Powrót do listy przejazdów</a><br><br>
         </div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+                <div class="msg" style="color:red;">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
         <form method="POST">    
 
             <label for="id_pociagu">ID Pociągu:</label>

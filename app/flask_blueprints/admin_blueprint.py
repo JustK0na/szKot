@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from common import hash_password,get_db_connection
+from common import hash_password,get_db_connection,MySQLdb
 
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
