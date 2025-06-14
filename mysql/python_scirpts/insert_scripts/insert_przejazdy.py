@@ -43,7 +43,6 @@ def insert_przejazdy():
     for id_polaczenia, dni, id_przewoznika in polaczenia:
         number_of_przejazds = random.randint(1, 12)
 
-        # Rozdziel dni tygodnia (np. 'Monday,Wednesday,Friday') na listę
         if isinstance(dni, str):
             dni_lista = dni.split(',')
         else:

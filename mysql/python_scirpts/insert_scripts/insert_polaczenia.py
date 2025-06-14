@@ -24,7 +24,7 @@ def insert_polaczenia(amount):
 
         travel_time = f"{random.randint(0, 5)}:{random.randint(0, 59):02d}:{random.randint(0, 59):02d}"  # HH:MM:SS format
 
-        departure_time = f"{random.randint(0, 24)}:{random.randint(0, 59):02d}:{random.randint(0, 59):02d}"  # HH:MM:SS format
+        departure_time = f"{random.randint(0, 23)}:{random.randint(0, 59):02d}:{random.randint(0, 59):02d}"  # HH:MM:SS format
 
         price = random.randint(10, 100)
 

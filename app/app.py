@@ -2,6 +2,10 @@ from flask import Flask, render_template, redirect, url_for,  flash
 from common import AM_IN_DOCKER
 
 
+######
+#TODO:
+# -add przejazdy script updater
+#######
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 

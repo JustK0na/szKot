@@ -73,23 +73,11 @@ def search():
 
     results = []
     all_connections = []
-
-    if request.method == 'POST':
-        from_city = request.form['from_city']
-        to_city = request.form['to_city']
-
-        query = """
-                SELECT id_przejazdu, nazwa_stacji_początkowej, nazwa_stacji_końcowej, czas_przejazdu, godzina_odjazdu, data
-                FROM polaczenia p
-                WHERE nazwa_stacji_początkowej = %s AND nazwa_stacji_końcowej = %s
-                """
-        cursor.execute(query, (from_city, to_city))
-        results = cursor.fetchall()
-
+    
     cursor.execute("""
-        SELECT id_przejazdu, nazwa_stacji_początkowej, nazwa_stacji_końcowej, czas_przejazdu, godzina_odjazdu, data,cena
-        FROM przejazd_szczeg
-        ORDER BY godzina_odjazdu DESC
+        SELECT id_przejazdu, nazwa_stacji_początkowej, nazwa_stacji_końcowej, godzina_odjazdu,data , czas_przejazdu, cena
+        FROM przejazd_szczeg WHERE stan = "Zaplanowany"
+        ORDER BY data ASC, godzina_odjazdu ASC
     """)
     all_connections = cursor.fetchall()
 
