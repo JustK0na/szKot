@@ -3,6 +3,7 @@ services:
     image: mysql:8.0
     restart: always
     environment:
+      TZ: "Europe/Warsaw"
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: szkot
       MYSQL_USER: user
@@ -19,6 +20,7 @@ services:
     depends_on:
       - db
     environment:
+      TZ: "Europe/Warsaw"
       MYSQL_HOST: db
       MYSQL_USER: user
       MYSQL_PASSWORD: user
@@ -32,6 +34,8 @@ services:
     build: ./mysql/python_scripts
     depends_on:
       - db
+    environment:
+      TZ: "Europe/Warsaw"
     networks:
       - backend
     restart: always
