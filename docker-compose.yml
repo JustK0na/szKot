@@ -4,7 +4,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mydatabase
+      MYSQL_DATABASE: szkot
       MYSQL_USER: user
       MYSQL_PASSWORD: user
     ports:
@@ -22,11 +22,20 @@ services:
       MYSQL_HOST: db
       MYSQL_USER: user
       MYSQL_PASSWORD: user
-      MYSQL_DATABASE: mydatabase
+      MYSQL_DATABASE: szkot
     ports:
       - "5000:5000"
     networks:
       - backend
+
+  updater:
+    build: ./mysql/python_scripts
+    depends_on:
+      - db
+    networks:
+      - backend
+    restart: always
+
 
 networks:
   backend:

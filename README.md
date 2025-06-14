@@ -2,6 +2,7 @@
 ###  Services
 - **`web`**: Flask app in Python 3.12
 - **`db`**: MySQL 8.x
+- **`updater`**: Python Slim 3.12
 
 ### Build and Run Instructions
 1. **Build and Start the Application:**
