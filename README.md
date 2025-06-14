@@ -24,7 +24,10 @@
    Username: can be found using script insert_przewoznicy example username: pkpintercity,kolejeśląski,polregio etc...
    Password: 123 
    Password is the same for every przewoznik by default
-
+3. **Pasażerowie**
+   Email: can be found in a dump
+   Password: 123 
+   Password is the same for every przewoznik by default
 ### Ports
 - **Flask Application:**
   - Exposes port `5000` (mapped to host port `5000`)
