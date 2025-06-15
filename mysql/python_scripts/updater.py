@@ -77,46 +77,47 @@ def update_przejazdy():
 
 def insert_przejazdy():
     print(f"[{datetime.now()}] Inserting new przejazdy")
-    today = datetime.today().date()
-    today_name = calendar.day_name[today.weekday()]  
+    for i in range(30):
+        date = datetime.today().date() + timedelta(days=i)
+        date_name = calendar.day_name[date.weekday()]  
 
-    conn = get_connection()
-    cursor = conn.cursor()
+        conn = get_connection()
+        cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM polaczenia")
-    polaczenia = cursor.fetchall()
+        cursor.execute("SELECT * FROM polaczenia")
+        polaczenia = cursor.fetchall()
 
-    for pol in polaczenia:
-        dni = pol['dni_tygodnia']
-        if dni is None:
-            continue
+        for pol in polaczenia:
+            dni = pol['dni_tygodnia']
+            if dni is None:
+                continue
 
-        dni_lista = [d.strip() for d in dni.split(',')]
+            dni_lista = [d.strip() for d in dni.split(',')]
 
-        if today_name not in dni_lista:
-            continue
+            if date_name not in dni_lista:
+                continue
 
-        cursor.execute("""
-            SELECT COUNT(*) AS count FROM przejazdy
-            WHERE id_połączenia = %s AND data = %s
-        """, (pol['id_połączenia'], today))
-        count = cursor.fetchone()['count']
-
-        if count == 0:
             cursor.execute("""
-                SELECT id_pociągu FROM pociagi WHERE id_przewoźnika = %s LIMIT 1
-            """, (pol['id_przewoznika'],))
-            pociag = cursor.fetchone()
-            if pociag:
-                cursor.execute("""
-                    INSERT INTO przejazdy (id_połączenia, id_pociągu, data, stan)
-                    VALUES (%s, %s, %s, 'Zaplanowany')
-                """, (pol['id_połączenia'], pociag['id_pociągu'], today))
-                print(f"Dodano nowy przejazd dla połączenia {pol['id_połączenia']}.")
+                SELECT COUNT(*) AS count FROM przejazdy
+                WHERE id_połączenia = %s AND data = %s
+            """, (pol['id_połączenia'], date))
+            count = cursor.fetchone()['count']
 
-    conn.commit()
-    cursor.close()
-    conn.close()
+            if count == 0:
+                cursor.execute("""
+                    SELECT id_pociągu FROM pociagi WHERE id_przewoźnika = %s LIMIT 1
+                """, (pol['id_przewoznika'],))
+                pociag = cursor.fetchone()
+                if pociag:
+                    cursor.execute("""
+                        INSERT INTO przejazdy (id_połączenia, id_pociągu, data, stan)
+                        VALUES (%s, %s, %s, 'Zaplanowany')
+                    """, (pol['id_połączenia'], pociag['id_pociągu'], date))
+                    print(f"Dodano nowy przejazd dla połączenia {pol['id_połączenia']}.")
+
+        conn.commit()
+        cursor.close()
+        conn.close()
 
 
 print("Update script running")

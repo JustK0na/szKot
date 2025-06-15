@@ -21,7 +21,7 @@ def generuj_daty_dla_dnia_tygodnia(dzien_tygodnia, ile):
     daty = []
 
     # Szukamy dat w promieniu +/-14 dni od dziś
-    for i in range(-14, 15):
+    for i in range(-14,-1):
         kandydat = today + timedelta(days=i)
         if kandydat.weekday() == dzien_num:
             daty.append(kandydat.date())
@@ -60,7 +60,7 @@ def insert_przejazdy():
                 )
                 wynik = cursor.fetchone()
                 if not wynik:
-                    continue  # Brak pociągu tego przewoźnika
+                    continue  
                 id_pociagu = wynik[0]
 
                 if data > datetime.today().date():
