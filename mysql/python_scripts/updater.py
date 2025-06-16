@@ -105,7 +105,7 @@ def insert_przejazdy():
 
             if count == 0:
                 cursor.execute("""
-                    SELECT id_pociągu FROM pociagi WHERE id_przewoźnika = %s LIMIT 1
+                    SELECT id_pociągu FROM pociagi WHERE id_przewoźnika = %s ORDER BY RAND() LIMIT 1
                 """, (pol['id_przewoznika'],))
                 pociag = cursor.fetchone()
                 if pociag:
