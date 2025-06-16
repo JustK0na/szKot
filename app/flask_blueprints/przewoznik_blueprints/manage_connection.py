@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from flask_blueprints.przewoznicy_blueprint import przewoznik_bp,get_db_connection
+from flask_blueprints.przewoznicy_blueprint import przewoznik_bp,get_db_connection,MySQLdb
 
 
 @przewoznik_bp.route('/polaczenia')
@@ -119,6 +119,8 @@ def dodaj_polaczenie():
         cursor.close()
         return redirect(url_for('przewoznik.przewoznik_polaczenia'))
 
+
+
     cursor.execute("SELECT id_stacji, nazwa_stacji FROM stacje_kolejowe ORDER BY nazwa_stacji")
     stacje = cursor.fetchall()
 
@@ -191,24 +193,27 @@ def dodaj_przejazd(connection_id):
 
 
     if request.method == 'POST':
-        id_pociagu = request.form.get('id_pociagu')
-        data = request.form.get('data_przejazdu')
-        stan = request.form.get('stan')
-        opoznienie = request.form.get('opoznienie')
+        try:
+            id_pociagu = request.form.get('id_pociagu')
+            data = request.form.get('data_przejazdu')
+            stan = request.form.get('stan')
+            opoznienie = request.form.get('opoznienie')
 
-        cursor.execute("""
-            INSERT INTO przejazdy(
-                id_połączenia,
-                id_pociągu,
-                data,
-                stan,
-                opoznienie) VALUES (%s,%s,%s,%s,%s)
-        """, (connection_id,id_pociagu, data, stan, opoznienie))
-        
-        conn.commit()
-        cursor.close()
-        return redirect(url_for('przewoznik.przejazdy_polaczenia', connection_id=connection_id))
-
+            cursor.execute("""
+                INSERT INTO przejazdy(
+                    id_połączenia,
+                    id_pociągu,
+                    data,
+                    stan,
+                    opoznienie) VALUES (%s,%s,%s,%s,%s)
+            """, (connection_id,id_pociagu, data, stan, opoznienie))
+            
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('przewoznik.przejazdy_polaczenia', connection_id=connection_id))
+        except MySQLdb.Error as e:
+                conn.rollback()
+                flash(f"Błąd MySQL: {e.args[1]}")
 
     cursor.execute("SELECT id_pociągu, nazwa_modelu,nazwa_przewoznika FROM pociag_szczeg WHERE id_przewoznika=%s", (id_przewoznika,))
     pociagi = cursor.fetchall()
@@ -255,23 +260,28 @@ def edytuj_przejazd_polaczenia(connection_id,przejazd_id):
     przejazd = cursor.fetchone()
 
     if request.method == 'POST':
-        id_pociagu = request.form.get('id_pociagu')
-        data = request.form.get('data_przejazdu')
-        stan = request.form.get('stan')
-        opoznienie = request.form.get('opoznienie')
+        try:
+            id_pociagu = request.form.get('id_pociagu')
+            data = request.form.get('data_przejazdu')
+            stan = request.form.get('stan')
+            opoznienie = request.form.get('opoznienie')
 
-        cursor.execute("""
-            UPDATE przejazdy SET
-                id_pociągu = %s,
-                data = %s,
-                stan = %s,
-                opoznienie = %s
-            WHERE id_przejazdu = %s
-        """, (id_pociagu, data, stan, opoznienie,przejazd_id))
-        
-        conn.commit()
-        cursor.close()
-        return redirect(url_for('przewoznik.przejazdy_polaczenia',connection_id=connection_id))
+            cursor.execute("""
+                UPDATE przejazdy SET
+                    id_pociągu = %s,
+                    data = %s,
+                    stan = %s,
+                    opoznienie = %s
+                WHERE id_przejazdu = %s
+            """, (id_pociagu, data, stan, opoznienie,przejazd_id))
+            
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('przewoznik.przejazdy_polaczenia',connection_id=connection_id))
+        except MySQLdb.Error as e:
+                conn.rollback()
+                flash(f"Błąd MySQL: {e.args[1]}")
+
 
 
     cursor.execute("SELECT id_pociągu, nazwa_modelu,nazwa_przewoznika FROM pociag_szczeg WHERE id_przewoznika=%s", (id_przewoznika,))

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from common import hash_password,get_db_connection
+from common import hash_password,get_db_connection,MySQLdb
 
 
 przewoznik_bp = Blueprint('przewoznik', __name__, url_prefix='/przewoznik')
