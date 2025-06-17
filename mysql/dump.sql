@@ -194,7 +194,7 @@ CREATE TABLE `polaczenia` (
   `id_przewoznika` int NOT NULL,
   `czas_przejazdu` time NOT NULL,
   `godzina_odjazdu` time NOT NULL,
-  `cena` int NOT NULL DEFAULT '0',
+  `cena` int NOT NULL,
   `dni_tygodnia` set('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') DEFAULT NULL,
   PRIMARY KEY (`id_połączenia`),
   KEY `id_stacji_początkowej` (`id_stacji_początkowej`),
