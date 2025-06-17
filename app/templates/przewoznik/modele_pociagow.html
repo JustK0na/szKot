@@ -11,6 +11,11 @@
     <div class = "links">
          <a href="{{ url_for('przewoznik.przewoznik_pociagi') }}">Powrót</a><br><br>
     </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+            <div class="msg" style="color:red;">{{ messages[0] }}</div>
+    {% endif %}
+    {% endwith %}
     <h3>Dodaj model</h3>
     <form method="POST" action="{{ url_for('przewoznik.dodaj_model') }}" style="display:inline;">
         Nazwa modelu: <input type="text" name="model_pociagu" required>

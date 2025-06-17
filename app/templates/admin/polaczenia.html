@@ -12,6 +12,11 @@
             <a href="{{ url_for('admin.admin') }}">Powrót</a><br><br>
             <a href="{{ url_for('admin.dodaj_polaczenie') }}"> Dodaj nowe połączenie</a>
         </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+            <div class="msg" style="color:red;">{{ messages[0] }}</div>
+    {% endif %}
+    {% endwith %}
         {% if connections %}
         <table border="1">
             <tr>

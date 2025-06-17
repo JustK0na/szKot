@@ -49,27 +49,31 @@ def edytuj_polaczenie(connection_id):
     connection = cursor.fetchone()
 
     if request.method == 'POST':
-        id_stacji_poczatkowej = request.form.get('id_stacji_początkowej')
-        id_stacji_koncowej = request.form.get('id_stacji_końcowej')
-        czas_przejazdu = request.form.get('czas_przejazdu')
-        godzina_odjazdu = request.form.get('godzina_odjazdu')
-        dni_tygodnia = ','.join(request.form.getlist('dni_tygodnia'))  
-        cena = request.form.get('cena')
+        try:
+            id_stacji_poczatkowej = request.form.get('id_stacji_początkowej')
+            id_stacji_koncowej = request.form.get('id_stacji_końcowej')
+            czas_przejazdu = request.form.get('czas_przejazdu')
+            godzina_odjazdu = request.form.get('godzina_odjazdu')
+            dni_tygodnia = ','.join(request.form.getlist('dni_tygodnia'))  
+            cena = request.form.get('cena')
 
-        cursor.execute("""
-            UPDATE polaczenia SET
-                id_stacji_początkowej = %s,
-                id_stacji_końcowej = %s,
-                czas_przejazdu = %s,
-                godzina_odjazdu = %s,
-                dni_tygodnia = %s,
-                cena = %s
-            WHERE id_połączenia = %s
-        """, (id_stacji_poczatkowej, id_stacji_koncowej, czas_przejazdu,
-              godzina_odjazdu, dni_tygodnia,cena ,connection_id))
-        conn.commit()
-        cursor.close()
-        return redirect(url_for('przewoznik.przewoznik_polaczenia'))
+            cursor.execute("""
+                UPDATE polaczenia SET
+                    id_stacji_początkowej = %s,
+                    id_stacji_końcowej = %s,
+                    czas_przejazdu = %s,
+                    godzina_odjazdu = %s,
+                    dni_tygodnia = %s,
+                    cena = %s
+                WHERE id_połączenia = %s
+            """, (id_stacji_poczatkowej, id_stacji_koncowej, czas_przejazdu,
+                godzina_odjazdu, dni_tygodnia,cena ,connection_id))
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('przewoznik.przewoznik_polaczenia'))
+        except MySQLdb.Error as e:
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
 
 
@@ -96,28 +100,32 @@ def dodaj_polaczenie():
     id_przewoznika = session.get('user_id')
 
     if request.method == 'POST':
-        id_stacji_poczatkowej = request.form.get('id_stacji_początkowej')
-        id_stacji_koncowej = request.form.get('id_stacji_końcowej')
-        czas_przejazdu = request.form.get('czas_przejazdu')
-        godzina_odjazdu = request.form.get('godzina_odjazdu')
-        dni_tygodnia = ','.join(request.form.getlist('dni_tygodnia'))
-        cena = request.form.get('cena')
+        try:
+            id_stacji_poczatkowej = request.form.get('id_stacji_początkowej')
+            id_stacji_koncowej = request.form.get('id_stacji_końcowej')
+            czas_przejazdu = request.form.get('czas_przejazdu')
+            godzina_odjazdu = request.form.get('godzina_odjazdu')
+            dni_tygodnia = ','.join(request.form.getlist('dni_tygodnia'))
+            cena = request.form.get('cena')
 
-        cursor.execute("""
-            INSERT INTO polaczenia (
-                id_stacji_początkowej,
-                id_stacji_końcowej,
-                czas_przejazdu,
-                godzina_odjazdu,
-                dni_tygodnia,
-                cena,
-                id_przewoznika
-            ) VALUES (%s, %s, %s, %s, %s,%s,%s)
-        """, ( id_stacji_poczatkowej, id_stacji_koncowej,
-              czas_przejazdu, godzina_odjazdu,  dni_tygodnia,cena,id_przewoznika))
-        conn.commit()
-        cursor.close()
-        return redirect(url_for('przewoznik.przewoznik_polaczenia'))
+            cursor.execute("""
+                INSERT INTO polaczenia (
+                    id_stacji_początkowej,
+                    id_stacji_końcowej,
+                    czas_przejazdu,
+                    godzina_odjazdu,
+                    dni_tygodnia,
+                    cena,
+                    id_przewoznika
+                ) VALUES (%s, %s, %s, %s, %s,%s,%s)
+            """, ( id_stacji_poczatkowej, id_stacji_koncowej,
+                czas_przejazdu, godzina_odjazdu,  dni_tygodnia,cena,id_przewoznika))
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('przewoznik.przewoznik_polaczenia'))
+        except MySQLdb.Error as e:
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
 
 
@@ -140,10 +148,15 @@ def usun_polaczenie(connection_id):
     
     conn = get_db_connection('przewoznik')
     cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM polaczenia WHERE id_połączenia = %s", (connection_id,))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
     
-    cursor.execute("DELETE FROM polaczenia WHERE id_połączenia = %s", (connection_id,))
-    conn.commit()
     cursor.close()
+
     return redirect(url_for('przewoznik.przewoznik_polaczenia'))
 
 
@@ -212,8 +225,8 @@ def dodaj_przejazd(connection_id):
             cursor.close()
             return redirect(url_for('przewoznik.przejazdy_polaczenia', connection_id=connection_id))
         except MySQLdb.Error as e:
-                conn.rollback()
-                flash(f"Błąd MySQL: {e.args[1]}")
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
     cursor.execute("SELECT id_pociągu, nazwa_modelu,nazwa_przewoznika FROM pociag_szczeg WHERE id_przewoznika=%s", (id_przewoznika,))
     pociagi = cursor.fetchall()
@@ -236,9 +249,13 @@ def usun_przejazd_polaczanie(connection_id,przejazd_id):
     
     conn = get_db_connection('przewoznik')
     cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM przejazdy WHERE id_przejazdu = %s", (przejazd_id,))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
 
-    cursor.execute("DELETE FROM przejazdy WHERE id_przejazdu = %s", (przejazd_id,))
-    conn.commit()
     cursor.close()
     return redirect(url_for('przewoznik.przejazdy_polaczenia', connection_id=connection_id))
 
@@ -279,8 +296,8 @@ def edytuj_przejazd_polaczenia(connection_id,przejazd_id):
             cursor.close()
             return redirect(url_for('przewoznik.przejazdy_polaczenia',connection_id=connection_id))
         except MySQLdb.Error as e:
-                conn.rollback()
-                flash(f"Błąd MySQL: {e.args[1]}")
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
 
 

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from common import random,hash_password,get_db_connection
+from common import random,hash_password,get_db_connection,MySQLdb
 
 user_bp = Blueprint('user', __name__)
 
@@ -44,16 +44,25 @@ def register():
         if cursor.fetchone():
             flash("Ten emali ma już przypisane konto.")
             return redirect(url_for('user.register'))
+        
 
-        query = """
-                INSERT INTO pasazerowie (imie, nazwisko, mail, telefon, haslo)
-                VALUES (%s, %s, %s, %s, %s) \
-                """
-        cursor.execute(query, (imie, nazwisko, email, telefon, password_hash))
-        conn.commit()
+        try:
+            query = """
+                    INSERT INTO pasazerowie (imie, nazwisko, mail, telefon, haslo)
+                    VALUES (%s, %s, %s, %s, %s) \
+                    """
+            cursor.execute(query, (imie, nazwisko, email, telefon, password_hash))
+            conn.commit()
+            cursor.close()
+            ("Rejestracja zakończona. Zaloguj się.")
+            return redirect(url_for('user.login'))
+        except MySQLdb.Error as e:
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
+
+
         cursor.close()
-        flash("Rejestracja zakończona. Zaloguj się.")
-        return redirect(url_for('user.login'))
+        
     return render_template('register.html')
 
 

@@ -11,11 +11,16 @@
         <div class = "links">
             <a href="{{ url_for('przewoznik.przewoznik_pociagi') }}">Powrót do listy pociagi</a><br><br>
         </div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="msg" style="color:red;">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
         <form method="POST">    
             <label>Model pociągu</label>
             <select name="id_modelu" id="id_modelu" required>
                 {% for m in models %}
-                    <option value="{{ m[0] }}" {% if m[0] == train[3] %}selected{% endif %}>
+                    <option value="{{ m[0] }}">
                         {{ m[1] }}
                     </option>
                 {% endfor %}

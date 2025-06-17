@@ -12,6 +12,12 @@
          <a href="{{ url_for('admin.admin') }}">Powrót</a><br><br>
          <a href="{{ url_for('admin.dodaj_przewoznika') }}">Dodaj przewoźnika</a><br><br>
     </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+            <div class="msg" style="color:red;">{{ messages[0] }}</div>
+    {% endif %}
+    {% endwith %}
+    
     {% if przewoznicy %}
     <table border="1">
             <tr>

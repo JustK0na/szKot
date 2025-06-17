@@ -11,6 +11,11 @@
         <div class = "links">
             <a href="{{ url_for('admin.admin_pasazerowie') }}">Powrót do listy uzytkowników</a><br><br>
         </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+            <div class="msg" style="color:red;">{{ messages[0] }}</div>
+    {% endif %}
+    {% endwith %}
         <h1>Edytuj uzytkownika #{{ user[0] }}</h1>
         <form method="POST">    
             <label>Imie</label>

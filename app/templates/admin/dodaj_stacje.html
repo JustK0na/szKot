@@ -11,6 +11,11 @@
         <div class = "links">
             <a href="{{ url_for('admin.admin_stacje') }}">Powrót do listy stacji kolejowych</a><br><br>
         </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+            <div class="msg" style="color:red;">{{ messages[0] }}</div>
+    {% endif %}
+    {% endwith %}
         <form method="POST">    
             <label>Nazwa stacji</label>
             <input type="text" id="nazwa_stacji" name="nazwa_stacji" required>

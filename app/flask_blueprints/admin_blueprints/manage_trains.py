@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from flask_blueprints.admin_blueprint import admin_bp, get_db_connection
+from flask_blueprints.admin_blueprint import admin_bp, get_db_connection,MySQLdb
 
 
 @admin_bp.route('/pociagi')
@@ -46,10 +46,12 @@ def usun_wagon(train_id,wagon_id):
 
     conn = get_db_connection('admin')
     cursor = conn.cursor()
-    
-    cursor.execute("DELETE FROM wagony WHERE id_wagonu = %s", (wagon_id,))
-
-    conn.commit()
+    try:
+        cursor.execute("DELETE FROM wagony WHERE id_wagonu = %s", (wagon_id,))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
 
     cursor.close()
     return redirect(url_for('admin.pokaz_wagony', train_id=train_id))
@@ -66,13 +68,16 @@ def edytuj_wagon(train_id, wagon_id):
     
     conn = get_db_connection('admin')
     cursor = conn.cursor()
-    
-    cursor.execute("""
-        UPDATE wagony SET liczba_miejsc = %s WHERE id_wagonu = %s
-    """, (liczba_miejsc , wagon_id))
-    
-    conn.commit()
-    
+    try:
+        cursor.execute("""
+            UPDATE wagony SET liczba_miejsc = %s WHERE id_wagonu = %s
+        """, (liczba_miejsc , wagon_id))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
+
+
     cursor.close()
 
     return redirect(url_for('admin.pokaz_wagony', train_id=train_id))
@@ -88,12 +93,14 @@ def dodaj_wagon(train_id):
     
     conn = get_db_connection('admin')
     cursor = conn.cursor()
-
-    cursor.execute("""
-        INSERT INTO wagony(id_pociągu, liczba_miejsc) VALUES(%s,%s)    """
-                   , (train_id,liczba_miejsc))
-    
-    conn.commit()
+    try:
+        cursor.execute("""
+            INSERT INTO wagony(id_pociągu, liczba_miejsc) VALUES(%s,%s)    """
+                    , (train_id,liczba_miejsc))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
     
     cursor.close()
 
@@ -116,22 +123,25 @@ def edytuj_pociag(train_id):
     train = cursor.fetchall()
 
     if request.method == 'POST':
-        model = request.form.get('id_modelu')
-        id_przewoznika = request.form.get('id_przewoznika')
-        stan = request.form.get('stan')
-        
-        cursor.execute("""
-            UPDATE pociagi SET
-                id_modelu = %s,
-                id_przewoźnika = %s,
-                stan = %s
-            WHERE id_pociągu = %s
-        """, (model, id_przewoznika, stan, train_id))
-        
-        conn.commit()
-        
-        cursor.close()
-        return redirect(url_for('admin.admin_pociagi'))
+        try:
+            model = request.form.get('id_modelu')
+            id_przewoznika = request.form.get('id_przewoznika')
+            stan = request.form.get('stan')
+            
+            cursor.execute("""
+                UPDATE pociagi SET
+                    id_modelu = %s,
+                    id_przewoźnika = %s,
+                    stan = %s
+                WHERE id_pociągu = %s
+            """, (model, id_przewoznika, stan, train_id))
+            
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('admin.admin_pociagi'))
+        except MySQLdb.Error as e:
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
     cursor.execute("SELECT id_przewoznika,nazwa FROM przewoznicy ORDER BY nazwa")
     przewoznicy = cursor.fetchall()
@@ -160,19 +170,23 @@ def dodaj_pociag():
     cursor = conn.cursor()
 
     if request.method == 'POST':
-        model = request.form.get('id_modelu')
-        id_przewoznika = request.form.get('id_przewoznika')
-        stan = request.form.get('stan')
-        
-        cursor.execute("""
-            INSERT INTO pociagi (
-                id_modelu, id_przewoźnika,stan
-            ) VALUES (%s,%s,%s)
-        """, (model, id_przewoznika, stan))
-        
-        conn.commit()
-        cursor.close()
-        return redirect(url_for('admin.admin_pociagi'))
+        try:
+            model = request.form.get('id_modelu')
+            id_przewoznika = request.form.get('id_przewoznika')
+            stan = request.form.get('stan')
+            
+            cursor.execute("""
+                INSERT INTO pociagi (
+                    id_modelu, id_przewoźnika,stan
+                ) VALUES (%s,%s,%s)
+            """, (model, id_przewoznika, stan))
+            
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('admin.admin_pociagi'))
+        except MySQLdb.Error as e:
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
     cursor.execute("SELECT id_przewoznika,nazwa FROM przewoznicy ORDER BY nazwa")
     przewoznicy = cursor.fetchall()
@@ -196,11 +210,13 @@ def usun_pociag(train_id):
     
     conn = get_db_connection('admin')
     cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM pociagi WHERE id_pociągu = %s", (train_id,))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
 
-    cursor.execute("DELETE FROM pociagi WHERE id_pociągu = %s", (train_id,))
-
-
-    conn.commit()
     cursor.close()
     return redirect(url_for('admin.admin_pociagi'))
 
@@ -231,10 +247,12 @@ def usun_model(model_id):
 
     conn = get_db_connection('admin')
     cursor = conn.cursor()
-    
-    cursor.execute("DELETE FROM modele_pociagow WHERE id_modelu = %s", (model_id,))
-
-    conn.commit()
+    try:    
+        cursor.execute("DELETE FROM modele_pociagow WHERE id_modelu = %s", (model_id,))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
 
     cursor.close()
     return redirect(url_for('admin.modele_pociagow'))
@@ -251,12 +269,14 @@ def edytuj_model(model_id):
     
     conn = get_db_connection('admin')
     cursor = conn.cursor()
-    
-    cursor.execute("""
-        UPDATE modele_pociagow SET nazwa_modelu = %s WHERE id_modelu = %s
-    """, (model_pociagu , model_id))
-    
-    conn.commit()
+    try:
+        cursor.execute("""
+            UPDATE modele_pociagow SET nazwa_modelu = %s WHERE id_modelu = %s
+        """, (model_pociagu , model_id))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
     
     cursor.close()
 
@@ -273,12 +293,14 @@ def dodaj_model():
     
     conn = get_db_connection('admin')
     cursor = conn.cursor()
-
-    cursor.execute("""
-        INSERT INTO modele_pociagow(nazwa_modelu) VALUES(%s)    """
-                   , (model_pociagu,))
-    
-    conn.commit()
+    try:
+        cursor.execute("""
+            INSERT INTO modele_pociagow(nazwa_modelu) VALUES(%s)    """
+                    , (model_pociagu,))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
     
     cursor.close()
 

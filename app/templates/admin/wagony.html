@@ -11,6 +11,11 @@
     <div class = "links">
          <a href="{{ url_for('admin.admin_pociagi') }}">Powrót</a><br><br>
     </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+            <div class="msg" style="color:red;">{{ messages[0] }}</div>
+    {% endif %}
+    {% endwith %}
     <h2>Dodaj wagon</h2>
     <form method="POST" action="{{ url_for('admin.dodaj_wagon', train_id=train_id) }}" style="display:inline;">
         Liczba miejsc: <input type="number" step="0.01" name="liczba_miejsc" required>

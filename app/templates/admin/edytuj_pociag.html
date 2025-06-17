@@ -11,11 +11,16 @@
         <div class = "links">
             <a href="{{ url_for('admin.admin_pociagi') }}">Powrót do listy pociagi</a><br><br>
         </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+            <div class="msg" style="color:red;">{{ messages[0] }}</div>
+    {% endif %}
+    {% endwith %}
         <form method="POST">    
             <label>Model pociągu</label>
             <select name="id_modelu" id="id_modelu" required>
                 {% for m in models %}
-                    <option value="{{ m[0] }}" {% if m[0] == train[3] %}selected{% endif %}>
+                    <option value="{{ m[0] }}">
                         {{ m[1] }}
                     </option>
                 {% endfor %}
@@ -24,7 +29,7 @@
             <label>Przewoźnik</label>           
             <select name="id_przewoznika" id="id_przewoznika" required>
                 {% for przewoznik in przewoznicy %}
-                    <option value="{{ przewoznik[0] }}" {% if przewoznik[0] == train[2] %}selected{% endif %}>
+                    <option value="{{ przewoznik[0] }}">
                         {{ przewoznik[1] }}
                     </option>
                 {% endfor %}

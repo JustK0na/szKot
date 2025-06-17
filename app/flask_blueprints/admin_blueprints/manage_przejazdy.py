@@ -40,9 +40,13 @@ def usun_przejazd(przejazd_id):
     
     conn = get_db_connection('admin')
     cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM przejazdy WHERE id_przejazdu = %s", (przejazd_id,))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
 
-    cursor.execute("DELETE FROM przejazdy WHERE id_przejazdu = %s", (przejazd_id,))
-    conn.commit()
     cursor.close()
     return redirect(url_for('admin.admin_przejazdy'))
 
@@ -63,12 +67,13 @@ def edytuj_przejazd(przejazd_id):
     przejazd = cursor.fetchone()
 
     if request.method == 'POST':
-        id_pociagu = request.form.get('id_pociagu')
-        data = request.form.get('data_przejazdu')
-        stan = request.form.get('stan')
-        opoznienie = request.form.get('opoznienie')
-
         try:
+            id_pociagu = request.form.get('id_pociagu')
+            data = request.form.get('data_przejazdu')
+            stan = request.form.get('stan')
+            opoznienie = request.form.get('opoznienie')
+
+        
             cursor.execute("""
                 UPDATE przejazdy SET
                     id_pociągu = %s,
@@ -81,8 +86,8 @@ def edytuj_przejazd(przejazd_id):
             cursor.close()
             return redirect(url_for('admin.admin_przejazdy'))
         except MySQLdb.Error as e:
-                conn.rollback()
-                flash(f"Błąd MySQL: {e.args[1]}")
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
 
     cursor.execute("SELECT id_pociągu, nazwa_modelu,nazwa_przewoznika FROM pociag_szczeg")

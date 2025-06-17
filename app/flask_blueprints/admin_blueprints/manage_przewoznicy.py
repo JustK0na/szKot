@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from flask_blueprints.admin_blueprint import admin_bp, get_db_connection
+from flask_blueprints.admin_blueprint import admin_bp, get_db_connection,MySQLdb
 from common import hash_password
 
 @admin_bp.route('/przewoznicy')
@@ -31,23 +31,26 @@ def edytuj_przewoznika(przewoznik_id):
     przewoznik = cursor.fetchall()
 
     if request.method == 'POST':
-        nazwa = request.form.get('nazwa')
-        username = request.form.get('username')
-        nowe_haslo = request.form.get('haslo')
-        
-        hash_haslo = hash_password(nowe_haslo)
+        try:
+            nazwa = request.form.get('nazwa')
+            username = request.form.get('username')
+            nowe_haslo = request.form.get('haslo')
+            
+            hash_haslo = hash_password(nowe_haslo)
 
-        cursor.execute("""
-            UPDATE przewoznicy SET
-                nazwa = %s,
-                username = %s,
-                haslo = %s
-            WHERE id_przewoznika = %s
-        """, (nazwa, username, hash_haslo, przewoznik_id))
-        conn.commit()
-
-        cursor.close()
-        return redirect(url_for('admin.admin_przewoznicy'))
+            cursor.execute("""
+                UPDATE przewoznicy SET
+                    nazwa = %s,
+                    username = %s,
+                    haslo = %s
+                WHERE id_przewoznika = %s
+            """, (nazwa, username, hash_haslo, przewoznik_id))
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('admin.admin_przewoznicy'))
+        except MySQLdb.Error as e:
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
 
     cursor.close()
@@ -66,22 +69,26 @@ def dodaj_przewoznika():
     cursor = conn.cursor()
 
     if request.method == 'POST':
-        nazwa = request.form.get('nazwa')
-        username = request.form.get('username')
-        nowe_haslo = request.form.get('haslo')
-        
-        hash_haslo = hash_password(nowe_haslo)
+        try:
+            nazwa = request.form.get('nazwa')
+            username = request.form.get('username')
+            nowe_haslo = request.form.get('haslo')
+            
+            hash_haslo = hash_password(nowe_haslo)
 
-        cursor.execute("""
-            INSERT INTO przewoznicy(
-                nazwa,
-                username,
-                haslo) VALUES(%s, %s, %s)
-        """, (nazwa, username, hash_haslo))
-        conn.commit()
+            cursor.execute("""
+                INSERT INTO przewoznicy(
+                    nazwa,
+                    username,
+                    haslo) VALUES(%s, %s, %s)
+            """, (nazwa, username, hash_haslo))
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('admin.admin_przewoznicy'))
+        except MySQLdb.Error as e:
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
-        cursor.close()
-        return redirect(url_for('admin.admin_przewoznicy'))
 
 
     cursor.close()
@@ -103,9 +110,13 @@ def usun_przewoznika(przewoznik_id):
     
     conn = get_db_connection('admin')
     cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM przewoznicy WHERE id_przewoznika = %s", (przewoznik_id,))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
     
-    cursor.execute("DELETE FROM przewoznicy WHERE id_przewoznika = %s", (przewoznik_id,))
-    conn.commit()
     cursor.close()
     return redirect(url_for('admin.admin_przewoznicy', przewoznik_id=przewoznik_id))
 

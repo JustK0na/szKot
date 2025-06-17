@@ -11,14 +11,19 @@
 
         <div class="links">
             <a href="{{ url_for('przewoznik.przewoznik_polaczenia') }}">Powrót do listy połączeń</a><br><br>
-        </div>
+        </div> 
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="msg" style="color:red;">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
 
         <form method="POST">    
             
             <label>Stacja początkowa:</label>
             <select name="id_stacji_początkowej" required>
                 {% for stacja in stacje %}
-                    <option value="{{ stacja[0] }}" {% if stacja[0] == connection[2] %}selected{% endif %}>
+                    <option value="{{ stacja[0] }}">
                         {{ stacja[1] }}
                     </option>
                 {% endfor %}
@@ -27,7 +32,7 @@
             <label>Stacja końcowa:</label>
             <select name="id_stacji_końcowej" required>
                 {% for stacja in stacje %}
-                    <option value="{{ stacja[0] }}" {% if stacja[0] == connection[3] %}selected{% endif %}>
+                    <option value="{{ stacja[0] }}">
                         {{ stacja[1] }}
                     </option>
                 {% endfor %}

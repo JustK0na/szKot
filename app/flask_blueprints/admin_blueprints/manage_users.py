@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from flask_blueprints.admin_blueprint import admin_bp, get_db_connection
+from flask_blueprints.admin_blueprint import admin_bp, get_db_connection,MySQLdb
 
 
 @admin_bp.route('/pasazerowie')
@@ -47,9 +47,14 @@ def usun_bilet(user_id, ticket_id):
     
     conn = get_db_connection('admin')
     cursor = conn.cursor()
-    
-    cursor.execute("DELETE FROM bilety WHERE id_biletu = %s", (ticket_id,))
-    conn.commit()
+
+    try:
+        cursor.execute("DELETE FROM bilety WHERE id_biletu = %s", (ticket_id,))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
+
     cursor.close()
     return redirect(url_for('admin.pokaz_bilety_pasazera', user_id=user_id))
 
@@ -66,12 +71,14 @@ def edytuj_bilet(user_id, ticket_id):
 
     conn = get_db_connection('admin')
     cursor = conn.cursor()
-
-    cursor.execute("""
-        UPDATE bilety SET cena = %s, ulgi = %s WHERE id_biletu = %s
-    """, (cena, ulga, ticket_id))
-    
-    conn.commit()
+    try:
+        cursor.execute("""
+            UPDATE bilety SET cena = %s, ulgi = %s WHERE id_biletu = %s
+        """, (cena, ulga, ticket_id))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
     
     cursor.close()
 
@@ -92,24 +99,26 @@ def edytuj_pasazera(user_id):
     user = cursor.fetchall()
 
     if request.method == 'POST':
-        imie = request.form.get('imie')
-        naziwsko = request.form.get('nazwisko')
-        email = request.form.get('email')
-        telefon = request.form.get('telefon')
-        
-        cursor.execute("""
-            UPDATE pasazerowie SET
-                imie = %s,
-                nazwisko = %s,
-                mail = %s,
-                telefon = %s
-            WHERE id_pasażera = %s
-        """, (imie, naziwsko, email, telefon, user_id))
-        conn.commit()
-
-        cursor.close()
-        return redirect(url_for('admin.admin_pasazerowie'))
-
+        try:
+            imie = request.form.get('imie')
+            naziwsko = request.form.get('nazwisko')
+            email = request.form.get('email')
+            telefon = request.form.get('telefon')
+            
+            cursor.execute("""
+                UPDATE pasazerowie SET
+                    imie = %s,
+                    nazwisko = %s,
+                    mail = %s,
+                    telefon = %s
+                WHERE id_pasażera = %s
+            """, (imie, naziwsko, email, telefon, user_id))
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('admin.admin_pasazerowie'))
+        except MySQLdb.Error as e:
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
     cursor.close()
 
@@ -127,9 +136,13 @@ def usun_pasazera(user_id):
     
     conn = get_db_connection('admin')
     cursor = conn.cursor()
-    
-    cursor.execute("DELETE FROM pasazerowie WHERE id_pasażera = %s", (user_id,))
-    conn.commit()
+    try:
+        cursor.execute("DELETE FROM pasazerowie WHERE id_pasażera = %s", (user_id,))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
+        
     cursor.close()
     return redirect(url_for('admin.admin_pasazerowie', user_id=user_id))
 

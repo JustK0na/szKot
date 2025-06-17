@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from flask_blueprints.admin_blueprint import admin_bp,get_db_connection
+from flask_blueprints.admin_blueprint import admin_bp,get_db_connection,MySQLdb
 
 @admin_bp.route('/stacje')
 def admin_stacje():
@@ -26,10 +26,13 @@ def usun_stacje(station_id):
     
     conn = get_db_connection('admin')
     cursor = conn.cursor()
+    try:
+        cursor.execute("DELETE FROM stacje_kolejowe WHERE id_stacji = %s", (station_id,))
+        conn.commit()
+    except MySQLdb.Error as e:
+        conn.rollback()
+        flash(f"Błąd MySQL: {e.args[1]}")
 
-    cursor.execute("DELETE FROM stacje_kolejowe WHERE id_stacji = %s", (station_id,))
-    
-    conn.commit()
     cursor.close()
     return redirect(url_for('admin.admin_stacje'))
 
@@ -47,19 +50,23 @@ def edytuj_stacje(station_id):
     station = cursor.fetchone()
 
     if request.method == 'POST':
-        nazwa_stacji = request.form.get('nazwa_stacji')
-        miasto = request.form.get('miasto')
-        
-        cursor.execute("""
-            UPDATE stacje_kolejowe SET
-                nazwa_stacji = %s,
-                miasto = %s
-            WHERE id_stacji = %s
-        """, (nazwa_stacji, miasto, station_id))
-        
-        conn.commit()
-        cursor.close()
-        return redirect(url_for('admin.admin_stacje'))
+        try:
+            nazwa_stacji = request.form.get('nazwa_stacji')
+            miasto = request.form.get('miasto')
+            
+            cursor.execute("""
+                UPDATE stacje_kolejowe SET
+                    nazwa_stacji = %s,
+                    miasto = %s
+                WHERE id_stacji = %s
+            """, (nazwa_stacji, miasto, station_id))
+            
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('admin.admin_stacje'))
+        except MySQLdb.Error as e:
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
     cursor.close()
 
@@ -80,18 +87,22 @@ def dodaj_stacje():
 
 
     if request.method == 'POST':
-        nazwa_stacji = request.form.get('nazwa_stacji')
-        miasto = request.form.get('miasto')
-        
-        cursor.execute("""
-            INSERT INTO stacje_kolejowe (
-                nazwa_stacji,miasto
-            ) VALUES (%s, %s)
-        """, (nazwa_stacji, miasto))
-        
-        conn.commit()
-        cursor.close()
-        return redirect(url_for('admin.admin_stacje'))
+        try:
+            nazwa_stacji = request.form.get('nazwa_stacji')
+            miasto = request.form.get('miasto')
+            
+            cursor.execute("""
+                INSERT INTO stacje_kolejowe (
+                    nazwa_stacji,miasto
+                ) VALUES (%s, %s)
+            """, (nazwa_stacji, miasto))
+            
+            conn.commit()
+            cursor.close()
+            return redirect(url_for('admin.admin_stacje'))
+        except MySQLdb.Error as e:
+            conn.rollback()
+            flash(f"Błąd MySQL: {e.args[1]}")
 
     cursor.close()
 

@@ -18,6 +18,11 @@
          <a href="{{ url_for('przewoznik.przewoznik_polaczenia') }}">Powrót</a><br><br>
          <a href="{{ url_for('przewoznik.dodaj_przejazd', connection_id=connection_id) }}">Dodaj przejazd</a><br><br>
     </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+            <div class="msg" style="color:red;">{{ messages[0] }}</div>
+    {% endif %}
+    {% endwith %}
     {% if przejazdy %}
     <table border="1">
         <tr>

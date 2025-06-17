@@ -23,7 +23,7 @@
             <label for="id_pociagu">ID Pociągu:</label>
             <select name="id_pociagu" id="id_pociagu" required>
                 {% for pociag in pociagi %}
-                    <option value="{{ pociag[0] }}" {% if pociag[0] == przejazd[1] %}selected{% endif %}>
+                    <option value="{{ pociag[0] }}">
                        {{ pociag[0] }} - {{ pociag[1] }} - {{ pociag[2] }}
                     </option>
                 {% endfor %}

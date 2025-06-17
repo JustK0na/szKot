@@ -64,7 +64,8 @@ CREATE TABLE `bilety` (
   KEY `id_pasażera` (`id_pasażera`),
   KEY `fk_bilety_przejazdy` (`id_przejazdu`),
   CONSTRAINT `bilety_ibfk_1` FOREIGN KEY (`id_pasażera`) REFERENCES `pasazerowie` (`id_pasażera`) ON DELETE CASCADE,
-  CONSTRAINT `fk_bilety_przejazdy` FOREIGN KEY (`id_przejazdu`) REFERENCES `przejazdy` (`id_przejazdu`) ON DELETE CASCADE
+  CONSTRAINT `fk_bilety_przejazdy` FOREIGN KEY (`id_przejazdu`) REFERENCES `przejazdy` (`id_przejazdu`) ON DELETE CASCADE,
+  CONSTRAINT `cena_wieksza_od_zera_bilet` CHECK (`cena` > 0)
 ) ENGINE=InnoDB AUTO_INCREMENT=58264 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -119,7 +120,8 @@ CREATE TABLE `pasazerowie` (
   `telefon` varchar(20) NOT NULL,
   `haslo` varchar(100) NOT NULL,
   PRIMARY KEY (`id_pasażera`),
-  UNIQUE KEY `mail` (`mail`)
+  UNIQUE KEY `mail` (`mail`),
+  CONSTRAINT `telefon_ma_miec_duzo_cyfr` CHECK ( CHAR_LENGTH(`telefon`) >= 9 )
 ) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -164,7 +166,7 @@ CREATE TABLE `pociagi` (
   PRIMARY KEY (`id_pociągu`),
   KEY `id_przewoźnika` (`id_przewoźnika`),
   KEY `fk_pociagi_modele` (`id_modelu`),
-  CONSTRAINT `fk_pociagi_modele` FOREIGN KEY (`id_modelu`) REFERENCES `modele_pociagow` (`id_modelu`),
+  CONSTRAINT `fk_pociagi_modele` FOREIGN KEY (`id_modelu`) REFERENCES `modele_pociagow` (`id_modelu`) ON DELETE CASCADE,
   CONSTRAINT `pociagi_ibfk_1` FOREIGN KEY (`id_przewoźnika`) REFERENCES `przewoznicy` (`id_przewoznika`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -201,7 +203,8 @@ CREATE TABLE `polaczenia` (
   KEY `polaczenia_przewoznik_idx` (`id_przewoznika`),
   CONSTRAINT `polaczenia_ibfk_2` FOREIGN KEY (`id_stacji_początkowej`) REFERENCES `stacje_kolejowe` (`id_stacji`) ON DELETE CASCADE,
   CONSTRAINT `polaczenia_ibfk_3` FOREIGN KEY (`id_stacji_końcowej`) REFERENCES `stacje_kolejowe` (`id_stacji`) ON DELETE CASCADE,
-  CONSTRAINT `polaczenia_przewoznik` FOREIGN KEY (`id_przewoznika`) REFERENCES `przewoznicy` (`id_przewoznika`)
+  CONSTRAINT `polaczenia_przewoznik` FOREIGN KEY (`id_przewoznika`) REFERENCES `przewoznicy` (`id_przewoznika`),
+  CONSTRAINT `cena_wieksza_od_zera` CHECK (`cena` > 0)
 ) ENGINE=InnoDB AUTO_INCREMENT=301 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -469,7 +472,8 @@ CREATE TABLE `wagony` (
   `liczba_miejsc` int DEFAULT NULL,
   PRIMARY KEY (`id_wagonu`),
   KEY `id_pociągu` (`id_pociągu`),
-  CONSTRAINT `wagony_ibfk_1` FOREIGN KEY (`id_pociągu`) REFERENCES `pociagi` (`id_pociągu`) ON DELETE CASCADE
+  CONSTRAINT `wagony_ibfk_1` FOREIGN KEY (`id_pociągu`) REFERENCES `pociagi` (`id_pociągu`) ON DELETE CASCADE,
+  CONSTRAINT `liczba_miejsc_wieksza_od_zera` CHECK (`liczba_miejsc` > 0)
 ) ENGINE=InnoDB AUTO_INCREMENT=737 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
